@@ -98,7 +98,6 @@ const headCells = [
 
 function Places(props) {
 
-
     const [data, setData] = useState([]);
     const [pageData, setPageData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);

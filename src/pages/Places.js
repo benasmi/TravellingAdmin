@@ -1,11 +1,14 @@
 import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
+import {makeStyles, withStyles} from "@material-ui/core/styles";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import TableComponent from "../components/TableComponent";
 import API from "../Networking/API";
-
+import Button from "@material-ui/core/Button";
+import AddIcon from "@material-ui/icons/Add"
+import Box from "@material-ui/core/Box";
+import history from "../helpers/history";
 
 
 const styles = theme => ({
@@ -14,6 +17,11 @@ const styles = theme => ({
     },
     input: {
         display: "none"
+    },
+    buttonsDiv: {
+        display: 'flex',
+        backgroundColor: "red",
+        justifyContent: "flex-end"
     }
 });
 
@@ -24,9 +32,10 @@ const headCells = [
     { id: 'address', numeric: false, disablePadding: false, label: 'Address',isId: false},
     { id: 'city', numeric: false, disablePadding: false, label: 'City',isId: false },
     { id: 'country', numeric: false, disablePadding: false, label: 'Country',isId: false },
-    { id: 'phoneNumber', numeric: false, disablePadding: false, label: 'Phone Number',isId: false }
-];
+    { id: 'phoneNumber', numeric: false, disablePadding: false, label: 'Phone Number',isId: false },
+    { id: 'actions', numeric: false, disablePadding: false, label: 'Actions', isId: false }
 
+];
 
 
 
@@ -37,6 +46,7 @@ const headCells = [
     "list": [
         {
             "placeId": 1,
+
             "name": "Gedimino pilies bokštas",
             "description": "Šis triaukštis mūrinis bokštas – buvusios pilies, pastatytos XV a., dalis.",
             "averageTimeSpent": "00:01:00",
@@ -87,8 +97,11 @@ const headCells = [
 
 
 function Places(props) {
+
+
     const [data, setData] = useState([]);
     const [pageData, setPageData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const { classes } = props;
 
     useEffect(()=>{
@@ -98,6 +111,7 @@ function Places(props) {
 
 
     function parseData(data){
+        setIsLoading(false);
         let placesData = [];
         data.list.map(row => {
             placesData.push(row)
@@ -109,11 +123,17 @@ function Places(props) {
         console.log(data)
     }
 
-    const changePageCallback = (p) => {
-        console.log(p);
-        console.log("TESTSTSTST");
-        getAllPlaces("?p="+p+"&s="+10)
+    function updatePlaceCallback(id){
+        console.log(id)
+    }
+
+
+    const changePageCallback = (p=0, keyword="") => {
+        setIsLoading(true)
+        getAllPlaces("?p="+p+"&s="+10+"&keyword="+keyword)
     };
+
+
 
     return (
         <div className={classes.root}>
@@ -124,14 +144,31 @@ function Places(props) {
                 pagingInfo={pageData}
                 checkable={false}
                 changePageCallback={changePageCallback}
+                updateCallback={updatePlaceCallback}
+                id={"placeId"}
+                isLoading={isLoading}
             />
+
+            <Box display="flex" justifyContent="flex-end">
+                <Button
+                    onClick={()=>{history.push("/addplace")}}
+                    variant="text"
+                    color="secondary"
+                    size="large"
+                    className={classes.button}
+                    startIcon={<AddIcon />}>
+                    Add
+                </Button>
+
+            </Box>
+
+
+
         </div>
     );
 
-
     function getAllPlaces(urlParams="") {
         API.getAllPlaces(urlParams).then(response=>{
-            console.log("kazkas", response)
             parseData(response)
         }).catch(error=>{
             console.log(error)

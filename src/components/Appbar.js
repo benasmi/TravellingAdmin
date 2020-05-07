@@ -18,13 +18,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import { Router, Route, Link } from "react-router-dom";
-import { createBrowserHistory } from "history";
 import Home from "../pages/Home";
-import Grid from "../pages/Places";
+import Places from "../pages/Places";
 import withStyles from "@material-ui/core/styles/withStyles";
+import AddPlace from "../pages/AddPlace";
+import history from "../helpers/history";
 
 const drawerWidth = 240;
-const history = createBrowserHistory();
 
 
 const useStyles = makeStyles((theme) => ({
@@ -145,8 +145,12 @@ export default function Appbar() {
                     <ListItem button component={Link} to="/" onClick={()=>setTitle("Home")}>
                         <ListItemText>Home</ListItemText>
                     </ListItem>
+                    <Divider light />
                     <ListItem button component={Link} to="/places" onClick={()=>setTitle("Place")} >
                         <ListItemText>Places</ListItemText>
+                    </ListItem>
+                    <ListItem button component={Link} to="/addplace" onClick={()=>setTitle("Add Place")} >
+                        <ListItemText>Add place</ListItemText>
                     </ListItem>
                 </List>
             </Drawer>
@@ -157,7 +161,9 @@ export default function Appbar() {
             >
                 <div className={classes.drawerHeader} />
                 <Route exact path="/" component={Home} />
-                <Route path="/places" component={Grid} />
+                <Route path="/places" component={Places} />
+                <Route path="/addplace" component={AddPlace} />
+
             </main>
             </Router>
         </div>

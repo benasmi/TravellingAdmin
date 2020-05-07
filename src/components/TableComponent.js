@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -12,6 +12,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
@@ -20,6 +21,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import EditIcon from '@material-ui/icons/Edit'
+import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField"
+import useDebounce from "../helpers/debounce";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -131,7 +137,20 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
     const classes = useToolbarStyles();
-    const { numSelected, title } = props;
+    const { numSelected, title, changePageCallback, keyword, setKeyword} = props;
+
+
+    const debouncedSearch = useDebounce(keyword, 300);
+
+
+
+    useEffect( () => {
+            changePageCallback(1,keyword)
+        },
+
+        [debouncedSearch]
+    );
+
 
     return (
         <Toolbar
@@ -155,13 +174,7 @@ const EnhancedTableToolbar = (props) => {
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
-            ) : (
-                <Tooltip title="Filter list">
-                    <IconButton aria-label="filter list">
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
+            ) : <TextField id="standard-basic" label="Search" onChange={ event =>{setKeyword(event.target.value)}}/>}
         </Toolbar>
     );
 };
@@ -170,6 +183,7 @@ EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired
 };
+
 
 
 
@@ -196,9 +210,13 @@ const useStyles = makeStyles((theme) => ({
         top: 20,
         width: 1,
     },
+    centerCell: {
+        textAlign: "center",
+        width: '100%'
+    }
 }));
 
-export default function TableComponent({title, headCells, pagingInfo, data, checkable, changePageCallback}) {
+export default function TableComponent({title, headCells, pagingInfo, data, checkable, changePageCallback, updateCallback, removeCallback, id, isLoading}) {
 
     TableComponent.propTypes = {
         title: PropTypes.string.isRequired,
@@ -206,8 +224,15 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
         pagingInfo: PropTypes.object,
         data: PropTypes.object.isRequired,
         checkable: PropTypes.bool.isRequired,
-        changePageCallback: PropTypes.func
+        changePageCallback: PropTypes.func,
+        updateCallback: PropTypes.func,
+        removeCallback: PropTypes.func,
+        id: PropTypes.string.isRequired,
+        isLoading: PropTypes.bool
     };
+
+
+
 
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
@@ -216,6 +241,8 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [keyword, setKeyword] = useState('');
+
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -232,29 +259,35 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
         setSelected([]);
     };
 
+    const handleCheckboxChange = (event, name) =>{
+
+            const selectedIndex = selected.indexOf(name);
+            let newSelected = [];
+
+            if (selectedIndex === -1) {
+                newSelected = newSelected.concat(selected, name);
+            } else if (selectedIndex === 0) {
+                newSelected = newSelected.concat(selected.slice(1));
+            } else if (selectedIndex === selected.length - 1) {
+                newSelected = newSelected.concat(selected.slice(0, -1));
+            } else if (selectedIndex > 0) {
+                newSelected = newSelected.concat(
+                    selected.slice(0, selectedIndex),
+                    selected.slice(selectedIndex + 1),
+                );
+            }
+
+            setSelected(newSelected);
+
+    };
+
     const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
 
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-        setSelected(newSelected);
     };
 
 
     const handleChangePage = (event, newPage) => {
-        pagingInfo !==null ? changePageCallback(newPage + 1) : setPage(newPage)
+        pagingInfo !==null ? changePageCallback(newPage + 1, keyword) : setPage(newPage)
     };
 
     const handleChangeRowsPerPage = (event) => {
@@ -271,10 +304,15 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
+                {isLoading ? <LinearProgress/> : null }
                 <EnhancedTableToolbar
                     title={title}
-                    numSelected={selected.length} />
-                <TableContainer>
+                    numSelected={selected.length}
+                    changePageCallback={changePageCallback}
+                    keyword={keyword}
+                    setKeyword={setKeyword}
+                />
+                 <TableContainer>
                     <Table
                         className={classes.table}
                         aria-labelledby="tableTitle"
@@ -313,17 +351,31 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
                                             {checkable ? <TableCell padding="checkbox">
                                                 <Checkbox
                                                     checked={isItemSelected}
+                                                    onChange={(event)=>handleCheckboxChange(event, row.name)}
                                                     inputProps={{ 'aria-labelledby': labelId }}
                                                 />
                                             </TableCell> : null}
 
                                             {headCells.map(header=>{
-                                                return header.isId ?
-                                                    <TableCell component="th" id={labelId} scope="row" >
-                                                    {row[header.id]}
-                                                    </TableCell> :
+                                                if(header.isId){
+                                                    return <TableCell component="th" id={labelId} scope="row" >
+                                                            {row[header.id]}
+                                                        </TableCell>
+                                                }else if(header.id === 'actions' ){
+                                                        return <TableCell>
+                                                            <div>
+                                                                <IconButton onClick={()=>updateCallback(row[id])} size="small" aria-label="edit" >
+                                                                    <EditIcon fontSize="small" />
+                                                                </IconButton>
 
-                                                    <TableCell align={header.numeric ? "right" : "left" }>{row[header.id]}</TableCell>
+                                                                <IconButton size="small" aria-label="delete" >
+                                                                    <DeleteIcon fontSize="small" />
+                                                                </IconButton>
+                                                            </div>
+                                                            </TableCell>
+                                                }else{
+                                                    return <TableCell align={header.numeric ? "right" : "left" }>{row[header.id]}</TableCell>
+                                                }
 
                                             })}
                                         </TableRow>
@@ -331,7 +383,12 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
                                 })}
                             {emptyRows > 0 && (
                                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                                    <TableCell colSpan={6} />
+                                    {data.length > 0 ? <TableCell colSpan={6} /> : !isLoading &&
+                                        <TableCell colSpan={6} className={classes.centerCell}>
+                                            <Typography variant="h6" noWrap>
+                                                No results
+                                            </Typography>
+                                        </TableCell>}
                                 </TableRow>
                             )}
                         </TableBody>

@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {withStyles} from "@material-ui/core/styles";
 import { createBrowserHistory } from "history";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
+
 import history from "../helpers/history";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -12,6 +13,9 @@ import PropTypes from "prop-types";
 import { Paper } from '@material-ui/core';
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
+import TableComponent from "../components/TableComponent";
+import AutocompleteChip from "../components/AutocompleteChip";
+import API from "../Networking/API";
 
 
 const styles = theme => ({
@@ -20,10 +24,10 @@ const styles = theme => ({
         // backgroundColor: "black"
     },
     bottomBar: {
-        position: 'fixed',
-        bottom: 0,
-         right: 10,
-         left: 10,
+        // position: 'fixed',
+        //width: '95%',
+        margin: theme.spacing(2),
+         // left: 10,
          //width: '100%',
         display: 'flex',
         justifyContent: 'flex-end'
@@ -44,6 +48,18 @@ function getSteps() {
 function AddPlace(props){
     const {classes} = props
     const [activeStep, setActiveStep] = React.useState(0);
+    const [availableTags, setAvailableTags] = React.useState([])
+    const [selectedTags, setSelectedTags] = useState([]);
+
+    useEffect(()=>{
+        API.getAllTags().then(response=>{
+            setAvailableTags(response.map(item => {
+                return {title: item.name, id: item.tagId}
+            }))
+        }).catch(error=>{
+            console.log(error)
+        })
+    },[]);
 
     let steps = getSteps()
 
@@ -98,26 +114,40 @@ function AddPlace(props){
                     </div>
                 )
             case 2:
+
                 return(
                     <div>
                         <Typography variant="h6" >
                             Place discovery settings
                         </Typography>
+                        <br/>
+                        <Typography variant="subtitle1" >
+                            Select tags
+                        </Typography>
+                        <AutocompleteChip options={availableTags} selectedOptions={selectedTags} setSelectedOptions ={setSelectedTags}/>
+                        <Button
+                            variant="text"
+                            color="primary"
+                            size="small"
+                            className={classes.button}
+                            startIcon={<AddIcon />}>
+                            Missing a tag? Add one!
+                        </Button>
                     </div>
                 )
         }
     }
 
     return (
-        <div>
+        <div style={{width: '100%'}}>
 
-            <Paper elevation = {1} className={classes.content}>
+            <Paper elevation = {2} className={classes.content}>
                 {getStep(activeStep)}
             </Paper>
 
-            <Paper elevation = {3} className = {classes.bottomBar}>
+            <Paper elevation = {2} className = {classes.bottomBar}>
 
-                <Stepper activeStep={activeStep} style={{ backgroundColor: "transparent", width: '80%' }}>
+                <Stepper activeStep={activeStep} style={{ backgroundColor: "transparent", width: '100%' }}>
                     {steps.map((label, index) => {
                         return(
                             <Step key={index}>
@@ -127,19 +157,19 @@ function AddPlace(props){
                 </Stepper>
 
                 <Button
-                    style={{width: '10%'}}
+                    // style={{width: '15%'}}
                     variant="contained"
                     color="primary"
                     onClick={handleBack}
                     className={classes.button}
-                >Previous step</Button>
+                >Back</Button>
                 <Button
-                    style={{width: '10%'}}
+                    // style={{width: '15%'}}
                     variant="contained"
                     color="primary"
                     onClick={handleNext}
                     className={classes.button}
-                >Next step</Button>
+                >Next</Button>
             </Paper>
         </div>
     )

@@ -34,7 +34,6 @@ const headCells = [
     { id: 'country', numeric: false, disablePadding: false, label: 'Country',isId: false },
     { id: 'phoneNumber', numeric: false, disablePadding: false, label: 'Phone Number',isId: false },
     { id: 'actions', numeric: false, disablePadding: false, label: 'Actions', isId: false }
-
 ];
 
 

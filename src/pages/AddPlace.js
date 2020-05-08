@@ -16,6 +16,7 @@ import TextField from "@material-ui/core/TextField";
 import TableComponent from "../components/TableComponent";
 import AutocompleteChip from "../components/AutocompleteChip";
 import API from "../Networking/API";
+import AddTag from "../components/AddDialog";
 
 
 const styles = theme => ({
@@ -50,15 +51,40 @@ function AddPlace(props){
     const [activeStep, setActiveStep] = React.useState(0);
     const [availableTags, setAvailableTags] = React.useState([])
     const [selectedTags, setSelectedTags] = useState([]);
+    const [dialogAddTagOpen, setDialogAddTagOpen] = useState(false);
 
-    useEffect(()=>{
+    const updateTags = () => {
         API.getAllTags().then(response=>{
             setAvailableTags(response.map(item => {
-                return {title: item.name, id: item.tagId}
+                return {title: item.name == null ? "" : item.name, id: item.tagId}
             }))
         }).catch(error=>{
             console.log(error)
         })
+    }
+
+    const handleAddTag = (value) => {
+        API.addTag([{name: value}]).then(response=>{
+            let newTag = {title: value, id: response[0]}
+            setAvailableTags(
+                [
+                    ...availableTags,
+                    newTag
+                ]
+            )
+            setSelectedTags([
+                ...selectedTags,
+                newTag
+            ])
+            setDialogAddTagOpen(false)
+
+        }).catch(error=>{
+                console.log(error)
+            })
+    }
+
+    useEffect(()=>{
+        updateTags()
     },[]);
 
     let steps = getSteps()
@@ -71,6 +97,7 @@ function AddPlace(props){
     };
 
     const getStep = (step) =>{
+
         switch(step){
             case 0:
                 return(
@@ -130,9 +157,11 @@ function AddPlace(props){
                             color="primary"
                             size="small"
                             className={classes.button}
-                            startIcon={<AddIcon />}>
+                            startIcon={<AddIcon />}
+                            onClick={() => setDialogAddTagOpen(true)}>
                             Missing a tag? Add one!
                         </Button>
+                        <AddTag action={handleAddTag}textFieldLabel="Name" open={dialogAddTagOpen} onCloseCallback={() => setDialogAddTagOpen(false)} header = "Add a new tag" />
                     </div>
                 )
         }

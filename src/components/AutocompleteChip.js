@@ -30,8 +30,8 @@ const styles = theme => ({
 
 function AutoCompleteChip(props){
 
-    const {options, selectedOptions, setSelectedOptions, classes} = props
-    const [getCurrentVal, setCurrentVal] = useState({"title": ""})
+    const {options, selectedOptions, setSelectedOptions, classes, label, id} = props;
+    const [getCurrentVal, setCurrentVal] = useState({"name": ""});
     const [viableOptions, setViableOptions] = useState(options.filter(item => !selectedOptions.includes(item)))
 
     function handleDelete(data) {
@@ -45,8 +45,7 @@ function AutoCompleteChip(props){
     }
 
     function handleInput(event, value){
-        setCurrentVal({"title": ""})
-        console.log("HandleInpust")
+        setCurrentVal({"name": ""});
         setSelectedOptions(
             [
                 ...selectedOptions,
@@ -64,10 +63,10 @@ function AutoCompleteChip(props){
                     {
                         selectedOptions.map(option => {
                             return(
-                                <li key={option.id}>
+                                <li key={option[id]}>
                                     <Chip
                                         variant="outlined"
-                                        label={option.title}
+                                        label={option.name}
                                         onDelete={() => handleDelete(option)}
                                         className={classes.chip}
                                     />
@@ -84,8 +83,8 @@ function AutoCompleteChip(props){
                     options={viableOptions}
                     onChange={handleInput}
                     disableClearable
-                    getOptionLabel={(option) =>  option.title}
-                    renderInput={(params) => <TextField {...params} label="Enter tag name" variant="outlined" />}
+                    getOptionLabel={(option) =>  option.name}
+                    renderInput={(params) => <TextField {...params} label={label} variant="outlined" />}
                 />
             </Box>
         </div>
@@ -96,7 +95,8 @@ AutoCompleteChip.propTypes = {
     setSelectedOptions: PropTypes.func.isRequired,
     options: PropTypes.array.isRequired,
     selectedOptions: PropTypes.array.isRequired,
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    label: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(AutoCompleteChip)

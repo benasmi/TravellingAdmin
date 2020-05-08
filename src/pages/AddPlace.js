@@ -38,6 +38,9 @@ const styles = theme => ({
         // margin: 'auto',
         margin: theme.spacing(1),
         padding: theme.spacing(4),
+    },
+    root:{
+        width: '100%'
     }
 });
 
@@ -47,25 +50,31 @@ function getSteps() {
 
 
 function AddPlace(props){
-    const {classes} = props
-    const [activeStep, setActiveStep] = React.useState(0);
-    const [availableTags, setAvailableTags] = React.useState([])
+    const {classes} = props;
+    const [activeStep, setActiveStep] = useState(0);
+
+    const [availableTags, setAvailableTags] = useState([])
     const [selectedTags, setSelectedTags] = useState([]);
     const [dialogAddTagOpen, setDialogAddTagOpen] = useState(false);
 
     const updateTags = () => {
         API.getAllTags().then(response=>{
-            setAvailableTags(response.map(item => {
-                return {title: item.name == null ? "" : item.name, id: item.tagId}
-            }))
+            setAvailableTags(response)
         }).catch(error=>{
             console.log(error)
         })
     }
+    const updateCategories = () => {
+        API.getAllCategories().then(response=>{
+            setAvailableCategories(response)
+        }).catch(error=>{
+            console.log(error)
+        });
+    }
 
     const handleAddTag = (value) => {
         API.addTag([{name: value}]).then(response=>{
-            let newTag = {title: value, id: response[0]}
+            let newTag = {tagId: response[0], name: value}
             setAvailableTags(
                 [
                     ...availableTags,
@@ -83,11 +92,17 @@ function AddPlace(props){
             })
     }
 
+    const [availableCategories, setAvailableCategories] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState([]);
+
+
+
     useEffect(()=>{
         updateTags()
-    },[]);
+        updateCategories()
+        },[]);
 
-    let steps = getSteps()
+    let steps = getSteps();
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => Math.min(prevActiveStep + 1, steps.length));
@@ -130,8 +145,30 @@ function AddPlace(props){
                                 shrink: true,
                             }}
                         />
+                        <TextField
+                            label="Phone number"
+                            style={{ margin: 8 }}
+                            placeholder="Enter phone number"
+                            fullWidth
+                            variant="outlined"
+                            margin="normal"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                        <TextField
+                            label="Website"
+                            style={{ margin: 8 }}
+                            placeholder="Enter website"
+                            fullWidth
+                            variant="outlined"
+                            margin="normal"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
                     </div>
-                )
+                );
             case 1:
                 return(
                     <div>
@@ -139,7 +176,7 @@ function AddPlace(props){
                             Add parking
                         </Typography>
                     </div>
-                )
+                );
             case 2:
 
                 return(
@@ -151,24 +188,39 @@ function AddPlace(props){
                         <Typography variant="subtitle1" >
                             Select tags
                         </Typography>
-                        <AutocompleteChip options={availableTags} selectedOptions={selectedTags} setSelectedOptions ={setSelectedTags}/>
+                        <AutocompleteChip label="Select tags" id="tagId" options={availableTags} selectedOptions={selectedTags} setSelectedOptions ={setSelectedTags}/>
                         <Button
                             variant="text"
                             color="primary"
                             size="small"
                             className={classes.button}
-                            startIcon={<AddIcon />}
-                            onClick={() => setDialogAddTagOpen(true)}>
-                            Missing a tag? Add one!
+                            onClick={() => setDialogAddTagOpen(true)}
+                            startIcon={<AddIcon />}>
+                            Add missing tag
                         </Button>
                         <AddTag action={handleAddTag}textFieldLabel="Name" open={dialogAddTagOpen} onCloseCallback={() => setDialogAddTagOpen(false)} header = "Add a new tag" />
+
+                        <br/>
+                        <br/>
+                        <Typography variant="subtitle1" >
+                            Select categories
+                        </Typography>
+                        <AutocompleteChip label="Select categories" id="categoryId" options={availableCategories} selectedOptions={selectedCategories} setSelectedOptions={setSelectedCategories}/>
+                        <Button
+                            variant="text"
+                            color="primary"
+                            size="small"
+                            className={classes.button}
+                            startIcon={<AddIcon />}>
+                            Missing a category? Add one!
+                        </Button>
                     </div>
                 )
         }
-    }
+    };
 
     return (
-        <div style={{width: '100%'}}>
+        <div className={classes.root}>
 
             <Paper elevation = {2} className={classes.content}>
                 {getStep(activeStep)}

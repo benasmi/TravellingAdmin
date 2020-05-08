@@ -16,7 +16,7 @@ import TextField from "@material-ui/core/TextField";
 import TableComponent from "../components/TableComponent";
 import AutocompleteChip from "../components/AutocompleteChip";
 import API from "../Networking/API";
-import AddTag from "../components/AddDialog";
+import AddDialog from "../components/AddDialog";
 
 
 const styles = theme => ({
@@ -56,6 +56,7 @@ function AddPlace(props){
     const [availableTags, setAvailableTags] = useState([])
     const [selectedTags, setSelectedTags] = useState([]);
     const [dialogAddTagOpen, setDialogAddTagOpen] = useState(false);
+    const [dialogAddCategoryOpen, setDialogAddCategoryOpen] = useState(false);
 
     const updateTags = () => {
         API.getAllTags().then(response=>{
@@ -92,10 +93,28 @@ function AddPlace(props){
             })
     }
 
+    const handleAddCategory = (value) => {
+        API.addCategory([{name: value}]).then(response=>{
+            let newCat = {categoryId: response[0], name: value}
+            setAvailableCategories(
+                [
+                    ...availableCategories,
+                    newCat
+                ]
+            )
+            setSelectedCategories([
+                ...selectedCategories,
+                newCat
+            ])
+            setDialogAddCategoryOpen(false)
+
+        }).catch(error=>{
+                console.log(error)
+            })
+    }
+
     const [availableCategories, setAvailableCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
-
-
 
     useEffect(()=>{
         updateTags()
@@ -198,7 +217,7 @@ function AddPlace(props){
                             startIcon={<AddIcon />}>
                             Add missing tag
                         </Button>
-                        <AddTag action={handleAddTag}textFieldLabel="Name" open={dialogAddTagOpen} onCloseCallback={() => setDialogAddTagOpen(false)} header = "Add a new tag" />
+                        <AddDialog action={handleAddTag}textFieldLabel="Name" open={dialogAddTagOpen} onCloseCallback={() => setDialogAddTagOpen(false)} header = "Add a new tag" />
 
                         <br/>
                         <br/>
@@ -211,9 +230,12 @@ function AddPlace(props){
                             color="primary"
                             size="small"
                             className={classes.button}
+                            onClick={() => setDialogAddCategoryOpen(true)}
                             startIcon={<AddIcon />}>
-                            Missing a category? Add one!
+                            Add a category
                         </Button>
+                        <AddDialog action={handleAddCategory}textFieldLabel="Name" open={dialogAddCategoryOpen} onCloseCallback={() => setDialogAddCategoryOpen(false)} header = "Add a new category" />
+
                     </div>
                 )
         }

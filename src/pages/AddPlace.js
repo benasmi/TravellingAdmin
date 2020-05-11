@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {withStyles} from "@material-ui/core/styles";
 import { createBrowserHistory } from "history";
 import AddIcon from "@material-ui/icons/Add";
+import DeleteIcon from "@material-ui/icons/Delete"
 import Button from "@material-ui/core/Button";
 
 import history from "../helpers/history";
@@ -10,14 +11,69 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Box from "@material-ui/core/Box";
 import PropTypes from "prop-types";
-import { Paper } from '@material-ui/core';
+import {Card, Paper} from '@material-ui/core';
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import TableComponent from "../components/TableComponent";
 import AutocompleteChip from "../components/AutocompleteChip";
 import API from "../Networking/API";
 import AddDialog from "../components/AddDialog";
+import ReorderablePhotos from "../components/ReorderablePhotos";
+import { DropzoneArea } from 'material-ui-dropzone';
+import AddImageDialog from "../components/AddImageDialog";
+import CardHeader from "@material-ui/core/CardHeader";
+import IconButton from "@material-ui/core/IconButton";
+import CardMedia from "@material-ui/core/CardMedia";
+import CardContent from "@material-ui/core/CardContent";
+import CardActions from "@material-ui/core/CardActions";
 
+const initialPhotos = [
+    {
+        src: "https://source.unsplash.com/2ShvY8Lf6l0/800x599",
+        width: 1,
+        height: 1
+    },
+    {
+        src: "https://source.unsplash.com/Dm-qxdynoEc/800x799",
+        width: 1,
+        height: 1
+    },
+    {
+        src: "https://source.unsplash.com/qDkso9nvCg0/600x799",
+        width: 1,
+        height: 1
+    },
+    {
+        src: "https://source.unsplash.com/iecJiKe_RNg/600x799",
+        width: 1,
+        height: 1
+    },
+    {
+        src: "https://source.unsplash.com/epcsn8Ed8kY/600x799",
+        width: 1,
+        height: 1
+    },
+    {
+        src: "https://source.unsplash.com/NQSWvyVRIJk/800x599",
+        width: 1,
+        height: 1
+    },
+    {
+        src: "https://source.unsplash.com/zh7GEuORbUw/600x799",
+        width: 1,
+        height: 1
+    },
+    {
+        src: "https://source.unsplash.com/PpOHJezOalU/800x599",
+        width: 1,
+        height: 1
+    },
+    {
+        src: "https://source.unsplash.com/I1ASdgphUH4/800x599",
+        width: 1,
+        height: 1
+    }
+];
 
 const styles = theme => ({
     button: {
@@ -41,6 +97,16 @@ const styles = theme => ({
     },
     root:{
         width: '100%'
+    },
+    outline: {
+        margin: theme.spacing(1),
+        padding: theme.spacing(1),
+        width: '100%'
+    },
+    addFromUrlWrapper: {
+        margin: theme.spacing(1),
+        padding: theme.spacing(1),
+        display: 'flex',
     }
 });
 
@@ -50,6 +116,7 @@ function getSteps() {
 
 
 function AddPlace(props){
+
     const {classes} = props;
     const [activeStep, setActiveStep] = useState(0);
 
@@ -57,6 +124,8 @@ function AddPlace(props){
     const [selectedTags, setSelectedTags] = useState([]);
     const [dialogAddTagOpen, setDialogAddTagOpen] = useState(false);
     const [dialogAddCategoryOpen, setDialogAddCategoryOpen] = useState(false);
+    const [photos, setPhotos] = useState([]);
+    const [addImageDialogOpen, setAddImageDialogOpen] = useState(false);
 
     const updateTags = () => {
         API.getAllTags().then(response=>{
@@ -130,6 +199,16 @@ function AddPlace(props){
         setActiveStep((prevActiveStep) => Math.max(0, prevActiveStep - 1));
     };
 
+    function handleAddPhoto(file) {
+        setAddImageDialogOpen(false)
+        if(file == null)
+            return;
+        setPhotos([
+            ...photos,
+            file]
+        )
+    }
+
     const getStep = (step) =>{
 
         switch(step){
@@ -186,6 +265,26 @@ function AddPlace(props){
                                 shrink: true,
                             }}
                         />
+                        <Card variant={"outlined"} className={classes.outline}>
+                            {photos.length > 0 && <ReorderablePhotos keyName="photoId" srcName = "url" setPhotos = {setPhotos} photos = {photos} />}
+
+
+                            <Button
+                                variant="text"
+                                color="primary"
+                                size="small"
+                                style={{width: '15%'}}
+                                className={classes.button}
+                                onClick={() => setAddImageDialogOpen(true)}
+                                startIcon={<AddIcon />}>
+                                Add photo
+                            </Button>
+
+                            <AddImageDialog open={addImageDialogOpen} onFinishCallback={(file) => handleAddPhoto(file)} onCloseCallback={() => setAddImageDialogOpen(false)}/>
+
+
+                        </Card>
+
                     </div>
                 );
             case 1:
@@ -217,7 +316,7 @@ function AddPlace(props){
                             startIcon={<AddIcon />}>
                             Add missing tag
                         </Button>
-                        <AddDialog action={handleAddTag}textFieldLabel="Name" open={dialogAddTagOpen} onCloseCallback={() => setDialogAddTagOpen(false)} header = "Add a new tag" />
+                        <AddDialog action={handleAddTag} textFieldLabel="Name" open={dialogAddTagOpen} onCloseCallback={() => setDialogAddTagOpen(false)} header = "Add a new tag" />
 
                         <br/>
                         <br/>
@@ -234,12 +333,14 @@ function AddPlace(props){
                             startIcon={<AddIcon />}>
                             Add a category
                         </Button>
-                        <AddDialog action={handleAddCategory}textFieldLabel="Name" open={dialogAddCategoryOpen} onCloseCallback={() => setDialogAddCategoryOpen(false)} header = "Add a new category" />
+                        <AddDialog action={handleAddCategory} textFieldLabel="Name" open={dialogAddCategoryOpen} onCloseCallback={() => setDialogAddCategoryOpen(false)} header = "Add a new category" />
 
                     </div>
                 )
         }
     };
+
+
 
     return (
         <div className={classes.root}>

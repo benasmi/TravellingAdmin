@@ -26,54 +26,11 @@ import IconButton from "@material-ui/core/IconButton";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
+import Checkbox from "@material-ui/core/Checkbox";
+import Schedule from "../components/Schedule";
 
-const initialPhotos = [
-    {
-        src: "https://source.unsplash.com/2ShvY8Lf6l0/800x599",
-        width: 1,
-        height: 1
-    },
-    {
-        src: "https://source.unsplash.com/Dm-qxdynoEc/800x799",
-        width: 1,
-        height: 1
-    },
-    {
-        src: "https://source.unsplash.com/qDkso9nvCg0/600x799",
-        width: 1,
-        height: 1
-    },
-    {
-        src: "https://source.unsplash.com/iecJiKe_RNg/600x799",
-        width: 1,
-        height: 1
-    },
-    {
-        src: "https://source.unsplash.com/epcsn8Ed8kY/600x799",
-        width: 1,
-        height: 1
-    },
-    {
-        src: "https://source.unsplash.com/NQSWvyVRIJk/800x599",
-        width: 1,
-        height: 1
-    },
-    {
-        src: "https://source.unsplash.com/zh7GEuORbUw/600x799",
-        width: 1,
-        height: 1
-    },
-    {
-        src: "https://source.unsplash.com/PpOHJezOalU/800x599",
-        width: 1,
-        height: 1
-    },
-    {
-        src: "https://source.unsplash.com/I1ASdgphUH4/800x599",
-        width: 1,
-        height: 1
-    }
-];
 
 const styles = theme => ({
     button: {
@@ -111,7 +68,7 @@ const styles = theme => ({
 });
 
 function getSteps() {
-    return ['Basic place info', 'Parking', 'Place discovery settings'];
+    return ['Basic place info', 'Parking', 'Place discovery settings', 'Working schedule'];
 }
 
 
@@ -184,6 +141,53 @@ function AddPlace(props){
 
     const [availableCategories, setAvailableCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
+    const [workingScheduleEnabled, setWorkingScheduleEnabled] = React.useState(false);
+    const [isPlacePermanentlyClosed, setIsPlacePermanentlyClosed] = React.useState(false);
+
+    const [scheduleData, setScheduleData] = useState([
+        {
+            dayOfWeek: 0,
+            openTime: "08:00",
+            closeTime: "18:00",
+            isClosed: false
+        },
+        {
+            dayOfWeek: 1,
+            openTime: "08:00",
+            closeTime: "18:00",
+            isClosed: false
+        },
+        {
+            dayOfWeek: 2,
+            openTime: "08:00",
+            closeTime: "18:00",
+            isClosed: false
+        },
+        {
+            dayOfWeek: 3,
+            openTime: "08:00",
+            closeTime: "18:00",
+            isClosed: false
+        },
+        {
+            dayOfWeek: 4,
+            openTime: "08:00",
+            closeTime: "18:00",
+            isClosed: false
+        },
+        {
+            dayOfWeek: 5,
+            openTime: "08:00",
+            closeTime: "18:00",
+            isClosed: false
+        },
+        {
+            dayOfWeek: 6,
+            openTime: "08:00",
+            closeTime: "18:00",
+            isClosed: false
+        }
+    ]);
 
     useEffect(()=>{
         updateTags()
@@ -336,6 +340,34 @@ function AddPlace(props){
                         <AddDialog action={handleAddCategory} textFieldLabel="Name" open={dialogAddCategoryOpen} onCloseCallback={() => setDialogAddCategoryOpen(false)} header = "Add a new category" />
 
                     </div>
+                )
+            case 3:
+
+                return(
+                    <div>
+                        <Typography variant="subtitle1" >
+                            Working schedule
+                        </Typography>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={workingScheduleEnabled}
+                                    onChange={() => setWorkingScheduleEnabled(current => !current)}
+                                    color="primary"
+                                />
+                            }
+                            label="Enable working schedule for this place"
+                        />
+                        <br/>
+                        {workingScheduleEnabled &&
+                            <Card variant={"outlined"} className={classes.outline}>
+
+                                <Schedule scheduleData={scheduleData} setScheduleData={setScheduleData}/>
+
+                            </Card>
+                        }
+                    </div>
+
                 )
         }
     };

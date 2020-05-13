@@ -10,14 +10,17 @@
     "bootstrap": "^4.4.1",
     "lodash.debounce": "^4.0.8",
     "material-table": "^1.57.2",
+    "material-ui-dropzone": "^3.0.0",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
     "react-geocode": "^0.2.1",
     "react-google-autocomplete": "^1.2.4",
     "react-google-maps": "^9.4.5",
+    "recompose": "latest",
+    "react-photo-gallery": "^8.0.0",
     "react-scripts": "3.4.1",
-    "recompose": "latest"
+    "react-sortable-hoc": "^1.11.0"
   },
   "scripts": {
     "start": "react-scripts start",

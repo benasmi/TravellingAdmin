@@ -39,14 +39,14 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
     function addNewParking(markerData){
         markerData.latitude = markerData.lat;
         markerData.longitude = markerData.lng;
-        API.insertNewParking([markerData]).then(response=>{
+        API.Parking.insertNewParking([markerData]).then(response=>{
             setAllSelectedParkingData(oldArray=>[...oldArray, response[0]])
         }).catch(error=>{
             console.log(error);
         })
     }
     const getClosestParking = (lat, lng, parkingDataChanged)=>{
-        API.getParkingByLocation("?lat="+lat+"&lng="+lng).then(response=>{
+        API.Parking.getParkingByLocation("?lat="+lat+"&lng="+lng).then(response=>{
             let placesData = [];
             response.map(row => {
                 placesData.push(row)

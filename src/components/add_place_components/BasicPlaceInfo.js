@@ -8,7 +8,15 @@ const styles = theme => ({
 
 });
 
-function BasicPlaceInfo() {
+function BasicPlaceInfo({classes, placeInfo, setPlaceInfo}) {
+
+    const updatePlaceInfo = (event) =>{
+      const {name, value} = event.target
+        let place = Object.assign({}, placeInfo, {})
+        place[name] = value;
+       setPlaceInfo(place)
+    };
+
 
     return <div>
             <Typography variant="h6" >
@@ -20,6 +28,9 @@ function BasicPlaceInfo() {
                 style={{ margin: 8 }}
                 placeholder="Enter the place name"
                 fullWidth
+                value={placeInfo['name']}
+                name="name"
+                onChange={e=>updatePlaceInfo(e)}
                 variant="outlined"
                 margin="normal"
                 InputLabelProps={{
@@ -32,6 +43,9 @@ function BasicPlaceInfo() {
                 placeholder="Describe the place thoroughly"
                 fullWidth
                 multiline
+                name="description"
+                value={placeInfo['description']}
+                onChange={e=>updatePlaceInfo(e)}
                 variant="outlined"
                 rows={4}
                 margin="normal"
@@ -44,6 +58,9 @@ function BasicPlaceInfo() {
                 style={{ margin: 8 }}
                 placeholder="Enter phone number"
                 fullWidth
+                name="phoneNumber"
+                value={placeInfo['phoneNumber']}
+                onChange={e=>updatePlaceInfo(e)}
                 variant="outlined"
                 margin="normal"
                 InputLabelProps={{
@@ -55,6 +72,9 @@ function BasicPlaceInfo() {
                 style={{ margin: 8 }}
                 placeholder="Enter website"
                 fullWidth
+                name="website"
+                value={placeInfo['website']}
+                onChange={e=>updatePlaceInfo(e)}
                 variant="outlined"
                 margin="normal"
                 InputLabelProps={{

@@ -69,7 +69,7 @@ function ReorderablePhotos(props){
         setPhotos(arrayMove(photos, oldIndex, newIndex));
     };
     function handleItemDelete(photo){
-        setPhotos(photos.filter(item => {return item[keyName] !== photo.key}))
+        setPhotos(photos.filter(item => {return item[keyName].toString() !== photo.key}))
     }
 
     let modifiedData = photos.map(item =>  {

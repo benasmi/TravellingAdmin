@@ -1,5 +1,5 @@
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Paper from "@material-ui/core/Paper";
@@ -32,7 +32,8 @@ function AutoCompleteChip(props){
 
     const {options, selectedOptions, setSelectedOptions, classes, label, id} = props;
     const [getCurrentVal, setCurrentVal] = useState({"name": ""});
-    const [viableOptions, setViableOptions] = useState(options.filter(item => !selectedOptions.includes(item)))
+    const [viableOptions, setViableOptions] = useState([]);
+
 
     function handleDelete(data) {
         setSelectedOptions(selectedOptions.filter(item => item !== data));
@@ -44,6 +45,10 @@ function AutoCompleteChip(props){
         )
     }
 
+    useEffect(() => {
+        setViableOptions(options.filter(item => !selectedOptions.includes(item)))
+    }, [options, selectedOptions]);
+
     function handleInput(event, value){
         setCurrentVal({"name": ""});
         setSelectedOptions(
@@ -51,7 +56,7 @@ function AutoCompleteChip(props){
                 ...selectedOptions,
                 value
             ]
-        )
+        );
         setViableOptions(viableOptions.filter(item => item !== value))
     }
 

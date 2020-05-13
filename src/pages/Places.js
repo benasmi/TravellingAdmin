@@ -127,7 +127,7 @@ function Places(props) {
 
 
     const changePageCallback = (p=0, keyword="") => {
-        setIsLoading(true)
+        setIsLoading(true);
         getAllPlaces("?p="+p+"&s="+10+"&keyword="+keyword)
     };
 

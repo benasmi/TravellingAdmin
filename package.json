@@ -13,7 +13,11 @@
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-geocode": "^0.2.1",
+    "react-google-autocomplete": "^1.2.4",
+    "react-google-maps": "^9.4.5",
+    "react-scripts": "3.4.1",
+    "recompose": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -41,6 +45,8 @@
     "@material-ui/icons": "^4.9.1",
     "axios": "^0.19.2",
     "history": "^4.10.1",
-    "react-router-dom": "^5.1.2"
+    "react-beautiful-dnd": "latest",
+    "react-router-dom": "^5.1.2",
+    "react-sortable-hoc": "^1.11.0"
   }
 }

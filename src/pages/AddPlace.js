@@ -55,21 +55,16 @@ function getSteps() {
 }
 
 
-function AddPlace(props){
-
-    const {classes} = props;
+function AddPlace({classes}){
     const [activeStep, setActiveStep] = useState(0);
 
+    const [placeInfo, setPlaceInfo] = useState({name: "", description: "",website: "", phoneNumber: ""});
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
-
     const [photos, setPhotos] = useState([]);
-
     const [locationData, setLocationData] = useState({city: '', address: '', country: '', lat: 54.687157, lng: 25.279652});
     const [parkingMarkerData, setParkingMarkerData] = useState({city: '', address: '', country: '', lat: 54.687157, lng: 25.279652});
-
     const [allSelectedParkingData, setAllSelectedParkingData] = useState([]);
-
     const [scheduleData, setScheduleData] = useState(initialScheduleData);
 
     let steps = getSteps();
@@ -85,12 +80,15 @@ function AddPlace(props){
         switch(step){
             case 0:
                 return <React.Fragment>
-                        <BasicPlaceInfo/>
+                        <BasicPlaceInfo
+                            placeInfo={placeInfo}
+                            setPlaceInfo={setPlaceInfo}
+                        />
                         <PhotosInfo
                             photos={photos}
                             setPhotos={setPhotos}
                         />
-                </React.Fragment>
+                </React.Fragment>;
 
             case 1:
                 return  <PlaceLocation

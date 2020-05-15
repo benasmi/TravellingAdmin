@@ -36,7 +36,7 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
 
 
     const updateTags = () => {
-        API.getAllTags().then(response=>{
+        API.Tags.getAllTags().then(response=>{
             setAvailableTags(response);
             console.log(response);
         }).catch(error=>{
@@ -44,7 +44,7 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
         })
     };
     const updateCategories = () => {
-        API.getAllCategories().then(response=>{
+        API.Categories.getAllCategories().then(response=>{
             setAvailableCategories(response)
             console.log(response);
         }).catch(error=>{
@@ -59,7 +59,7 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
     },[]);
 
     const handleAddCategory = (value) => {
-        API.addCategory([{name: value}]).then(response=>{
+        API.Categories.addCategory([{name: value}]).then(response=>{
             let newCat = {categoryId: response[0], name: value};
             setAvailableCategories(
                 [
@@ -81,7 +81,7 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
 
 
     const handleAddTag = (value) => {
-        API.addTag([{name: value}]).then(response=>{
+        API.Tags.addTag([{name: value}]).then(response=>{
             let newTag = {tagId: response[0], name: value}
             setAvailableTags(
                 [
@@ -133,7 +133,7 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
             className={classes.button}
             onClick={() => setDialogAddCategoryOpen(true)}
             startIcon={<AddIcon />}>
-            Add a category
+            Add missing category
         </Button>
         <AddDialog action={handleAddCategory} textFieldLabel="Name" open={dialogAddCategoryOpen} onCloseCallback={() => setDialogAddCategoryOpen(false)} header = "Add a new category" />
 

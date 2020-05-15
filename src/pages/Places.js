@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
-import {makeStyles, withStyles} from "@material-ui/core/styles";
-import GridList from "@material-ui/core/GridList";
-import GridListTile from "@material-ui/core/GridListTile";
+import {withStyles} from "@material-ui/core/styles";
 import TableComponent from "../components/TableComponent";
 import API from "../Networking/API";
 import Button from "@material-ui/core/Button";
@@ -36,65 +34,6 @@ const headCells = [
     { id: 'actions', numeric: false, disablePadding: false, label: 'Actions', isId: false }
 ];
 
-
-
-
-/*
-{
-    "total": 12,
-    "list": [
-        {
-            "placeId": 1,
-
-            "name": "Gedimino pilies bokštas",
-            "description": "Šis triaukštis mūrinis bokštas – buvusios pilies, pastatytos XV a., dalis.",
-            "averageTimeSpent": "00:01:00",
-            "latitude": 54.4112,
-            "longitude": 25.1727,
-            "address": "Arsenalo g. 5, 01143",
-            "country": "Lithuania",
-            "city": "Vilnius",
-            "phoneNumber": "(8-5) 261 7453",
-            "website": "lnm.lt"
-        },
-        {
-            "placeId": 1,
-            "name": "Gedimino pilies bokštas",
-            "description": "Šis triaukštis mūrinis bokštas – buvusios pilies, pastatytos XV a., dalis.",
-            "averageTimeSpent": "00:01:00",
-            "latitude": 54.4112,
-            "longitude": 25.1727,
-            "address": "Arsenalo g. 5, 01143",
-            "country": "Lithuania",
-            "city": "Vilnius",
-            "phoneNumber": "(8-5) 261 7453",
-            "website": "lnm.lt"
-        }
-    ],
-    "pageNum": 1,
-    "pageSize": 10,
-    "size": 10,
-    "startRow": 1,
-    "endRow": 10,
-    "pages": 2,
-    "prePage": 0,
-    "nextPage": 2,
-    "isFirstPage": true,
-    "isLastPage": false,
-    "hasPreviousPage": false,
-    "hasNextPage": true,
-    "navigatePages": 8,
-    "navigatepageNums": [
-        1,
-        2
-    ],
-    "navigateFirstPage": 1,
-    "navigateLastPage": 2
-}
- */
-
-
-
 function Places(props) {
 
     const [data, setData] = useState([]);
@@ -118,11 +57,10 @@ function Places(props) {
         delete data.list;
         setData(placesData);
         setPageData(data);
-        console.log(data)
     }
 
     function updatePlaceCallback(id){
-        console.log(id)
+
     }
 
 
@@ -166,7 +104,7 @@ function Places(props) {
     );
 
     function getAllPlaces(urlParams="") {
-        API.getAllPlaces(urlParams).then(response=>{
+        API.Places.getAllPlaces(urlParams).then(response=>{
             parseData(response)
         }).catch(error=>{
             console.log(error)

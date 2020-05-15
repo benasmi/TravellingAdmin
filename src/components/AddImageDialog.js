@@ -31,25 +31,12 @@ function AddImageDialog(props){
         let formData = new FormData()
         formData.append("image", imagefile)
 
-        // API.uploadPhoto(formData).then(response => {
-        //     console.log(response)
-        //     onFinishCallback(response)
-        // }).catch(err => {
-        //     onFinishCallback()
-        // }).finally(() => {
-        //     setIsLoading(false)
-        // })
-        axios.post('http://izbg.l.dedikuoti.lt:8080/api/v1/photo/upload', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        }).then(response => {
-                console.log(response)
-                onFinishCallback(response.data)
-        }).catch(() => {
-                onFinishCallback()
+        API.Photos.uploadPhoto(formData).then(response => {
+            onFinishCallback(response)
+        }).catch(err => {
+            onFinishCallback()
         }).finally(() => {
-                setIsLoading(false)
+            setIsLoading(false)
         })
     }
 

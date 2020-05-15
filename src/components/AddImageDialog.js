@@ -26,22 +26,30 @@ function AddImageDialog(props){
 
     function handleFileUpload(files) {
         setIsLoading(true)
-        console.log(files)
 
-        var formData = new FormData();
         var imagefile = files[0]
-        formData.append("image", imagefile);
+        let formData = new FormData()
+        formData.append("image", imagefile)
+
+        // API.uploadPhoto(formData).then(response => {
+        //     console.log(response)
+        //     onFinishCallback(response)
+        // }).catch(err => {
+        //     onFinishCallback()
+        // }).finally(() => {
+        //     setIsLoading(false)
+        // })
         axios.post('http://izbg.l.dedikuoti.lt:8080/api/v1/photo/upload', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         }).then(response => {
-            console.log(response)
-            onFinishCallback(response.data)
+                console.log(response)
+                onFinishCallback(response.data)
         }).catch(() => {
-            onFinishCallback()
+                onFinishCallback()
         }).finally(() => {
-            setIsLoading(false)
+                setIsLoading(false)
         })
     }
 

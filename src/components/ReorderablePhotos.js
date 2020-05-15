@@ -82,7 +82,6 @@ function ReorderablePhotos(props){
     })
 
 })
-    console.log(modifiedData)
         return (
             <div >
                 <SortableGallery distance={10} items={modifiedData} onSortEnd={onSortEnd} axis={"xy"} onItemDelete = {handleItemDelete} />

@@ -1,14 +1,14 @@
 import React from "react";
 import axios from "axios"
 
-const request = async function(options) {
+const request = async function(options, contentType) {
     const client = axios.create({
         baseURL: "http://izbg.l.dedikuoti.lt:8080/",
         headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            'Content-Type': (contentType == null) ? 'application/json': contentType,
+            'Accept':  'application/json',
             'Access-Control-Allow-Origin': '*'
-        }
+        },
     });
 
     const onSuccess = function (response) {
@@ -48,8 +48,16 @@ const postRequest = function (path, data) {
     });
 };
 
+const postMultipartRequest = function (path, formData) {
+    return request({
+        url: path,
+        method: 'POST',
+        data: formData
+    }, 'multipart/form-data' /*'application/x-www-form-urlencoded'*/);
+};
+
 const RequestType = {
-    getRequest, postRequest
+    getRequest, postRequest, postMultipartRequest
 };
 
 export default RequestType

@@ -15,8 +15,9 @@ const getAllCategories = () => RequestType.getRequest("api/v1/categories/all");
 const Categories = {addCategory, getAllCategories};
 
 const addPhoto = (params) => RequestType.postRequest("api/v1/photo/insert", params);
-const uploadPhoto = (params) => RequestType.postRequest("api/v1/photo/upload", params);
+const uploadPhoto = (params) => RequestType.postMultipartRequest("api/v1/photo/upload", params);
 const Photos = {addPhoto, uploadPhoto};
+
 
 //Parking
 const getParkingByLocation = (urlParams) =>RequestType.getRequest("api/v1/parking/search", urlParams);

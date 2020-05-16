@@ -13,40 +13,41 @@ import ParkingLocation from "../components/add_place_components/ParkingLocation"
 import PlaceDiscovery from "../components/add_place_components/PlaceDiscovery";
 import initialScheduleData from "../components/add_place_components/initialScheduleData";
 import WorkingSchedule from "../components/add_place_components/WorkingSchedule";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 
 
 const styles = theme => ({
     button: {
         margin: theme.spacing(2)
     },
-    bottomBar: {
-        margin: theme.spacing(2),
-        display: 'flex',
-        justifyContent: 'flex-end'
-    },
-    content: {
-        margin: theme.spacing(1),
+    // bottomBar: {
+    //     margin: theme.spacing(2),
+    //     display: 'flex',
+    //     justifyContent: 'flex-end'
+    // },
+    paperContent: {
+        width: "70%",
+        marginTop: theme.spacing(4),
         padding: theme.spacing(4),
     },
-    paper:{
-        padding: theme.spacing(2),
+    root:{
+        height:"100vh"
+    },
+    content:{
+        display:"flex",
+        flexDirection: "column",
+        alignItems: "center",
+        height:`calc(93vh - 64px)`,
+        padding: theme.spacing(8),
+        overflowY: "auto"
+    },
+    bottom:{
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
-        marginTop: "8px"
-    },
-    root:{
-        width: '100%'
-    },
-    outline: {
-        margin: theme.spacing(1),
+        justifyContent: "space-around",
         padding: theme.spacing(1),
-        width: '100%'
-    },
-    addFromUrlWrapper: {
-        margin: theme.spacing(1),
-        padding: theme.spacing(1),
-        display: 'flex',
+        height: "7vh"
     }
 });
 
@@ -55,7 +56,7 @@ function getSteps() {
 }
 
 
-function AddPlace({classes}){
+function AddPlace({classes, match}){
     const [activeStep, setActiveStep] = useState(0);
 
     const [placeInfo, setPlaceInfo] = useState({name: "", description: "",website: "", phoneNumber: ""});
@@ -66,6 +67,14 @@ function AddPlace({classes}){
     const [parkingMarkerData, setParkingMarkerData] = useState({city: '', address: '', country: '', lat: 54.687157, lng: 25.279652});
     const [allSelectedParkingData, setAllSelectedParkingData] = useState([]);
     const [scheduleData, setScheduleData] = useState(initialScheduleData);
+
+    const [isPublished, setIsPublished] = useState(false);
+
+    function changeIsPublished(){
+
+    }
+
+    //console.log(match.params.placeId);
 
     let steps = getSteps();
 
@@ -113,39 +122,101 @@ function AddPlace({classes}){
         }
     };
 
-    return (
+    return(
         <div className={classes.root}>
+            <div className={classes.content}>
+                <Paper elevation = {4} className={classes.paperContent}>
+                    <BasicPlaceInfo
+                        placeInfo={placeInfo}
+                        setPlaceInfo={setPlaceInfo}
+                    />
+                </Paper>
 
-            <Paper elevation = {2} className={classes.content}>
-                {getStep(activeStep)}
-            </Paper>
+                <Paper elevation = {4} className={classes.paperContent}>
+                    <PhotosInfo
+                        photos={photos}
+                        setPhotos={setPhotos}
+                    />
+                </Paper>
+                <Paper elevation = {4} className={classes.paperContent}>
+                    <PlaceLocation
+                        locationData={locationData}
+                        setLocationData={setLocationData}/>
+                </Paper>
+                <Paper elevation = {4} className={classes.paperContent}>
+                    <ParkingLocation
+                        allSelectedParkingData={allSelectedParkingData}
+                        setAllSelectedParkingData={setAllSelectedParkingData}
+                        parkingMarkerData={parkingMarkerData}
+                        setParkingMarkerData={setParkingMarkerData}/>
+                </Paper>
+                <Paper elevation = {4} className={classes.paperContent}>
+                    <PlaceDiscovery
+                        selectedTags={selectedTags}
+                        setSelectedTags={setSelectedTags}
+                        selectedCategories={selectedCategories}
+                        setSelectedCategories={setSelectedCategories}/>
+                </Paper>
 
-            <Paper elevation = {2} className = {classes.bottomBar}>
+                <Paper elevation = {4} className={classes.paperContent}>
+                    <WorkingSchedule
+                        scheduleData={scheduleData}
+                        setScheduleData={setScheduleData}/>
+                </Paper>
+            </div>
 
-                <Stepper activeStep={activeStep} style={{ backgroundColor: "transparent", width: '100%' }}>
-                    {steps.map((label, index) => {
-                        return(
-                            <Step key={index}>
-                                <StepLabel>{label}</StepLabel>
-                            </Step>)
-                    })}
-                </Stepper>
+            <Paper elevation={1} className={classes.bottom}>
 
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleBack}
-                    className={classes.button}
-                >Back</Button>
+                <FormControlLabel
+                    control={<Switch checked={isPublished} onChange={()=>setIsPublished(!isPublished)} name="isPublished" />}
+                    label="Publish"
+                />
+
                 <Button
                     variant="contained"
                     color="primary"
                     onClick={handleNext}
-                    className={classes.button}
-                >Next</Button>
+                    className={classes.button}>
+                    Save
+                </Button>
+
+
+
             </Paper>
-        </div>
-    )
+        </div>)
+    //
+    //
+    //
+    //         {/*<Paper elevation = {2} className={classes.content}>*/}
+    //         {/*    {getStep(activeStep)}*/}
+    //         {/*</Paper>*/}
+    //
+    //         {/*<Paper elevation = {2} className = {classes.bottomBar}>*/}
+    //
+    //         {/*    <Stepper activeStep={activeStep} style={{ backgroundColor: "transparent", width: '100%' }}>*/}
+    //         {/*        {steps.map((label, index) => {*/}
+    //         {/*            return(*/}
+    //         {/*                <Step key={index}>*/}
+    //         {/*                    <StepLabel>{label}</StepLabel>*/}
+    //         {/*                </Step>)*/}
+    //         {/*        })}*/}
+    //         {/*    </Stepper>*/}
+    //
+    //         {/*    <Button*/}
+    //         {/*        variant="contained"*/}
+    //         {/*        color="primary"*/}
+    //         {/*        onClick={handleBack}*/}
+    //         {/*        className={classes.button}*/}
+    //         {/*    >Back</Button>*/}
+    //         {/*    <Button*/}
+    //         {/*        variant="contained"*/}
+    //         {/*        color="primary"*/}
+    //         {/*        onClick={handleNext}*/}
+    //         {/*        className={classes.button}*/}
+    //         {/*    >Next</Button>*/}
+    //         {/*</Paper>*/}
+    //
+    //
 }
 
 AddPlace.propTypes = {

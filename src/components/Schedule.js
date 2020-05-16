@@ -20,7 +20,7 @@ const styles = theme => ({
 
 function ScheduleCard({dayOfWeek, setData, data, classes}){
 
-    const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
     const [openTime, setOpenTime] = useState(data.openTime);
     const [closeTime, setCloseTime] = useState(data.closeTime);
@@ -38,7 +38,7 @@ function ScheduleCard({dayOfWeek, setData, data, classes}){
 
     return(
     <Card elevation={1} className={classes.scheduleCard}  >
-        <Typography variant="h6">
+        <Typography variant="subtitle1">
             {weekDays[dayOfWeek]}
         </Typography>
 
@@ -47,7 +47,7 @@ function ScheduleCard({dayOfWeek, setData, data, classes}){
             {!isClosed &&
                 <React.Fragment>
                 <TextField
-                    label="Opening time"
+                    label="Opens"
                     type="time"
                     value={openTime}
                     onChange={(e) => setOpenTime(e.target.value)}
@@ -59,7 +59,7 @@ function ScheduleCard({dayOfWeek, setData, data, classes}){
                     }}
                 />
                 <TextField
-                    label="Closing time"
+                    label="Closes"
                     type="time"
                     onChange={(e) => setCloseTime(e.target.value)}
                     value={closeTime}

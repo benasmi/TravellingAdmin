@@ -7,6 +7,7 @@ import {arrayMove, SortableContainer, SortableElement} from 'react-sortable-hoc'
 import Paper from "@material-ui/core/Paper";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete"
+import UseSnackbarContext from "../../contexts/UseSnackbarContext";
 
 const styles = theme => ({
     outline: {
@@ -27,6 +28,7 @@ const styles = theme => ({
 });
 
 function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allSelectedParkingData, setAllSelectedParkingData}) {
+    const { addConfig } = UseSnackbarContext();
 
     const onSortEnd = ({oldIndex, newIndex}) => {
         setAllSelectedParkingData(arrayMove(allSelectedParkingData,oldIndex, newIndex))
@@ -41,8 +43,10 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
         markerData.longitude = markerData.lng;
         API.Parking.insertNewParking([markerData]).then(response=>{
             setAllSelectedParkingData(oldArray=>[...oldArray, response[0]])
+            addConfig(true)
         }).catch(error=>{
             console.log(error);
+            addConfig(false)
         })
     }
     const getClosestParking = (lat, lng, parkingDataChanged)=>{

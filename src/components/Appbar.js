@@ -28,10 +28,14 @@ const drawerWidth = 240;
 
 
 const useStyles = makeStyles((theme) => ({
-    root: {
+    root1: {
+        overflow: "hidden",
         display: 'flex',
+        height: "100vh",
+        background: "#F1F1F1"
     },
     appBar: {
+        height: "64px",
         transition: theme.transitions.create(['margin', 'width'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
@@ -67,8 +71,9 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'flex-end',
     },
     content: {
-        flexGrow: 1,
-        padding: theme.spacing(3),
+        width: "100vw",
+        height: "100%",
+        //padding: theme.spacing(3),
         transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
@@ -76,11 +81,13 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: -drawerWidth,
     },
     contentShift: {
+        width: "100vw",
+        height: "100%",
         transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen,
         }),
-        marginLeft: 0,
+        marginLeft: 0
     },
 }));
 
@@ -100,7 +107,7 @@ export default function Appbar() {
     };
 
     return (
-        <div className={classes.root}>
+        <div className={classes.root1}>
             <CssBaseline />
             <AppBar
                 position="fixed"
@@ -162,8 +169,7 @@ export default function Appbar() {
                 <div className={classes.drawerHeader} />
                 <Route exact path="/" component={Home} />
                 <Route path="/places" component={Places} />
-                <Route path="/addplace" component={AddPlace} />
-
+                <Route path="/addplace/:placeId?" component={AddPlace} />
             </main>
             </Router>
         </div>

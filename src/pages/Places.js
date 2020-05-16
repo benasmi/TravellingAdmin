@@ -11,18 +11,27 @@ import history from "../helpers/history";
 
 const styles = theme => ({
     button: {
-        margin: theme.spacing(1)
+        margin: theme.spacing(2)
     },
     input: {
         display: "none"
     },
+    root:{
+        height:"100vh",
+        width:"100%"
+    },
     buttonsDiv: {
-        display: 'flex',
         backgroundColor: "red",
         justifyContent: "flex-end"
+    },
+    content:{
+        display: 'flex',
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: theme.spacing(8),
     }
 });
-
 
 
 const headCells = [
@@ -73,32 +82,33 @@ function Places(props) {
 
     return (
         <div className={classes.root}>
-            <TableComponent
-                title={"Places"}
-                headCells={headCells}
-                data={data}
-                pagingInfo={pageData}
-                checkable={false}
-                changePageCallback={changePageCallback}
-                updateCallback={updatePlaceCallback}
-                id={"placeId"}
-                isLoading={isLoading}
-            />
 
-            <Box display="flex" justifyContent="flex-end">
-                <Button
-                    onClick={()=>{history.push("/addplace")}}
-                    variant="text"
-                    color="secondary"
-                    size="large"
-                    className={classes.button}
-                    startIcon={<AddIcon />}>
-                    Add
-                </Button>
+            <div className={classes.content} >
+                <TableComponent
+                    title={"Places"}
+                    headCells={headCells}
+                    data={data}
+                    pagingInfo={pageData}
+                    checkable={false}
+                    changePageCallback={changePageCallback}
+                    updateCallback={updatePlaceCallback}
+                    id={"placeId"}
+                    isLoading={isLoading}
+                />
 
-            </Box>
+                <Box display="flex" justifyContent="flex-end">
+                    <Button
+                        onClick={()=>{history.push("/addplace")}}
+                        variant="text"
+                        color="secondary"
+                        size="large"
+                        className={classes.button}
+                        startIcon={<AddIcon />}>
+                        Add
+                    </Button>
 
-
+                </Box>
+            </div>
 
         </div>
     );

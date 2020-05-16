@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import AddImageDialog from "../AddImageDialog";
 import {Card} from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
 
 const styles = theme => ({
     outline: {
@@ -31,25 +32,32 @@ function PhotosInfo({classes, setPhotos, photos}) {
     }
 
     return(
-        <Card variant={"outlined"} className={classes.outline}>
-            {photos.length > 0 && <ReorderablePhotos keyName="photoId" srcName = "url" setPhotos = {setPhotos} photos = {photos} />}
+        <div>
+            <Typography variant="h6" >
+                Photos
+            </Typography>
+            <Card variant={"outlined"} className={classes.outline}>
+
+                {photos.length > 0 && <ReorderablePhotos keyName="photoId" srcName = "url" setPhotos = {setPhotos} photos = {photos} />}
 
 
-            <Button
-                variant="text"
-                color="primary"
-                size="small"
-                style={{width: '15%'}}
-                className={classes.button}
-                onClick={() => setAddImageDialogOpen(true)}
-                startIcon={<AddIcon />}>
-                Add photo
-            </Button>
+                <Button
+                    variant="text"
+                    color="primary"
+                    size="small"
+                    style={{width: '15%'}}
+                    className={classes.button}
+                    onClick={() => setAddImageDialogOpen(true)}
+                    startIcon={<AddIcon />}>
+                    Add photo
+                </Button>
 
-            <AddImageDialog open={addImageDialogOpen} onFinishCallback={(file) => handleAddPhoto(file)} onCloseCallback={() => setAddImageDialogOpen(false)}/>
+                <AddImageDialog open={addImageDialogOpen} onFinishCallback={(file) => handleAddPhoto(file)} onCloseCallback={() => setAddImageDialogOpen(false)}/>
 
 
-        </Card>
+            </Card>
+        </div>
+
     )
 }
 

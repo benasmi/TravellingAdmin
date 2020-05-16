@@ -44,11 +44,9 @@ function WorkingSchedule({classes, scheduleData, setScheduleData}) {
         />
         <br/>
         {workingScheduleEnabled &&
-        <Card variant={"outlined"} className={classes.outline}>
 
             <Schedule scheduleData={scheduleData} setScheduleData={setScheduleData}/>
 
-        </Card>
         }
     </div>
 }

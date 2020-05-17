@@ -46,9 +46,11 @@ const ParkingPlace = {updateParkingForPlace};
 const updatePhotoForPlace = (data, urlParams) => RequestType.postRequest("api/v1/photoplace/update", data, urlParams);
 const PhotoPlace = {updatePhotoForPlace};
 
+//Schedule
+const updateScheduleForPlace = (data, urlParams) => RequestType.postRequest("api/v1/ws/update", data, urlParams);
+const Schedule = {updateScheduleForPlace};
 
-
-const API = {Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace};
+const API = {Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule};
 
 export default API
 

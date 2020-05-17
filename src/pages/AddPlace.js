@@ -16,19 +16,15 @@ import WorkingSchedule from "../components/add_place_components/WorkingSchedule"
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import API from "../Networking/API";
-import * as $ from "expect";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 
 const styles = theme => ({
     button: {
         margin: theme.spacing(2)
     },
-    // bottomBar: {
-    //     margin: theme.spacing(2),
-    //     display: 'flex',
-    //     justifyContent: 'flex-end'
-    // },
     paperContent: {
         width: "70%",
         marginTop: theme.spacing(4),
@@ -36,6 +32,13 @@ const styles = theme => ({
     },
     root:{
         height:"100vh"
+    },
+    loader:{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100vw",
+        height: "100vh"
     },
     content:{
         display:"flex",
@@ -54,39 +57,40 @@ const styles = theme => ({
     }
 });
 
-function getSteps() {
-    return ['Basic place info', "Place location", 'Parking', 'Place discovery settings', 'Working schedule'];
-}
-
-
 function AddPlace({classes, match}){
-    const [placeInfo, setPlaceInfo] = useState({placeId: "", name: "", description: "",website: "", phoneNumber: ""});
+    const [placeInfo, setPlaceInfo] = useState({placeId: "", name: "", description: "",website: "", phoneNumber: "", hasSchedule: false, isPublic: false});
+
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
+
     const [photos, setPhotos] = useState([]);
-    const [locationData, setLocationData] = useState({city: '', address: '', country: '', latitude: 54.687157, longitude: 25.279652});
+
+    const [locationData, setLocationData] = useState({city: '', address: '', country: '', latitude: '', longitude: ''});
     const [parkingMarkerData, setParkingMarkerData] = useState({city: '', address: '', country: '', latitude: 54.687157, longitude: 25.279652});
     const [allSelectedParkingData, setAllSelectedParkingData] = useState([]);
-    const [scheduleData, setScheduleData] = useState(initialScheduleData);
 
-    const [isPublished, setIsPublished] = useState(false);
+    const [scheduleData, setScheduleData] = useState(initialScheduleData);
 
     const [placeId, setPlaceId] = useState(match.params.placeId);
 
+    const [firstTimeLoading, setFirstTimeLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+
+
+
+    const { addConfig } = UseSnackbarContext();
+
     useEffect(()=>{
-        console.log(placeId);
         if(placeId!==undefined){
             getPlaceInfo()
         }
     },[placeId]);
 
     function getPlaceInfo() {
-        console.log("calls");
         API.Places.getPlaceById("?full=true&p="+placeId).then(response=>{
-            console.log(response);
             setAllData(response)
         }).catch(error=>{
-
+            formFeedback(false)
         })
     }
 
@@ -96,7 +100,9 @@ function AddPlace({classes, match}){
             name: place.name,
             description: place.description,
             website: place.website,
-            phoneNumber: place.phoneNumber
+            phoneNumber: place.phoneNumber,
+            hasSchedule: place.hasSchedule,
+            isPublic: place.isPublic
         });
 
         setLocationData({city: place.city,
@@ -107,20 +113,30 @@ function AddPlace({classes, match}){
 
         setSelectedTags(place.tags);
         setSelectedCategories(place.categories);
-        setScheduleData(place.schedule);
+        console.log("Schedule", place.schedule);
+        if(place.schedule.length > 0)
+            setScheduleData(place.schedule);
         setAllSelectedParkingData(place.parking);
         setPhotos(place.photos)
+
+        setFirstTimeLoading(false);
+
     }
 
+    function formFeedback(success, message="Something went wrong!"){
+        addConfig(success, message);
+        setIsLoading(false)
+    }
 
     function saveChanges(){
+        setIsLoading(true);
         if(placeId === undefined){
             Promise.all([
                 insertBasicPlaceInfo()
             ]).then(responses=>{
-                console.log("All information was updated")
+                formFeedback(true, "Place inserted successfully!")
             }).catch(error=>{
-
+                formFeedback(false)
             })
         }else{
             Promise.all([
@@ -128,17 +144,17 @@ function AddPlace({classes, match}){
                 updateTagsData(placeId),
                 updatePhotoData(placeId),
                 updateCategoriesData(placeId),
-                updateParkingData(placeId)
+                updateParkingData(placeId),
+                updateSchedule(placeId)
             ]).then(response=>{
-                console.log("Information was updated successfully!")
+                formFeedback(true, "All changes saved!");
             }).catch(err=>{
-
+                formFeedback(false)
             })
         }
     }
 
     function updatePlaceInfo() {
-        console.log(formPlaceInfo())
         API.Places.updatePlace(formPlaceInfo()).then(response=>{
 
         }).catch(error=>{
@@ -154,6 +170,7 @@ function AddPlace({classes, match}){
                 updateParkingData(placeId);
                 updateCategoriesData(placeId);
                 updatePhotoData(placeId);
+                updateSchedule(placeId);
                 return placeId
             }).catch(error=>{
 
@@ -192,25 +209,20 @@ function AddPlace({classes, match}){
         })
     }
 
+    function updateSchedule(id){
+        console.log("Id", id);
+        console.log("Schedule datacka", scheduleData);
+        API.Schedule.updateScheduleForPlace(scheduleData, "?p="+id).then(response=>{}).catch(er=>{})
+    }
+
     function formPlaceInfo(){
         return Object.assign(placeInfo, locationData)
     }
 
-    function addPlaceId(data){
-        if(data.length === 0) return data;
-        return data.map(row=>{
-            return row.placeId = placeId
-        })
-    }
-
-
-    useEffect(()=>{
-
-    },[placeId]);
 
     return(
         <div className={classes.root}>
-            <div className={classes.content}>
+            {firstTimeLoading ? <div className={classes.loader}><CircularProgress /></div> : <div className={classes.content}>
                 <Paper elevation = {4} className={classes.paperContent}>
                     <BasicPlaceInfo
                         placeInfo={placeInfo}
@@ -246,16 +258,25 @@ function AddPlace({classes, match}){
 
                 <Paper elevation = {4} className={classes.paperContent}>
                     <WorkingSchedule
+                        workingScheduleEnabled={placeInfo}
+                        setWorkingScheduleEnabled={setPlaceInfo}
                         scheduleData={scheduleData}
                         setScheduleData={setScheduleData}/>
                 </Paper>
-            </div>
+            </div> }
+
+            {isLoading ? <LinearProgress/> : null}
 
             <Paper elevation={1} className={classes.bottom}>
 
                 <FormControlLabel
-                    control={<Switch checked={isPublished} onChange={()=>setIsPublished(!isPublished)} name="isPublished" />}
-                    label="Publish"
+                    control={<Switch checked={placeInfo['isPublic']} onChange={()=> {
+                            var obj = Object.assign({}, placeInfo, {});
+                            obj['isPublic'] = !obj['isPublic']
+                            setPlaceInfo(obj);
+                        }
+                    } name="isPublic" />}
+                    label="Make this place public"
                 />
 
                 <Button

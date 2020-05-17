@@ -25,8 +25,7 @@ const styles = theme => ({
     },
 });
 
-function WorkingSchedule({classes, scheduleData, setScheduleData}) {
-    const [workingScheduleEnabled, setWorkingScheduleEnabled] = useState(false);
+function WorkingSchedule({classes, scheduleData, setScheduleData,workingScheduleEnabled, setWorkingScheduleEnabled}) {
 
     return <div>
         <Typography variant="subtitle1" >
@@ -35,18 +34,20 @@ function WorkingSchedule({classes, scheduleData, setScheduleData}) {
         <FormControlLabel
             control={
                 <Switch
-                    checked={workingScheduleEnabled}
-                    onChange={() => setWorkingScheduleEnabled(current => !current)}
+                    checked={workingScheduleEnabled['hasSchedule']}
+                    onChange={() => {
+                        var obj = Object.assign({}, workingScheduleEnabled,{});
+                        obj['hasSchedule'] = !obj['hasSchedule'];
+                        console.log(obj);
+                        setWorkingScheduleEnabled(obj)}}
                     color="primary"
                 />
             }
             label="Enable working schedule for this place"
         />
         <br/>
-        {workingScheduleEnabled &&
-
+        {workingScheduleEnabled['hasSchedule'] &&
             <Schedule scheduleData={scheduleData} setScheduleData={setScheduleData}/>
-
         }
     </div>
 }

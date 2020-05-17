@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useContext } from 'react';
 
 export const SnackbarContext = React.createContext({
     config: null,
@@ -6,15 +7,21 @@ export const SnackbarContext = React.createContext({
     removeConfig: () => {}
 });
 
+export function UseSnackbarContext() {
+    const { config, addConfig, removeConfig } = useContext(SnackbarContext);
+    return { config, addConfig, removeConfig };
+}
+
+
 export default function SnackbarProvider({ children }) {
     const [config, setConfig] = useState(null);
 
     const removeConfig = () => setConfig(null);
-    const addConfig = (success) => setConfig({ success });
+    const addConfig = (success, message) => setConfig({ success, message });
 
     const contextValue = {
         config,
-        addConfig: (success) => addConfig(success),
+        addConfig: (success, message) => addConfig(success, message),
         removeConfig: () => removeConfig()
     };
 

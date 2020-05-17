@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {withStyles} from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Stepper from "@material-ui/core/Stepper";
@@ -15,6 +15,9 @@ import initialScheduleData from "../components/add_place_components/initialSched
 import WorkingSchedule from "../components/add_place_components/WorkingSchedule";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+import API from "../Networking/API";
+import * as $ from "expect";
+import UseSnackbarContext from "../contexts/UseSnackbarContext";
 
 
 const styles = theme => ({
@@ -57,70 +60,153 @@ function getSteps() {
 
 
 function AddPlace({classes, match}){
-    const [activeStep, setActiveStep] = useState(0);
-
-    const [placeInfo, setPlaceInfo] = useState({name: "", description: "",website: "", phoneNumber: ""});
+    const [placeInfo, setPlaceInfo] = useState({placeId: "", name: "", description: "",website: "", phoneNumber: ""});
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [photos, setPhotos] = useState([]);
-    const [locationData, setLocationData] = useState({city: '', address: '', country: '', lat: 54.687157, lng: 25.279652});
-    const [parkingMarkerData, setParkingMarkerData] = useState({city: '', address: '', country: '', lat: 54.687157, lng: 25.279652});
+    const [locationData, setLocationData] = useState({city: '', address: '', country: '', latitude: 54.687157, longitude: 25.279652});
+    const [parkingMarkerData, setParkingMarkerData] = useState({city: '', address: '', country: '', latitude: 54.687157, longitude: 25.279652});
     const [allSelectedParkingData, setAllSelectedParkingData] = useState([]);
     const [scheduleData, setScheduleData] = useState(initialScheduleData);
 
     const [isPublished, setIsPublished] = useState(false);
 
-    function changeIsPublished(){
+    const [placeId, setPlaceId] = useState(match.params.placeId);
+
+    useEffect(()=>{
+        console.log(placeId);
+        if(placeId!==undefined){
+            getPlaceInfo()
+        }
+    },[placeId]);
+
+    function getPlaceInfo() {
+        console.log("calls");
+        API.Places.getPlaceById("?full=true&p="+placeId).then(response=>{
+            console.log(response);
+            setAllData(response)
+        }).catch(error=>{
+
+        })
+    }
+
+    function setAllData(place){
+        setPlaceInfo({
+            placeId: place.placeId,
+            name: place.name,
+            description: place.description,
+            website: place.website,
+            phoneNumber: place.phoneNumber
+        });
+
+        setLocationData({city: place.city,
+            address: place.address,
+            country: place.country,
+            latitude: place.latitude,
+            longitude: place.longitude});
+
+        setSelectedTags(place.tags);
+        setSelectedCategories(place.categories);
+        setScheduleData(place.schedule);
+        setAllSelectedParkingData(place.parking);
+        setPhotos(place.photos)
+    }
+
+
+    function saveChanges(){
+        if(placeId === undefined){
+            Promise.all([
+                insertBasicPlaceInfo()
+            ]).then(responses=>{
+                console.log("All information was updated")
+            }).catch(error=>{
+
+            })
+        }else{
+            Promise.all([
+                updatePlaceInfo(),
+                updateTagsData(placeId),
+                updatePhotoData(placeId),
+                updateCategoriesData(placeId),
+                updateParkingData(placeId)
+            ]).then(response=>{
+                console.log("Information was updated successfully!")
+            }).catch(err=>{
+
+            })
+        }
+    }
+
+    function updatePlaceInfo() {
+        console.log(formPlaceInfo())
+        API.Places.updatePlace(formPlaceInfo()).then(response=>{
+
+        }).catch(error=>{
+
+        })
 
     }
 
-    //console.log(match.params.placeId);
 
-    let steps = getSteps();
+    function insertBasicPlaceInfo(){
+            return API.Places.insertPlace(formPlaceInfo()).then(placeId=>{
+                updateTagsData(placeId);
+                updateParkingData(placeId);
+                updateCategoriesData(placeId);
+                updatePhotoData(placeId);
+                return placeId
+            }).catch(error=>{
 
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => Math.min(prevActiveStep + 1, steps.length));
-    };
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => Math.max(0, prevActiveStep - 1));
-    };
+            })
+    }
 
-    const getStep = (step) =>{
-        switch(step){
-            case 0:
-                return <React.Fragment>
-                        <BasicPlaceInfo
-                            placeInfo={placeInfo}
-                            setPlaceInfo={setPlaceInfo}
-                        />
-                        <PhotosInfo
-                            photos={photos}
-                            setPhotos={setPhotos}
-                        />
-                </React.Fragment>;
+    function updateParkingData(id) {
+        API.ParkingPlace.updateParkingForPlace(allSelectedParkingData, "?p="+id).then(response=>{
 
-            case 1:
-                return  <PlaceLocation
-                    locationData={locationData}
-                    setLocationData={setLocationData}/>;
-            case 2:
-                return <ParkingLocation
-                        allSelectedParkingData={allSelectedParkingData}
-                        setAllSelectedParkingData={setAllSelectedParkingData}
-                        parkingMarkerData={parkingMarkerData}
-                        setParkingMarkerData={setParkingMarkerData}/>;
-            case 3:
-                return <PlaceDiscovery
-                    selectedTags={selectedTags}
-                    setSelectedTags={setSelectedTags}
-                    selectedCategories={selectedCategories}
-                    setSelectedCategories={setSelectedCategories}/>;
-            case 4:
-                return <WorkingSchedule
-                    scheduleData={scheduleData}
-                    setScheduleData={setScheduleData}/>
-        }
-    };
+        }).catch(error=>{
+
+        })
+    }
+
+    function updateTagsData(id) {
+        API.TagsPlace.updateTagsForPlace(selectedTags, "?p="+id).then(response=>{
+
+        }).catch(error=>{
+
+        })
+    }
+
+    function updateCategoriesData(id) {
+        API.CategoriesPlace.updateCategoriesForPlace(selectedCategories, "?p="+id).then(response=>{
+
+        }).catch(error=>{
+
+        })
+    }
+
+    function updatePhotoData(id) {
+        API.PhotoPlace.updatePhotoForPlace(photos, "?p="+id).then(response=>{
+
+        }).catch(error=>{
+
+        })
+    }
+
+    function formPlaceInfo(){
+        return Object.assign(placeInfo, locationData)
+    }
+
+    function addPlaceId(data){
+        if(data.length === 0) return data;
+        return data.map(row=>{
+            return row.placeId = placeId
+        })
+    }
+
+
+    useEffect(()=>{
+
+    },[placeId]);
 
     return(
         <div className={classes.root}>
@@ -175,48 +261,13 @@ function AddPlace({classes, match}){
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleNext}
+                    onClick={()=>saveChanges()}
                     className={classes.button}>
                     Save
                 </Button>
-
-
-
             </Paper>
         </div>)
-    //
-    //
-    //
-    //         {/*<Paper elevation = {2} className={classes.content}>*/}
-    //         {/*    {getStep(activeStep)}*/}
-    //         {/*</Paper>*/}
-    //
-    //         {/*<Paper elevation = {2} className = {classes.bottomBar}>*/}
-    //
-    //         {/*    <Stepper activeStep={activeStep} style={{ backgroundColor: "transparent", width: '100%' }}>*/}
-    //         {/*        {steps.map((label, index) => {*/}
-    //         {/*            return(*/}
-    //         {/*                <Step key={index}>*/}
-    //         {/*                    <StepLabel>{label}</StepLabel>*/}
-    //         {/*                </Step>)*/}
-    //         {/*        })}*/}
-    //         {/*    </Stepper>*/}
-    //
-    //         {/*    <Button*/}
-    //         {/*        variant="contained"*/}
-    //         {/*        color="primary"*/}
-    //         {/*        onClick={handleBack}*/}
-    //         {/*        className={classes.button}*/}
-    //         {/*    >Back</Button>*/}
-    //         {/*    <Button*/}
-    //         {/*        variant="contained"*/}
-    //         {/*        color="primary"*/}
-    //         {/*        onClick={handleNext}*/}
-    //         {/*        className={classes.button}*/}
-    //         {/*    >Next</Button>*/}
-    //         {/*</Paper>*/}
-    //
-    //
+
 }
 
 AddPlace.propTypes = {

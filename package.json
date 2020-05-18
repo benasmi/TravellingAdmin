@@ -17,10 +17,14 @@
     "react-geocode": "^0.2.1",
     "react-google-autocomplete": "^1.2.4",
     "react-google-maps": "^9.4.5",
-    "recompose": "latest",
+    "react-infinite-scroll-component": "^5.0.4",
+    "react-infinite-scroller": "^1.2.4",
+    "react-masonry-component": "^6.2.1",
     "react-photo-gallery": "^8.0.0",
     "react-scripts": "3.4.1",
-    "react-sortable-hoc": "^1.11.0"
+    "react-sortable-hoc": "^1.11.0",
+    "react-stack-grid": "^0.7.1",
+    "recompose": "latest"
   },
   "scripts": {
     "start": "react-scripts start",

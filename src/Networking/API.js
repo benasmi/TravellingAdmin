@@ -2,7 +2,8 @@ import RequestType from '../Networking/NetworkLayerCentral'
 
 //Places
 const getAllPlaces = (urlParams) => RequestType.getRequest("api/v1/place/search", urlParams);
-const Places = {getAllPlaces};
+const searchApiPlaces = (urlParams) => RequestType.getRequest("api/v1/placeApi/search", urlParams);
+const Places = {getAllPlaces, searchApiPlaces};
 
 //Tags
 const getAllTags = () => RequestType.getRequest("api/v1/tags/all");

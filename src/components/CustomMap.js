@@ -55,11 +55,11 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
             area = getArea( addressArray ),
             state = getState( addressArray ),
             country = getCountry(addressArray),
-            latValue = place.geometry.location.lat(),
-            lngValue = place.geometry.location.lng();
+            latitudeValue = place.geometry.location.lat(),
+            longitudeValue = place.geometry.location.lng();
 
-        onMarkerLocationChanged(latValue, lngValue);
-        changeLocationData(city,country,address,latValue,lngValue, onParkingDataChanged);
+        onMarkerLocationChanged(latitudeValue, longitudeValue);
+        changeLocationData(city,country,address,latitudeValue,longitudeValue, onParkingDataChanged);
 
     };
 
@@ -88,17 +88,17 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
         );
     };
 
-    function changeLocationData(city,country,address,lat,lng, onParkingDataChanged) {
+    function changeLocationData(city,country,address,latitude,longitude, onParkingDataChanged) {
         let data = Object.assign({}, locationData, {});
         data['city'] = city;
         data['country'] = country;
         data['address'] = address;
-        data['lat'] = lat;
-        data['lng'] = lng;
+        data['latitude'] = latitude;
+        data['longitude'] = longitude;
         setLocationData(data);
         markerData = data;
         if (changedParkingMarkerCallback !== undefined){
-            changedParkingMarkerCallback(city,address,country, lat,lng, onParkingDataChanged);
+            changedParkingMarkerCallback(city,address,country, latitude,longitude, onParkingDataChanged);
         }
 
     }
@@ -178,13 +178,13 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
     const markers = (onToggleOpen, infoWindows, parking) =>{
         return parking.map((location, i) => {
 
-            const lat = parseFloat(location.latitude);
-            const lng = parseFloat(location.longitude);
+            const latitude = parseFloat(location.latitude);
+            const longitude = parseFloat(location.longitude);
 
             return (
                 <Marker
                     key={location.parkingId}
-                    position={{ lat: lat, lng: lng}}
+                    position={{ latitude: latitude, longitude: longitude}}
                     options={{icon: parkingIcon}}
                     onClick={()=>onToggleOpen(location.parkingId)}
                 >
@@ -221,7 +221,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
      */
     const MyMapComponent = compose(
         withProps({
-            googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyDGFjZHSoRrZ2AEO0ONXvjuN4RiCmknXf&v=3.exp&libraries=geometry,drawing,places",
+            googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyDGFjZHSoRrZ2AEO0ONXvjuN4RiCmknXf8&v=3.exp&libraries=geometry,drawing,places",
             loadingElement: <div style={{ height: `100%` }} />,
             containerElement: <div style={{ height: mapHeight }} />,
             mapElement: <div style={{ height: `100%` }} />,
@@ -240,8 +240,8 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
 
         <GoogleMap
             defaultZoom={12}
-            center={{lat: props.markerLocation.lat, lng: props.markerLocation.lng }}
-            defaultCenter={{ lat: props.markerLocation.lat, lng: props.markerLocation.lng }}
+            center={{lat: props.markerLocation.latitude, lng: props.markerLocation.longitude }}
+            defaultCenter={{ lat: props.markerLocation.latitude, lng: props.markerLocation.longitude }}
         >
             <Marker
                 name={'Dolores park'}
@@ -249,7 +249,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                 draggable={true}
                 onClick={()=>props.toggleDraggableInfoWindow(true)}
                 onDragEnd={e=>onMarkerDragEnd(e, props.markerChanger, props.onParkingDataChange)}
-                position={{ lat: props.markerLocation.lat, lng: props.markerLocation.lng }} >
+                position={{ lat: props.markerLocation.latitude, lng: props.markerLocation.longitude }} >
 
                 {props.infoWindow.show && addParkingCallback && (
                     <InfoWindow onCloseClick={()=>{props.toggleDraggableInfoWindow(false)}}>
@@ -280,14 +280,14 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
         withProps(),
         withStateHandlers({
             draggableMarkerLocation: {
-                lat: locationData!==undefined ? locationData.lat : 54.686047,
-                lng: locationData!==undefined ? locationData.lng : 25.2775476
+                latitude: locationData.latitude,
+                longitude: locationData.longitude
             },parkingData: [], infoWindows: []
         },{
             onMarkerLocationChanged: ({draggableMarkerLocation}) => (newLat, newLng) => ({
                 draggableMarkerLocation: {
-                    lat: newLat,
-                    lng: newLng
+                    latitude: newLat,
+                    longitude: newLng
                 }
             }),
                 onParkingDataChange: ({parkingData}) => (parking) => ({

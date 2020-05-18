@@ -8,15 +8,10 @@ export default function SnackbarFeedback(props){
 
     const { config, removeConfig } = UseSnackbarContext();
 
-    const MESSAGES = {
-        SUCCESS: "Your request to server went successfully!",
-        ERROR: "Something went wrong! Please try again later."
-    };
-
     return(
-        <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={!!config} autoHideDuration={3000} onClose={removeConfig}>
+        <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={!!config} autoHideDuration={4000} onClose={removeConfig}>
             <Alert onClose={removeConfig} severity={!!config ? (config.success ? "success" : "danger") : ""}>
-                {!!config ? (config.success ? MESSAGES.SUCCESS : MESSAGES.ERROR)  : ""}
+                {!!config && config.message}
             </Alert>
         </Snackbar>
     )

@@ -69,9 +69,8 @@ function Places(props) {
     }
 
     function updatePlaceCallback(id){
-
+        history.push("/addplace/"+id)
     }
-
 
     const changePageCallback = (p=0, keyword="") => {
         setIsLoading(true);

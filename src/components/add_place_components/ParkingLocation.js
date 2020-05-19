@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 import CustomMap from "../CustomMap";
@@ -8,6 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete"
 import UseSnackbarContext from "../../contexts/UseSnackbarContext";
+import Button from "@material-ui/core/Button";
 
 const styles = theme => ({
     outline: {
@@ -38,20 +39,30 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
         getClosestParking(parseFloat(lat),parseFloat(lng), parkingDataChanged);
     }
 
+
+
     function addNewParking(markerData){
-        markerData.latitude = markerData.lat;
-        markerData.longitude = markerData.lng;
-        API.Parking.insertNewParking([markerData]).then(response=>{
-            setAllSelectedParkingData(oldArray=>[...oldArray, response[0]])
-            addConfig(true)
-        }).catch(error=>{
-            console.log(error);
-            addConfig(false)
-        })
+        if(!parkingExists(markerData)){
+            API.Parking.insertNewParking([markerData]).then(response=>{
+                setAllSelectedParkingData(oldArray=> [...oldArray, response[0]]);
+                addConfig(true)
+            }).catch(error=>{
+                addConfig(false)
+            })
+        }
     }
+
+    function parkingExists(markerData){
+        for(let i = 0; i<allSelectedParkingData.length; i++){
+            if(allSelectedParkingData[i].address === markerData.address) return true;
+        }
+        return false
+    }
+
     const getClosestParking = (lat, lng, parkingDataChanged)=>{
         API.Parking.getParkingByLocation("?lat="+lat+"&lng="+lng).then(response=>{
             let placesData = [];
+            console.log("ParkingData", response)
             response.map(row => {
                 placesData.push(row)
             });
@@ -97,12 +108,14 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
         <CustomMap mapHeight={350}
                    locationData={parkingMarkerData}
                    setLocationData={setParkingMarkerData}
-                   selectedParkingCallback={(location)=>setAllSelectedParkingData(oldArray=> [...oldArray, location])}
+                   selectedParkingCallback={(location)=>{
+                       if(!parkingExists(location))
+                           setAllSelectedParkingData(oldArray=> [...oldArray, location])
+                       }}
                    changedParkingMarkerCallback={changedParkingMarkerCallback}
                    addParkingCallback={addNewParking}
 
         />
-
         <br/>
         <Typography variant="subtitle1" >
             Selected parking locations

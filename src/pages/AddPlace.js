@@ -65,7 +65,7 @@ function AddPlace({classes, match}){
 
     const [photos, setPhotos] = useState([]);
 
-    const [locationData, setLocationData] = useState({city: '', address: '', country: '', latitude: '', longitude: ''});
+    const [locationData, setLocationData] = useState({city: '', address: '', country: '', latitude: 54.687157, longitude: 25.279652});
     const [parkingMarkerData, setParkingMarkerData] = useState({city: '', address: '', country: '', latitude: 54.687157, longitude: 25.279652});
     const [allSelectedParkingData, setAllSelectedParkingData] = useState([]);
 
@@ -81,14 +81,37 @@ function AddPlace({classes, match}){
     const { addConfig } = UseSnackbarContext();
 
     useEffect(()=>{
+        //Loaded place for editing
         if(placeId!==undefined){
+            console.log("Getting place location");
             getPlaceInfo()
+        }else{
+            console.log("Came here to add new place");
+            setFirstTimeLoading(false) //Just loaded add place window
         }
+
+        //New Place has been just inserted, thus inserting other place info
+        if(placeId!==undefined && firstTimeLoading===false){
+            console.log("Just added new place");
+            Promise.all([
+                updateTagsData(placeId),
+                updateParkingData(placeId),
+                updateCategoriesData(placeId),
+                updatePhotoData(placeId),
+                updateSchedule(placeId)
+            ]).then(responses=>{
+                formFeedback(true, "Place inserted successfully!")
+            }).catch(error=>{
+                formFeedback(false)
+            })
+        }
+
     },[placeId]);
 
     function getPlaceInfo() {
         API.Places.getPlaceById("?full=true&p="+placeId).then(response=>{
             setAllData(response)
+
         }).catch(error=>{
             formFeedback(false)
         })
@@ -116,6 +139,7 @@ function AddPlace({classes, match}){
         console.log("Schedule", place.schedule);
         if(place.schedule.length > 0)
             setScheduleData(place.schedule);
+        console.log(place.parking);
         setAllSelectedParkingData(place.parking);
         setPhotos(place.photos)
 
@@ -131,13 +155,7 @@ function AddPlace({classes, match}){
     function saveChanges(){
         setIsLoading(true);
         if(placeId === undefined){
-            Promise.all([
-                insertBasicPlaceInfo()
-            ]).then(responses=>{
-                formFeedback(true, "Place inserted successfully!")
-            }).catch(error=>{
-                formFeedback(false)
-            })
+            insertBasicPlaceInfo()
         }else{
             Promise.all([
                 updatePlaceInfo(),
@@ -163,15 +181,9 @@ function AddPlace({classes, match}){
 
     }
 
-
     function insertBasicPlaceInfo(){
-            return API.Places.insertPlace(formPlaceInfo()).then(placeId=>{
-                updateTagsData(placeId);
-                updateParkingData(placeId);
-                updateCategoriesData(placeId);
-                updatePhotoData(placeId);
-                updateSchedule(placeId);
-                return placeId
+            API.Places.insertPlace(formPlaceInfo()).then(placeId=>{
+                setPlaceId(placeId)
             }).catch(error=>{
 
             })
@@ -210,9 +222,9 @@ function AddPlace({classes, match}){
     }
 
     function updateSchedule(id){
-        console.log("Id", id);
-        console.log("Schedule datacka", scheduleData);
-        API.Schedule.updateScheduleForPlace(scheduleData, "?p="+id).then(response=>{}).catch(er=>{})
+        console.log(scheduleData);
+        if(placeInfo['hasSchedule'])
+            API.Schedule.updateScheduleForPlace(scheduleData, "?p="+id).then(response=>{}).catch(er=>{})
     }
 
     function formPlaceInfo(){
@@ -270,6 +282,7 @@ function AddPlace({classes, match}){
             <Paper elevation={1} className={classes.bottom}>
 
                 <FormControlLabel
+                    disabled={true}
                     control={<Switch checked={placeInfo['isPublic']} onChange={()=> {
                             var obj = Object.assign({}, placeInfo, {});
                             obj['isPublic'] = !obj['isPublic']

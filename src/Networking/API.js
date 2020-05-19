@@ -2,10 +2,11 @@ import RequestType from '../Networking/NetworkLayerCentral'
 
 //Places
 const getAllPlaces = (urlParams) => RequestType.getRequest("api/v1/place/search", urlParams);
+const getAllPlacesAdmin = (urlParams) => RequestType.getRequest("api/v1/place/searchadmin", urlParams);
 const insertPlace = (data) => RequestType.postRequest("api/v1/place/insert",data);
 const updatePlace = (data) => RequestType.postRequest("api/v1/place/update", data);
 const getPlaceById = (urlParams) => RequestType.getRequest("api/v1/place/getplace", urlParams);
-const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById};
+const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin};
 
 //Tags
 const getAllTags = () => RequestType.getRequest("api/v1/tags/all");

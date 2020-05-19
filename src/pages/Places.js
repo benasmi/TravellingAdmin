@@ -18,7 +18,8 @@ const styles = theme => ({
     },
     root:{
         height:"100vh",
-        width:"100%"
+        width:"100%",
+        overflow: "auto"
     },
     buttonsDiv: {
         backgroundColor: "red",
@@ -113,7 +114,7 @@ function Places(props) {
     );
 
     function getAllPlaces(urlParams="") {
-        API.Places.getAllPlaces(urlParams).then(response=>{
+        API.Places.getAllPlacesAdmin(urlParams).then(response=>{
             parseData(response)
         }).catch(error=>{
             console.log(error)

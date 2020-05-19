@@ -24,12 +24,15 @@ const styles = theme => ({
     autocomplete:{
         width: '200px',
         height: '40px',
-        fontSize: "14px"
+        fontSize: "14px",
+        border: "0",
+        borderBottom: "2px solid grey",
+        outline:"0",
+        marginBottom: "4px"
     }
 });
 
 var markerData = {};
-
 function CustomMap({classes, locationData, setLocationData, mapHeight, selectedParkingCallback, changedParkingMarkerCallback, addParkingCallback}){
 
 
@@ -47,40 +50,53 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
     Geocode.enableDebug();
 
 
+    function useFunction(callback) {
+        const ref = React.useRef();
+        ref.current = callback;
+
+        return React.useCallback(function() {
+            const callback = ref.current;
+            if (typeof callback === "function") {
+                return callback.apply(this, arguments);
+            }
+        }, []);
+    }
+    const selectParkingHandler = useFunction(selectedParkingCallback);
+    const addNewParkingHandler = useFunction(addParkingCallback);
+
+
     const onPlaceSelected = (place, onMarkerLocationChanged, onParkingDataChanged) => {
 
-        const address = place.formatted_address,
-            addressArray =  place.address_components,
-            city = getCity( addressArray ),
-            area = getArea( addressArray ),
-            state = getState( addressArray ),
-            country = getCountry(addressArray),
-            latitudeValue = place.geometry.location.lat(),
-            longitudeValue = place.geometry.location.lng();
+        const address = place.formatted_address
+        const addressArray =  place.address_components
+        if(addressArray !== undefined){
+            const city = getCity( addressArray ),
+                country = getCountry(addressArray),
+                latitudeValue = place.geometry.location.lat(),
+                longitudeValue = place.geometry.location.lng();
 
-        onMarkerLocationChanged(latitudeValue, longitudeValue);
-        changeLocationData(city,country,address,latitudeValue,longitudeValue, onParkingDataChanged);
-
+            onMarkerLocationChanged(latitudeValue, longitudeValue, address, city, country);
+            changeLocationData(city,country,address,latitudeValue,longitudeValue, onParkingDataChanged);
+        }
     };
 
     const onMarkerDragEnd = ( event, onMarkerLocationChanged, onParkingDataChanged) => {
         let newLat = event.latLng.lat(),
             newLng = event.latLng.lng();
 
-        onMarkerLocationChanged(newLat, newLng);
 
         Geocode.fromLatLng( newLat , newLng ).then(
             response => {
-                const address = response.results[0].formatted_address,
-                    addressArray =  response.results[0].address_components,
-                    city = getCity( addressArray ),
-                    area = getArea( addressArray ),
-                    state = getState( addressArray ),
-                    country = getState( addressArray );
+                const address = response.results[0].formatted_address
+                const addressArray =  response.results[0].address_components
+                if(addressArray!==undefined){
+                    const city = getCity( addressArray ),
+                        country = getCountry( addressArray );
+
+                    onMarkerLocationChanged(newLat, newLng, address, city, country);
 
                     changeLocationData(city,country,address,newLat,newLng, onParkingDataChanged);
-
-
+                }
             },
             error => {
                 console.error(error);
@@ -100,7 +116,6 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
         if (changedParkingMarkerCallback !== undefined){
             changedParkingMarkerCallback(city,address,country, latitude,longitude, onParkingDataChanged);
         }
-
     }
 
     /**
@@ -110,16 +125,19 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
      * @return {string}
      */
     const getCity = ( addressArray ) => {
-        let city = '';
-        for( let i = 0; i < addressArray.length; i++ ) {
-            if ( addressArray[ i ].types[0] && 'administrative_area_level_2' === addressArray[ i ].types[0] ) {
-                city = addressArray[ i ].long_name;
-                return city;
+        if(addressArray !== undefined){
+            let city = '';
+            for( let i = 0; i < addressArray.length; i++ ) {
+                if ( addressArray[ i ].types[0] && 'administrative_area_level_2' === addressArray[ i ].types[0] ) {
+                    city = addressArray[ i ].long_name;
+                    return city;
+                }
             }
         }
     };
 
     const getCountry = (addressArray) =>{
+        if(addressArray!=undefined){
         let country = '';
         for( let i = 0; i < addressArray.length; i++ ) {
             if ( addressArray[ i ].types[0] && 'country' === addressArray[ i ].types[0] ) {
@@ -127,45 +145,8 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                 return country;
             }
         }
-    };
-
-    /**
-     * Get the area and set the area input value to the one selected
-     *
-     * @param addressArray
-     * @return {string}
-     */
-    const getArea = ( addressArray ) => {
-        let area = '';
-        for( let i = 0; i < addressArray.length; i++ ) {
-            if ( addressArray[ i ].types[0]  ) {
-                for ( let j = 0; j < addressArray[ i ].types.length; j++ ) {
-                    if ( 'sublocality_level_1' === addressArray[ i ].types[j] || 'locality' === addressArray[ i ].types[j] ) {
-                        area = addressArray[ i ].long_name;
-                        return area;
-                    }
-                }
-            }
         }
     };
-    /**
-     * Get the address and set the address input value to the one selected
-     *
-     * @param addressArray
-     * @return {string}
-     */
-    const getState = ( addressArray ) => {
-        let state = '';
-        for( let i = 0; i < addressArray.length; i++ ) {
-            for( let i = 0; i < addressArray.length; i++ ) {
-                if ( addressArray[ i ].types[0] && 'administrative_area_level_1' === addressArray[ i ].types[0] ) {
-                    state = addressArray[ i ].long_name;
-                    return state;
-                }
-            }
-        }
-    };
-
     /**
      *
      * Renders parking data markers
@@ -184,7 +165,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
             return (
                 <Marker
                     key={location.parkingId}
-                    position={{ latitude: latitude, longitude: longitude}}
+                    position={{ lat: latitude, lng: longitude}}
                     options={{icon: parkingIcon}}
                     onClick={()=>onToggleOpen(location.parkingId)}
                 >
@@ -194,7 +175,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                             <div style={{display:"flex", flexDirection: "column"}}>
                                 {location.address}
                                 <Button
-                                    onClick={()=>{selectedParkingCallback(location)}}
+                                    onClick={()=>{selectParkingHandler(location)}}
                                     variant="text"
                                     color="secondary"
                                     size="large"
@@ -211,18 +192,12 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
         })
     };
 
-    const addNewParking = () => {
-
-    };
-
 
     /**
      * Map component that renders parking data and has draggable marker
      */
     const MyMapComponent = compose(
         withProps({
-            googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyDGFjZHSoRrZ2AEO0ONXvjuN4RiCmknXf8&v=3.exp&libraries=geometry,drawing,places",
-            loadingElement: <div style={{ height: `100%` }} />,
             containerElement: <div style={{ height: mapHeight }} />,
             mapElement: <div style={{ height: `100%` }} />,
         }),
@@ -234,7 +209,6 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
             })
             }
         ),
-        withScriptjs,
         withGoogleMap
     )(props =>
 
@@ -254,9 +228,13 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                 {props.infoWindow.show && addParkingCallback && (
                     <InfoWindow onCloseClick={()=>{props.toggleDraggableInfoWindow(false)}}>
                         <div style={{display:"flex", flexDirection: "column"}}>
-                            {locationData.address}
+                            {props.markerLocation.address}
                             <Button
-                                onClick={()=>addParkingCallback(markerData)}
+                                onClick={()=>{
+
+                                    addNewParkingHandler(props.markerLocation)
+
+                                }}
                                 variant="text"
                                 color="secondary"
                                 size="large"
@@ -281,13 +259,17 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
         withStateHandlers({
             draggableMarkerLocation: {
                 latitude: locationData.latitude,
-                longitude: locationData.longitude
+                longitude: locationData.longitude,
+                address:  locationData.address
             },parkingData: [], infoWindows: []
         },{
-            onMarkerLocationChanged: ({draggableMarkerLocation}) => (newLat, newLng) => ({
+            onMarkerLocationChanged: ({draggableMarkerLocation}) => (newLat, newLng, address, city, country) => ({
                 draggableMarkerLocation: {
                     latitude: newLat,
-                    longitude: newLng
+                    longitude: newLng,
+                    address: address,
+                    city: city,
+                    country: country
                 }
             }),
                 onParkingDataChange: ({parkingData}) => (parking) => ({
@@ -322,6 +304,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                             infoWindows={props.infoWindows}
             />
 
+
         </div>
     );
 
@@ -331,6 +314,8 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
     return useMemo(() => {
         return <FullMap/>;
     }, [])
+
+    //
 
 }
 

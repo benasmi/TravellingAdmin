@@ -49,7 +49,6 @@
     "@material-ui/icons": "^4.9.1",
     "axios": "^0.19.2",
     "history": "^4.10.1",
-    "react-beautiful-dnd": "latest",
     "react-router-dom": "^5.1.2",
     "react-sortable-hoc": "^1.11.0"
   }

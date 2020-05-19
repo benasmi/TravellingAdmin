@@ -3,7 +3,7 @@ import axios from "axios"
 
 const request = async function(options, contentType) {
     const client = axios.create({
-        baseURL: /*"http://izbg.l.dedikuoti.lt:8080/"*/ "http://localhost:8080/",
+        baseURL: "http://izbg.l.dedikuoti.lt:8080/" /*"http://localhost:8080/"*/,
         headers: {
             'Content-Type': (contentType == null) ? 'application/json': contentType,
             'Accept':  'application/json',

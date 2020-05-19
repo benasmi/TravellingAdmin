@@ -23,6 +23,7 @@ import Places from "../pages/Places";
 import withStyles from "@material-ui/core/styles/withStyles";
 import AddPlace from "../pages/AddPlace";
 import history from "../helpers/history";
+import ApiPlaces from "../pages/ApiPlaces";
 
 const drawerWidth = 240;
 
@@ -156,6 +157,9 @@ export default function Appbar() {
                     <ListItem button component={Link} to="/places" onClick={()=>setTitle("Place")} >
                         <ListItemText>Places</ListItemText>
                     </ListItem>
+                    <ListItem button component={Link} to="/apiplaces" onClick={()=>setTitle("Api places")} >
+                        <ListItemText>Explore API places</ListItemText>
+                    </ListItem>
                     <ListItem button component={Link} to="/addplace" onClick={()=>setTitle("Add Place")} >
                         <ListItemText>Add place</ListItemText>
                     </ListItem>
@@ -170,6 +174,8 @@ export default function Appbar() {
                 <Route exact path="/" component={Home} />
                 <Route path="/places" component={Places} />
                 <Route path="/addplace/:placeId?" component={AddPlace} />
+                <Route path="/apiplaces" component={ApiPlaces} />
+                <Route path="/addplace" component={AddPlace} />
             </main>
             </Router>
         </div>

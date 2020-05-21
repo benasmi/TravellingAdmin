@@ -372,7 +372,7 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
                                                             {row[header.id]}
                                                         </TableCell>
                                                 }else if(header.id === 'actions' ){
-                                                        return <TableCell>
+                                                        return <TableCell >
                                                             <div>
                                                                 <IconButton onClick={()=>updateCallback(row[id])} size="small" aria-label="edit" >
                                                                     <EditIcon fontSize="small" />

@@ -27,9 +27,15 @@ const styles = theme => ({
         margin: theme.spacing(2)
     },
     paperContent: {
-        width: "70%",
         marginTop: theme.spacing(4),
-        padding: theme.spacing(4),
+        [theme.breakpoints.down("lg")]: {
+            width: "95%",
+            padding: theme.spacing(2),
+        },
+        [theme.breakpoints.up("lg")]: {
+            width: "70%",
+            padding: theme.spacing(4),
+        },
     },
     root:{
         height:"100vh"
@@ -46,7 +52,14 @@ const styles = theme => ({
         flexDirection: "column",
         alignItems: "center",
         height:`calc(93vh - 64px)`,
-        padding: theme.spacing(8),
+        [theme.breakpoints.down("lg")]: {
+            width: "100%",
+            padding: theme.spacing(1),
+        },
+        [theme.breakpoints.up("lg")]: {
+            width: "auto",
+            padding: theme.spacing(8),
+        },
         overflowY: "auto"
     },
     bottom:{

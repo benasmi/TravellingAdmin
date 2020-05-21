@@ -13,12 +13,9 @@ import Strings from "../helpers/stringResources";
 const styles = theme => ({
     root:{
         overflow: 'scroll',
-        width: "100vw",
+        width: "100%",
         padding: theme.spacing(1),
         height:`calc(100vh - 64px)`,
-        // position: "static",
-        // left: 0,
-        // right: 0,
         paddingTop: "9vh",
     },
     topBar: {

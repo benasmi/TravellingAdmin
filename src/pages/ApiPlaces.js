@@ -6,6 +6,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import debounce from 'lodash/debounce'
 import Masonry from "react-masonry-component";
 import SearchInputComponent from "../components/SearchInputComponent";
+import Strings from "../helpers/stringResources";
 
 
 
@@ -38,10 +39,10 @@ const styles = theme => ({
 
 function ApiPlaces({classes}){
 
-    const [data, setData] = useState([])
-    const [isLoadingData, setIsLoadingData] = useState(false)
-    const [after, setAfter] = useState(null)
-    const [searchQuery, setSearchQuery] = useState("Kaunas")
+    const [data, setData] = useState([]);
+    const [isLoadingData, setIsLoadingData] = useState(false);
+    const [after, setAfter] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("Kaunas");
 
     const loadDataFunc = (query, after) => {
         // console.log(data)

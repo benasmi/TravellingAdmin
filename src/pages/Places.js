@@ -7,6 +7,9 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add"
 import Box from "@material-ui/core/Box";
 import history from "../helpers/history";
+import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
+import Strings from "../helpers/stringResources";
+import UseSnackbarContext from "../contexts/UseSnackbarContext";
 
 
 const styles = theme => ({
@@ -51,11 +54,12 @@ function Places(props) {
     const [isLoading, setIsLoading] = useState(true);
     const { classes } = props;
 
+    const { addAlertConfig } = UseAlertDialogContext();
+    const { addConfig } = UseSnackbarContext();
+
     useEffect(()=>{
         getAllPlaces()
     },[]);
-
-
 
     function parseData(data){
         setIsLoading(false);
@@ -72,6 +76,23 @@ function Places(props) {
     function updatePlaceCallback(id){
         history.push("/addplace/"+id)
     }
+    function removePlaceCallback(id){
+        addAlertConfig(Strings.DIALOG_PLACE_DELETE_TITLE, Strings.DIALOG_PLACE_DELETE_MESSAGE, function () {
+            API.Places.removePlace("?p="+id).then(response=>{
+                let tmp = [];
+                data.map(row=>{
+                    console.log(row);
+                    if(row.placeId !== id){
+                        tmp.push(row)
+                    }
+                });
+                setData(tmp);
+                addConfig(true, Strings.SNACKBAR_PLACE_REMOVE_SUCCESS)
+            }).catch(error=>{
+                addConfig(false, Strings.SNACKBAR_ERROR)
+            })
+        })
+    }
 
     const changePageCallback = (p=0, keyword="") => {
         setIsLoading(true);
@@ -82,7 +103,6 @@ function Places(props) {
 
     return (
         <div className={classes.root}>
-
             <div className={classes.content} >
                 <TableComponent
                     title={"Places"}
@@ -92,6 +112,7 @@ function Places(props) {
                     checkable={false}
                     changePageCallback={changePageCallback}
                     updateCallback={updatePlaceCallback}
+                    removeCallback={removePlaceCallback}
                     id={"placeId"}
                     isLoading={isLoading}
                 />
@@ -106,7 +127,6 @@ function Places(props) {
                         startIcon={<AddIcon />}>
                         Add
                     </Button>
-
                 </Box>
             </div>
 

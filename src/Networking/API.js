@@ -7,8 +7,9 @@ const insertPlace = (data) => RequestType.postRequest("api/v1/place/insert",data
 const updatePlace = (data) => RequestType.postRequest("api/v1/place/update", data);
 const getPlaceById = (urlParams) => RequestType.getRequest("api/v1/place/getplace", urlParams);
 const searchApiPlaces = (urlParams) => RequestType.getRequest("api/v1/placeApi/search", urlParams);
+const removePlace = (urlParams) => RequestType.getRequest("api/v1/place/delete", urlParams);
 
-const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin,searchApiPlaces};
+const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin,searchApiPlaces, removePlace};
 
 
 //Tags

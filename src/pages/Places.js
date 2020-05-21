@@ -83,6 +83,7 @@ function Places(props) {
         history.push("/addplace/"+id)
     }
     function removePlaceCallback(id){
+        setIsLoading(true);
         addAlertConfig(Strings.DIALOG_PLACE_DELETE_TITLE, Strings.DIALOG_PLACE_DELETE_MESSAGE, function () {
             API.Places.removePlace("?p="+id).then(response=>{
                 let tmp = [];
@@ -94,10 +95,12 @@ function Places(props) {
                 });
                 setData(tmp);
                 addConfig(true, Strings.SNACKBAR_PLACE_REMOVE_SUCCESS)
+                setIsLoading(false)
             }).catch(error=>{
+                setIsLoading(false);
                 addConfig(false, Strings.SNACKBAR_ERROR)
             })
-        })
+        }, ()=>{setIsLoading(false)})
     }
 
     const changePageCallback = (p=0, keyword="") => {

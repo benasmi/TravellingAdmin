@@ -12,8 +12,8 @@ export default function AlertDialogProvider({ children }) {
 
     const contextValue = {
         alertConfig,
-        addAlertConfig: (title, message, func) => setAlertConfig({ title, message, func}),
-        removeAlertConfig: () => setAlertConfig(null)
+        addAlertConfig: (title, message, func, onClose) => setAlertConfig({ title, message, func,onClose}),
+        removeAlertConfig: (onCloseFunc) => setAlertConfig(null)
     };
 
     return (

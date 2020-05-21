@@ -272,7 +272,9 @@ function AddPlace({classes, match}){
     }
 
     function formPlaceInfo(){
-        return Object.assign(placeInfo, locationData)
+        let d = Object.assign(placeInfo, locationData)
+        console.log(d);
+        return d
     }
 
 

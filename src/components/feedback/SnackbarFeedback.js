@@ -10,7 +10,7 @@ export default function SnackbarFeedback(props){
 
     return(
         <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={!!config} autoHideDuration={4000} onClose={removeConfig}>
-            <Alert onClose={removeConfig} severity={!!config ? (config.success ? "success" : "danger") : ""}>
+            <Alert onClose={removeConfig} severity={!!config ? (config.success ? "success" : "error") : ""}>
                 {!!config && config.message}
             </Alert>
         </Snackbar>

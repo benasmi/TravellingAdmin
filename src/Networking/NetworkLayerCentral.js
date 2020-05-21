@@ -2,8 +2,9 @@ import React from "react";
 import axios from "axios"
 
 const request = async function(options, contentType) {
+
     const client = axios.create({
-        baseURL: "http://izbg.l.dedikuoti.lt:8080/" /*"http://localhost:8080/"*/,
+        baseURL: true ? "http://localhost:8080/" : "http://izbg.l.dedikuoti.lt:8080/",
         headers: {
             'Content-Type': (contentType == null) ? 'application/json': contentType,
             'Accept':  'application/json',
@@ -15,6 +16,8 @@ const request = async function(options, contentType) {
         console.debug('Request Successful!', response);
         return response.data;
     };
+
+
 
     const onError = function (error) {
         console.debug('Request Failed:', error.config);

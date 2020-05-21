@@ -11,10 +11,15 @@ const AlertDialogFeedback = () => {
 
     const {alertConfig, removeAlertConfig} = UseAlertDialogContext();
 
+    function remove() {
+        alertConfig.onClose()
+        removeAlertConfig()
+    }
+
     return(
         <Dialog
             open={!!alertConfig}
-            onClose={removeAlertConfig}
+            onClose={remove}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
@@ -25,7 +30,7 @@ const AlertDialogFeedback = () => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={removeAlertConfig}
+                <Button onClick={remove}
                         color="primary">
                     Close
                 </Button>

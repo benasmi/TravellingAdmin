@@ -21,7 +21,12 @@ import Box from "@material-ui/core/Box";
 
 const styles = theme => ({
     root: {
-        width: "28vw",
+        [theme.breakpoints.down('lg')]: {
+            width: "95%",
+        },
+        [theme.breakpoints.up('lg')]: {
+            width: "28vw",
+        },
         margin: theme.spacing(1)
     },
     media: {

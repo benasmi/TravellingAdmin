@@ -16,6 +16,7 @@ const styles = theme => ({
     input: {
         display: "none"
     },
+
     root:{
         height:"100vh",
         width:"100%",
@@ -30,7 +31,12 @@ const styles = theme => ({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        padding: theme.spacing(8),
+        [theme.breakpoints.down("lg")]: {
+            padding: theme.spacing(1),
+        },
+        [theme.breakpoints.up("lg")]: {
+            padding: theme.spacing(8),
+        },
     }
 });
 

@@ -153,7 +153,7 @@ export default function Appbar() {
                         <ListItemText>Home</ListItemText>
                     </ListItem>
                     <Divider light />
-                    <ListItem button component={Link} to="/places" onClick={()=>setTitle("Place")} >
+                    <ListItem button component={Link} to="/places" onClick={()=>setTitle("Places")} >
                         <ListItemText>Places</ListItemText>
                     </ListItem>
                     <ListItem button component={Link} to="/apiplaces" onClick={()=>setTitle("Api places")} >

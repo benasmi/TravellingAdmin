@@ -37,7 +37,7 @@ export default function SearchInputComponent({hint, searchCallback}) {
         searchCallback(event.target.value)
     }
 
-    const debounceInput = debounce(event => debouncedInput(event), 300)
+    const debounceInput = debounce(event => debouncedInput(event), 500)
 
     const handleInput = (event) => {
         event.persist()

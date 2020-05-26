@@ -54,7 +54,7 @@ function ApiPlaces({classes}){
     }
 
     const handleScrollDebounced = (e) => {
-        const scrollOffset = 100 //px
+        const scrollOffset = 250//px
         const bottom = Math.round(e.target.scrollHeight - e.target.scrollTop - scrollOffset)  <= e.target.clientHeight;
         if (bottom && !isLoadingData) {
             loadDataFunc(
@@ -83,7 +83,6 @@ function ApiPlaces({classes}){
 
             <div className={classes.root} onScroll={(e) => handleScroll(e)}>
                 <Masonry
-                    // className={'my-gallery-class'} // default ''
                     style={{margin: "0 auto"}}
                     elementType={'div'} // default 'div'
                     options={{
@@ -91,7 +90,6 @@ function ApiPlaces({classes}){
                     }} // default {}
                     disableImagesLoaded={false} // default false
                     updateOnEachImageLoad={false} // default false and works only if disableImagesLoaded is false
-                    // imagesLoadedOptions={} // default {}
                 >
 
                     {data.map(item => {

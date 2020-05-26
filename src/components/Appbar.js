@@ -13,17 +13,15 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import { Router, Route, Link } from "react-router-dom";
 import Home from "../pages/Home";
 import Places from "../pages/Places";
-import withStyles from "@material-ui/core/styles/withStyles";
 import AddPlace from "../pages/AddPlace";
 import history from "../helpers/history";
 import ApiPlaces from "../pages/ApiPlaces";
+import UseSnackbarContext from "../contexts/UseSnackbarContext";
+import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 
 const drawerWidth = 240;
 
@@ -97,7 +95,8 @@ export default function Appbar() {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = useState(false);
-    const [title, setTitle] = useState("Home");
+    const { title, setTitle } = UseAppBarTitleContext();
+
 
     const handleDrawerOpen = () => {
         setOpen(true);

@@ -12,7 +12,8 @@ const AlertDialogFeedback = () => {
     const {alertConfig, removeAlertConfig} = UseAlertDialogContext();
 
     function remove() {
-        alertConfig.onClose()
+        if(alertConfig.onClose !== undefined)
+            alertConfig.onClose()
         removeAlertConfig()
     }
 

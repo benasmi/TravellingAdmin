@@ -13,7 +13,7 @@ const Strings = {
     DIALOG_PLACE_VERIFY_MESSAGE: "This is a user's suggested place. Are you sure you want to verify this place and make it visible to others?",
 
     DIALOG_PLACE_DELETE_TITLE: "Delete place",
-    DIALOG_PLACE_DELETE_MESSAGE: "This action will remove place and everything associated with it: Tags, Categories, Parking, Photos, Schedule. Are you sure you want to proceed?",
+    DIALOG_PLACE_DELETE_MESSAGE: "This action will remove this place permanently. Are you sure you want to proceed?",
 
     SNACKBAR_PLACE_INSERTED_SUCCESS: "Place inserted successfully",
     SNACKBAR_PLACE_REMOVE_SUCCESS: "Place was removed successfully",

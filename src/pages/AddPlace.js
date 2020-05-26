@@ -21,6 +21,8 @@ import Strings from "../helpers/stringResources";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import green from "@material-ui/core/colors/green";
 import ThemeProvider from "react-bootstrap/ThemeProvider";
+import Reviews from "../components/add_place_components/Reviews";
+import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 
 const styles = theme => ({
     button: {
@@ -73,7 +75,11 @@ const styles = theme => ({
 
 
 function AddPlace({classes, match}){
-    const [placeInfo, setPlaceInfo] = useState({placeId: "", name: "", description: "",website: "", phoneNumber: "", hasSchedule: false, isPublic: false, isVerified: true});
+    const [placeInfo, setPlaceInfo] = useState({placeId: "",
+        name: "", description: "",website: "", phoneNumber: "",
+        hasSchedule: false, isPublic: false, isVerified: true, overallStarRating: 0, totalReviews: 0,
+        source: "", price: "", averageTimeSpent: ""});
+
 
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
@@ -97,6 +103,7 @@ function AddPlace({classes, match}){
     const { addConfig } = UseSnackbarContext();
     const { addAlertConfig } = UseAlertDialogContext();
 
+    const { title, setTitle } = UseAppBarTitleContext();
 
     const ColorButton = withStyles((theme) => ({
         root: {
@@ -114,6 +121,7 @@ function AddPlace({classes, match}){
             console.log("Getting place location");
             getPlaceInfo()
         }else{
+            setTitle("Add new place");
             console.log("Came here to add new place");
             setFirstTimeLoading(false) //Just loaded add place window
         }
@@ -146,14 +154,14 @@ function AddPlace({classes, match}){
     function getPlaceInfo() {
         API.Places.getPlaceById("?full=true&p="+placeId).then(response=>{
             setAllData(response)
-
+            setTitle("Editing place/"+response.name);
         }).catch(error=>{
             formFeedback(false)
         })
     }
 
     function setAllData(place){
-        console.log(place)
+        console.log(place);
         setPlaceInfo({
             placeId: place.placeId,
             name: place.name,
@@ -162,7 +170,9 @@ function AddPlace({classes, match}){
             phoneNumber: place.phoneNumber,
             hasSchedule: place.hasSchedule,
             isPublic: place.isPublic,
-            isVerified: place.isVerified
+            isVerified: place.isVerified,
+            overallStarRating: place.overallStarRating,
+            totalReviews: place.totalReviews
         });
 
         setLocationData({city: place.city,
@@ -176,10 +186,8 @@ function AddPlace({classes, match}){
         if(place.schedule.length > 0)
             setScheduleData(place.schedule);
         setAllSelectedParkingData(place.parking);
-        setPhotos(place.photos)
-
-        setFirstTimeLoading(false);
-
+        setPhotos(place.photos);
+        setFirstTimeLoading(false)
     }
 
     function formFeedback(success, message=Strings.SNACKBAR_ERROR){
@@ -298,12 +306,24 @@ function AddPlace({classes, match}){
     return(
         <div className={classes.root}>
             {firstTimeLoading ? <div className={classes.loader}><CircularProgress /></div> : <div className={classes.content}>
+
+
+
+
                 <Paper elevation = {4} className={classes.paperContent}>
                     <BasicPlaceInfo
                         placeInfo={placeInfo}
                         setPlaceInfo={setPlaceInfo}
                     />
                 </Paper>
+
+                {placeId !== undefined ?
+                    <Paper elevation = {4} className={classes.paperContent}>
+                        <Reviews
+                            placeInfo={placeInfo}
+                        />
+                    </Paper>
+                    : null}
 
                 <Paper elevation = {4} className={classes.paperContent}>
                     <PhotosInfo

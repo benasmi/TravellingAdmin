@@ -28,7 +28,7 @@ const styles = theme => ({
 function WorkingSchedule({classes, scheduleData, setScheduleData,workingScheduleEnabled, setWorkingScheduleEnabled}) {
 
     return <div>
-        <Typography variant="subtitle1" >
+        <Typography variant="h6" >
             Working schedule
         </Typography>
         <FormControlLabel

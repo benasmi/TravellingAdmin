@@ -4,6 +4,7 @@ import SnackbarProvider from "./contexts/SnackbarContext";
 import SnackbarFeedback from "./components/feedback/SnackbarFeedback";
 import AlertDialogProvider from "./contexts/AlertDialogContext";
 import AlertDialogFeedback from "./components/feedback/AlertDialogFeedback";
+import AppBarTitleProvider from "./contexts/AppBarTitleContext";
 
 class App extends Component {
     render() {
@@ -11,7 +12,9 @@ class App extends Component {
             <React.Fragment>
                 <AlertDialogProvider>
                 <SnackbarProvider>
-                    <Appbar />
+                    <AppBarTitleProvider>
+                        <Appbar />
+                    </AppBarTitleProvider>
                     <SnackbarFeedback/>
                     <AlertDialogFeedback/>
                 </SnackbarProvider>
@@ -20,5 +23,4 @@ class App extends Component {
         );
     }
 }
-
 export default App;

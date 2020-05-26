@@ -21,6 +21,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import TextField from "@material-ui/core/TextField"
 import useDebounce from "../helpers/debounce";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import Chip from "@material-ui/core/Chip";
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -132,7 +133,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
     const classes = useToolbarStyles();
-    const { numSelected, title, changePageCallback, keyword, setKeyword} = props;
+    const { numSelected, title, changePageCallback, keyword, setKeyword, customToolbarElements} = props;
 
 
     const debouncedSearch = useDebounce(keyword, 300);
@@ -161,14 +162,16 @@ const EnhancedTableToolbar = (props) => {
                     {title}
                 </Typography>
             )}
-
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
                     <IconButton aria-label="delete">
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
-            ) : <TextField id="standard-basic" label="Search" onChange={ event =>{setKeyword(event.target.value)}}/>}
+            ) : <div style={{display: "flex", alignItems: "center"}}>
+                <TextField id="standard-basic" label="Search" onChange={ event =>{setKeyword(event.target.value)}}/>
+                {!!customToolbarElements ? customToolbarElements : null}
+            </div>}
         </Toolbar>
     );
 };
@@ -220,7 +223,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function TableComponent({title, headCells, pagingInfo, data, checkable, changePageCallback, updateCallback, removeCallback, id, isLoading}) {
+export default function TableComponent({title, headCells, pagingInfo, data, checkable, changePageCallback, updateCallback, removeCallback, id, isLoading, customToolbarElements}) {
 
     TableComponent.propTypes = {
         title: PropTypes.string.isRequired,
@@ -232,9 +235,9 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
         updateCallback: PropTypes.func,
         removeCallback: PropTypes.func,
         id: PropTypes.string.isRequired,
-        isLoading: PropTypes.bool
+        isLoading: PropTypes.bool,
+        customToolbarElements: PropTypes.object
     };
-
 
 
 
@@ -315,6 +318,7 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
                     changePageCallback={changePageCallback}
                     keyword={keyword}
                     setKeyword={setKeyword}
+                    customToolbarElements={customToolbarElements}
                 />
                  <TableContainer>
                     <Table

@@ -7,6 +7,19 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add"
 import Box from "@material-ui/core/Box";
 import history from "../helpers/history";
+import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
+import Strings from "../helpers/stringResources";
+import UseSnackbarContext from "../contexts/UseSnackbarContext";
+import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@material-ui/core/IconButton";
+import FilterListIcon from "@material-ui/icons/FilterList";
+import Popover from "@material-ui/core/Popover";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
+import Checkbox from "@material-ui/core/Checkbox";
+import {forEach} from "react-bootstrap/cjs/ElementChildren";
+import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 
 
 const styles = theme => ({
@@ -16,6 +29,14 @@ const styles = theme => ({
     input: {
         display: "none"
     },
+
+    sortingButtons: {
+        padding: theme.spacing(2),
+        display: "flex",
+        flexDirection: "column"
+
+},
+
     root:{
         height:"100vh",
         width:"100%",
@@ -30,7 +51,12 @@ const styles = theme => ({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        padding: theme.spacing(8),
+        [theme.breakpoints.down("lg")]: {
+            padding: theme.spacing(1),
+        },
+        [theme.breakpoints.up("lg")]: {
+            padding: theme.spacing(8),
+        },
     }
 });
 
@@ -51,11 +77,21 @@ function Places(props) {
     const [isLoading, setIsLoading] = useState(true);
     const { classes } = props;
 
+
+    const [filterOptions, setFilterOptions] = useState([
+        {filterLabel: "Unverified", filter: false, filterName: "unverified"},
+        {filterLabel: "Unpublished", filter: false, filterName: "unpublished"}]);
+
+    const [filterQuery, setFilterQuery] = useState("");
+
+
+    const { addAlertConfig } = UseAlertDialogContext();
+    const { addConfig } = UseSnackbarContext();
+
     useEffect(()=>{
-        getAllPlaces()
-    },[]);
-
-
+        console.log("Filter query", filterQuery);
+        getAllPlaces("?o="+filterQuery)
+    },[filterQuery]);
 
     function parseData(data){
         setIsLoading(false);
@@ -72,17 +108,94 @@ function Places(props) {
     function updatePlaceCallback(id){
         history.push("/addplace/"+id)
     }
+    function removePlaceCallback(id){
+        setIsLoading(true);
+        addAlertConfig(Strings.DIALOG_PLACE_DELETE_TITLE, Strings.DIALOG_PLACE_DELETE_MESSAGE, function () {
+            API.Places.removePlace("?p="+id).then(response=>{
+                let tmp = [];
+                data.map(row=>{
+                    if(row.placeId !== id){
+                        tmp.push(row)
+                    }
+                });
+                setData(tmp);
+                addConfig(true, Strings.SNACKBAR_PLACE_REMOVE_SUCCESS)
+                setIsLoading(false)
+            }).catch(error=>{
+                setIsLoading(false);
+                addConfig(false, Strings.SNACKBAR_ERROR)
+            })
+        }, ()=>{setIsLoading(false)})
+    }
 
     const changePageCallback = (p=0, keyword="") => {
         setIsLoading(true);
-        getAllPlaces("?p="+p+"&s="+10+"&keyword="+keyword)
+        getAllPlaces("?p="+p+"&s="+10+"&keyword="+keyword+"&o="+filterQuery)
     };
 
 
+    //Sorting stuff
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const filterOptionsChanged = (name) =>{
+        let filters = [];
+        let fq = [];
+        filterOptions.map(row=>{
+            if(row.filterName === name){
+                row.filter = !row.filter
+            }
+            if(row.filter){
+                fq.push(row.filterName)
+            }
+            filters.push(row)
+        });
+
+        setFilterQuery(fq.join(","));
+        setFilterOptions(filters)
+    };
+
+    const customToolbarElements = () =>{
+        return <div>
+            <Tooltip aria-describedby={id} title="Filter list">
+                <IconButton  aria-label="filter list" onClick={handleClick}>
+                    <FilterListIcon />
+                </IconButton>
+            </Tooltip>
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={()=>{setAnchorEl(null)}}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <div className={classes.sortingButtons}>
+                    {filterOptions.map(row=>{
+                        return <FormControlLabel
+                            control={<Checkbox checked={row.filter} onChange={()=>filterOptionsChanged(row.filterName)} name={row.filterName} />}
+                            label={row.filterLabel}
+                        />
+                    })}
+                </div>
+
+            </Popover>
+        </div>
+    };
+    /*------------------------------------------------------------------------------------------------------*/
 
     return (
         <div className={classes.root}>
-
             <div className={classes.content} >
                 <TableComponent
                     title={"Places"}
@@ -92,8 +205,10 @@ function Places(props) {
                     checkable={false}
                     changePageCallback={changePageCallback}
                     updateCallback={updatePlaceCallback}
+                    removeCallback={removePlaceCallback}
                     id={"placeId"}
                     isLoading={isLoading}
+                    customToolbarElements={customToolbarElements()}
                 />
 
                 <Box display="flex" justifyContent="flex-end">
@@ -106,7 +221,6 @@ function Places(props) {
                         startIcon={<AddIcon />}>
                         Add
                     </Button>
-
                 </Box>
             </div>
 

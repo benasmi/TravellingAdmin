@@ -9,13 +9,30 @@ import PropTypes from "prop-types";
 
 const styles = theme => ({
     scheduleCard: {
-        margin: theme.spacing(1),
-        padding: theme.spacing(1),
+        [theme.breakpoints.down("lg")]: {
+            margin: theme.spacing(0),
+            padding: theme.spacing(0),
+        },
+        [theme.breakpoints.up("lg")]: {
+            margin: theme.spacing(1),
+            padding: theme.spacing(1),
+        },
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center'
         //width: '100%'
     },
+    text : {
+
+        [theme.breakpoints.down("lg")]: {
+            fontSize: '0.8rem'
+
+        },
+        [theme.breakpoints.only("lg")]: {
+            fontSize: '1rem'
+
+        },
+    }
 })
 
 function ScheduleCard({dayOfWeek, setData, data, classes}){
@@ -38,7 +55,8 @@ function ScheduleCard({dayOfWeek, setData, data, classes}){
 
     return(
     <Card elevation={1} className={classes.scheduleCard}  >
-        <Typography variant="subtitle1">
+
+        <Typography variant="subtitle1" className={classes.text}>
             {weekDays[dayOfWeek]}
         </Typography>
 

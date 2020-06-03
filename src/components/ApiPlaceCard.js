@@ -10,7 +10,6 @@ import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import red from "@material-ui/core/colors/red";
-import Collapse from "@material-ui/core/Collapse";
 import CardActions from "@material-ui/core/CardActions";
 import EditIcon from '@material-ui/icons/Edit';
 import PropTypes from "prop-types";
@@ -22,7 +21,12 @@ import Box from "@material-ui/core/Box";
 
 const styles = theme => ({
     root: {
-        width: "28vw",
+        [theme.breakpoints.down('lg')]: {
+            width: "95%",
+        },
+        [theme.breakpoints.up('lg')]: {
+            width: "28vw",
+        },
         margin: theme.spacing(1)
     },
     media: {

@@ -12,20 +12,16 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import EditIcon from '@material-ui/icons/Edit'
-import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField"
 import useDebounce from "../helpers/debounce";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import Chip from "@material-ui/core/Chip";
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -137,7 +133,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
     const classes = useToolbarStyles();
-    const { numSelected, title, changePageCallback, keyword, setKeyword} = props;
+    const { numSelected, title, changePageCallback, keyword, setKeyword, customToolbarElements} = props;
 
 
     const debouncedSearch = useDebounce(keyword, 300);
@@ -147,7 +143,6 @@ const EnhancedTableToolbar = (props) => {
     useEffect( () => {
             changePageCallback(1,keyword)
         },
-
         [debouncedSearch]
     );
 
@@ -167,14 +162,16 @@ const EnhancedTableToolbar = (props) => {
                     {title}
                 </Typography>
             )}
-
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
                     <IconButton aria-label="delete">
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
-            ) : <TextField id="standard-basic" label="Search" onChange={ event =>{setKeyword(event.target.value)}}/>}
+            ) : <div style={{display: "flex", alignItems: "center"}}>
+                <TextField id="standard-basic" label="Search" onChange={ event =>{setKeyword(event.target.value)}}/>
+                {!!customToolbarElements ? customToolbarElements : null}
+            </div>}
         </Toolbar>
     );
 };
@@ -213,10 +210,20 @@ const useStyles = makeStyles((theme) => ({
     centerCell: {
         textAlign: "center",
         width: '100%'
+    },
+    rowNotPublished:{
+        backgroundColor: "#ffcdd2"
+    },
+    rowNotVerified:{
+        backgroundColor: "#fff9c4"
+    },
+    rowBasic: {
+        backgroundColor: "#FFFFFF"
     }
+
 }));
 
-export default function TableComponent({title, headCells, pagingInfo, data, checkable, changePageCallback, updateCallback, removeCallback, id, isLoading}) {
+export default function TableComponent({title, headCells, pagingInfo, data, checkable, changePageCallback, updateCallback, removeCallback, id, isLoading, customToolbarElements}) {
 
     TableComponent.propTypes = {
         title: PropTypes.string.isRequired,
@@ -228,9 +235,9 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
         updateCallback: PropTypes.func,
         removeCallback: PropTypes.func,
         id: PropTypes.string.isRequired,
-        isLoading: PropTypes.bool
+        isLoading: PropTypes.bool,
+        customToolbarElements: PropTypes.object
     };
-
 
 
 
@@ -311,6 +318,7 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
                     changePageCallback={changePageCallback}
                     keyword={keyword}
                     setKeyword={setKeyword}
+                    customToolbarElements={customToolbarElements}
                 />
                  <TableContainer>
                     <Table
@@ -331,15 +339,21 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
                             checkable={checkable}
                         />
 
+
                         <TableBody>
                             {stableSort(data, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
+
                                     const isItemSelected = isSelected(row.name);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
+                                    const rowStyle = row['isVerified'] !== undefined  && row['isVerified'] === false ? classes.rowNotVerified :
+                                        row['isPublic'] !== undefined && row['isPublic'] === false ? classes.rowNotPublished :  classes.rowBasic;
+
                                     return (
                                         <TableRow
+                                            className={rowStyle}
                                             hover
                                             onClick={(event) => handleClick(event, row.name)}
                                             role="checkbox"
@@ -362,14 +376,14 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
                                                             {row[header.id]}
                                                         </TableCell>
                                                 }else if(header.id === 'actions' ){
-                                                        return <TableCell>
+                                                        return <TableCell >
                                                             <div>
                                                                 <IconButton onClick={()=>updateCallback(row[id])} size="small" aria-label="edit" >
                                                                     <EditIcon fontSize="small" />
                                                                 </IconButton>
 
                                                                 <IconButton size="small" aria-label="delete" >
-                                                                    <DeleteIcon fontSize="small" />
+                                                                    <DeleteIcon onClick={()=>removeCallback(row[id])} fontSize="small" />
                                                                 </IconButton>
                                                             </div>
                                                             </TableCell>
@@ -382,7 +396,8 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
                                     );
                                 })}
                             {emptyRows > 0 && (
-                                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows}}>
+
                                     {data.length > 0 ? <TableCell colSpan={6} /> : !isLoading &&
                                         <TableCell colSpan={6} className={classes.centerCell}>
                                             <Typography variant="h6" noWrap>

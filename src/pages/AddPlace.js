@@ -1,10 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {withStyles} from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import PropTypes from "prop-types";
+import PropTypes, {func} from "prop-types";
 import {Paper} from '@material-ui/core';
 import BasicPlaceInfo from "../components/add_place_components/BasicPlaceInfo";
 import PhotosInfo from "../components/add_place_components/PhotosInfo";
@@ -17,18 +14,30 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import API from "../Networking/API";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
+import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import LinearProgress from "@material-ui/core/LinearProgress";
-
+import Strings from "../helpers/stringResources";
+import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
+import green from "@material-ui/core/colors/green";
+import ThemeProvider from "react-bootstrap/ThemeProvider";
+import Reviews from "../components/add_place_components/Reviews";
+import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 
 const styles = theme => ({
     button: {
         margin: theme.spacing(2)
     },
     paperContent: {
-        width: "70%",
         marginTop: theme.spacing(4),
-        padding: theme.spacing(4),
+        [theme.breakpoints.down("lg")]: {
+            width: "95%",
+            padding: theme.spacing(2),
+        },
+        [theme.breakpoints.up("lg")]: {
+            width: "70%",
+            padding: theme.spacing(4),
+        },
     },
     root:{
         height:"100vh"
@@ -45,7 +54,14 @@ const styles = theme => ({
         flexDirection: "column",
         alignItems: "center",
         height:`calc(93vh - 64px)`,
-        padding: theme.spacing(8),
+        [theme.breakpoints.down("lg")]: {
+            width: "100%",
+            padding: theme.spacing(1),
+        },
+        [theme.breakpoints.up("lg")]: {
+            width: "auto",
+            padding: theme.spacing(8),
+        },
         overflowY: "auto"
     },
     bottom:{
@@ -57,8 +73,13 @@ const styles = theme => ({
     }
 });
 
+
 function AddPlace({classes, match}){
-    const [placeInfo, setPlaceInfo] = useState({placeId: "", name: "", description: "",website: "", phoneNumber: "", hasSchedule: false, isPublic: false});
+    const [placeInfo, setPlaceInfo] = useState({placeId: "",
+        name: "", description: "",website: "", phoneNumber: "",
+        hasSchedule: false, isPublic: false, isVerified: true, overallStarRating: 0, totalReviews: 0,
+        source: "", price: "", averageTimeSpent: ""});
+
 
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
@@ -78,7 +99,21 @@ function AddPlace({classes, match}){
 
 
 
+
     const { addConfig } = UseSnackbarContext();
+    const { addAlertConfig } = UseAlertDialogContext();
+
+    const { title, setTitle } = UseAppBarTitleContext();
+
+    const ColorButton = withStyles((theme) => ({
+        root: {
+            color: theme.palette.getContrastText(green[500]),
+            backgroundColor: green[500],
+            '&:hover': {
+                backgroundColor: green[700],
+            },
+        },
+    }))(Button);
 
     useEffect(()=>{
         //Loaded place for editing
@@ -86,6 +121,7 @@ function AddPlace({classes, match}){
             console.log("Getting place location");
             getPlaceInfo()
         }else{
+            setTitle("Add new place");
             console.log("Came here to add new place");
             setFirstTimeLoading(false) //Just loaded add place window
         }
@@ -100,7 +136,7 @@ function AddPlace({classes, match}){
                 updatePhotoData(placeId),
                 updateSchedule(placeId)
             ]).then(responses=>{
-                formFeedback(true, "Place inserted successfully!")
+                formFeedback(true, Strings.SNACKBAR_PLACE_INSERTED_SUCCESS)
             }).catch(error=>{
                 formFeedback(false)
             })
@@ -108,16 +144,24 @@ function AddPlace({classes, match}){
 
     },[placeId]);
 
+    useEffect(()=>{
+        if(firstTimeLoading === false){
+            console.log("Making this place public");
+            updateAll()
+        }
+    },[placeInfo['isPublic']]);
+
     function getPlaceInfo() {
         API.Places.getPlaceById("?full=true&p="+placeId).then(response=>{
             setAllData(response)
-
+            setTitle("Editing place/"+response.name);
         }).catch(error=>{
             formFeedback(false)
         })
     }
 
     function setAllData(place){
+        console.log(place);
         setPlaceInfo({
             placeId: place.placeId,
             name: place.name,
@@ -125,7 +169,10 @@ function AddPlace({classes, match}){
             website: place.website,
             phoneNumber: place.phoneNumber,
             hasSchedule: place.hasSchedule,
-            isPublic: place.isPublic
+            isPublic: place.isPublic,
+            isVerified: place.isVerified,
+            overallStarRating: place.overallStarRating,
+            totalReviews: place.totalReviews
         });
 
         setLocationData({city: place.city,
@@ -136,40 +183,45 @@ function AddPlace({classes, match}){
 
         setSelectedTags(place.tags);
         setSelectedCategories(place.categories);
-        console.log("Schedule", place.schedule);
         if(place.schedule.length > 0)
             setScheduleData(place.schedule);
-        console.log(place.parking);
         setAllSelectedParkingData(place.parking);
-        setPhotos(place.photos)
-
-        setFirstTimeLoading(false);
-
+        setPhotos(place.photos);
+        setFirstTimeLoading(false)
     }
 
-    function formFeedback(success, message="Something went wrong!"){
+    function formFeedback(success, message=Strings.SNACKBAR_ERROR){
         addConfig(success, message);
         setIsLoading(false)
     }
 
     function saveChanges(){
-        setIsLoading(true);
         if(placeId === undefined){
-            insertBasicPlaceInfo()
+            addAlertConfig(Strings.DIALOG_PLACE_INSERT_TITLE,Strings.DIALOG_PLACE_INSERT,function () {
+                setIsLoading(true);
+                insertBasicPlaceInfo()
+            });
         }else{
-            Promise.all([
-                updatePlaceInfo(),
-                updateTagsData(placeId),
-                updatePhotoData(placeId),
-                updateCategoriesData(placeId),
-                updateParkingData(placeId),
-                updateSchedule(placeId)
-            ]).then(response=>{
-                formFeedback(true, "All changes saved!");
-            }).catch(err=>{
-                formFeedback(false)
+            addAlertConfig(Strings.DIALOG_PLACE_UPDATE_TITLE, Strings.DIALOG_PLACE_UPDATE, function () {
+                setIsLoading(true)
+                updateAll()
             })
         }
+    }
+
+    function updateAll(){
+        Promise.all([
+            updatePlaceInfo(),
+            updateTagsData(placeId),
+            updatePhotoData(placeId),
+            updateCategoriesData(placeId),
+            updateParkingData(placeId),
+            updateSchedule(placeId)
+        ]).then(response=>{
+            formFeedback(true, Strings.SNACKBAR_CHANGES_SAVED);
+        }).catch(err=>{
+            formFeedback(false)
+        })
     }
 
     function updatePlaceInfo() {
@@ -228,19 +280,50 @@ function AddPlace({classes, match}){
     }
 
     function formPlaceInfo(){
-        return Object.assign(placeInfo, locationData)
+        let d = Object.assign(placeInfo, locationData)
+        console.log(d);
+        return d
     }
 
+
+    function publishPlace(){
+        addAlertConfig(Strings.DIALOG_PLACE_PUBLISH_TITLE, placeInfo['isPublic'] ? Strings.DIALOG_PLACE_UNPUBLISH_MESSAGE : Strings.DIALOG_PLACE_PUBLISH_MESSAGE, function(){
+            let obj = Object.assign({}, placeInfo, {});
+            obj['isPublic'] = !obj['isPublic'];
+            setPlaceInfo(obj);
+        })
+    }
+
+    function verifyPlace(){
+        addAlertConfig(Strings.DIALOG_PLACE_VERIFY_TITLE, Strings.DIALOG_PLACE_VERIFY_MESSAGE, function(){
+            let obj = Object.assign({}, placeInfo, {});
+            obj['isPublic'] = 1;
+            obj['isVerified'] = 1;
+            setPlaceInfo(obj);
+        })
+    }
 
     return(
         <div className={classes.root}>
             {firstTimeLoading ? <div className={classes.loader}><CircularProgress /></div> : <div className={classes.content}>
+
+
+
+
                 <Paper elevation = {4} className={classes.paperContent}>
                     <BasicPlaceInfo
                         placeInfo={placeInfo}
                         setPlaceInfo={setPlaceInfo}
                     />
                 </Paper>
+
+                {placeId !== undefined ?
+                    <Paper elevation = {4} className={classes.paperContent}>
+                        <Reviews
+                            placeInfo={placeInfo}
+                        />
+                    </Paper>
+                    : null}
 
                 <Paper elevation = {4} className={classes.paperContent}>
                     <PhotosInfo
@@ -281,17 +364,25 @@ function AddPlace({classes, match}){
 
             <Paper elevation={1} className={classes.bottom}>
 
-                <FormControlLabel
-                    disabled={true}
+                {
+
+                    placeInfo['isVerified'] === false && placeId !== undefined ?
+                        <ColorButton
+                            variant="contained"
+                            color="primary"
+                            onClick={()=>{verifyPlace()}}
+                            className={classes.button}
+                        >
+                            Verify place
+                        </ColorButton>
+                    :
+                    <FormControlLabel
                     control={<Switch checked={placeInfo['isPublic']} onChange={()=> {
-                            var obj = Object.assign({}, placeInfo, {});
-                            obj['isPublic'] = !obj['isPublic']
-                            setPlaceInfo(obj);
-                        }
+                        publishPlace()
+                    }
                     } name="isPublic" />}
                     label="Make this place public"
-                />
-
+                />}
                 <Button
                     variant="contained"
                     color="primary"
@@ -299,6 +390,8 @@ function AddPlace({classes, match}){
                     className={classes.button}>
                     Save
                 </Button>
+
+
             </Paper>
         </div>)
 

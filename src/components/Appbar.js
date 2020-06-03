@@ -20,6 +20,8 @@ import Places from "../pages/Places";
 import AddPlace from "../pages/AddPlace";
 import history from "../helpers/history";
 import ApiPlaces from "../pages/ApiPlaces";
+import UseSnackbarContext from "../contexts/UseSnackbarContext";
+import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 
 const drawerWidth = 240;
 
@@ -93,7 +95,8 @@ export default function Appbar() {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = useState(false);
-    const [title, setTitle] = useState("Home");
+    const { title, setTitle } = UseAppBarTitleContext();
+
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -150,7 +153,7 @@ export default function Appbar() {
                         <ListItemText>Home</ListItemText>
                     </ListItem>
                     <Divider light />
-                    <ListItem button component={Link} to="/places" onClick={()=>setTitle("Place")} >
+                    <ListItem button component={Link} to="/places" onClick={()=>setTitle("Places")} >
                         <ListItemText>Places</ListItemText>
                     </ListItem>
                     <ListItem button component={Link} to="/apiplaces" onClick={()=>setTitle("Api places")} >

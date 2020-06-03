@@ -5,10 +5,12 @@ import {compose, withProps, withStateHandlers} from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
 import withStyles from "@material-ui/core/styles/withStyles";
 import {map} from "react-bootstrap/cjs/ElementChildren";
-import PropTypes from "prop-types";
+import PropTypes, {func} from "prop-types";
 import Button from "@material-ui/core/Button";
 import history from "../helpers/history";
 import AddIcon from "@material-ui/icons/Add";
+import MyLocationIcon from '@material-ui/icons/MyLocation';
+import IconButton from "@material-ui/core/IconButton";
 
 
 //
@@ -136,7 +138,36 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
         }
     };
 
+    function getCurrentPosition(onMarkerLocationChanged, onParkingDataChanged){
+        navigator.geolocation.getCurrentPosition(function(position) {
+
+            let newLat = position.coords.latitude,
+                newLng = position.coords.longitude;
+
+            Geocode.fromLatLng( newLat , newLng ).then(
+                response => {
+                    const address = response.results[0].formatted_address
+                    const addressArray =  response.results[0].address_components
+                    if(addressArray!==undefined){
+                        const city = getCity( addressArray ),
+                            country = getCountry( addressArray );
+
+                        onMarkerLocationChanged(newLat, newLng, address, city, country);
+
+                        changeLocationData(city,country,address,newLat,newLng, onParkingDataChanged);
+                    }
+                },
+                error => {
+                    console.error(error);
+                }
+            );
+            console.log("Latitude is :", position.coords.latitude);
+            console.log("Longitude is :", position.coords.longitude);
+        });
+    }
+
     const getCountry = (addressArray) =>{
+        //getCurrentPosition()
         if(addressArray!=undefined){
         let country = '';
         for( let i = 0; i < addressArray.length; i++ ) {
@@ -217,6 +248,9 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
             center={{lat: props.markerLocation.latitude, lng: props.markerLocation.longitude }}
             defaultCenter={{ lat: props.markerLocation.latitude, lng: props.markerLocation.longitude }}
         >
+
+
+
             <Marker
                 name={'Dolores park'}
                 visible={true}
@@ -295,6 +329,16 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                 onPlaceSelected={(place)=>{onPlaceSelected(place, props.onMarkerLocationChanged, props.onParkingDataChange)} }
                 types={['(regions)']}
             />
+            <IconButton aria-label="delete" className={classes.margin} size="small">
+                <MyLocationIcon
+                    fontSize="large"
+                    color="primary"
+                    onClick={()=>{
+                        getCurrentPosition(props.onMarkerLocationChanged, props.onParkingDataChange)
+                    }}
+
+                />
+            </IconButton>
 
             <MyMapComponent markerChanger={props.onMarkerLocationChanged}
                             markerLocation={props.draggableMarkerLocation}

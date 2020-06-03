@@ -6,7 +6,14 @@ const getAllPlacesAdmin = (urlParams) => RequestType.getRequest("api/v1/place/se
 const insertPlace = (data) => RequestType.postRequest("api/v1/place/insert",data);
 const updatePlace = (data) => RequestType.postRequest("api/v1/place/update", data);
 const getPlaceById = (urlParams) => RequestType.getRequest("api/v1/place/getplace", urlParams);
+<<<<<<< HEAD
 const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin};
+=======
+const searchApiPlaces = (urlParams) => RequestType.getRequest("api/v1/placeApi/search", urlParams);
+const removePlace = (urlParams) => RequestType.getRequest("api/v1/place/delete", urlParams);
+
+const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin,searchApiPlaces, removePlace};
+>>>>>>> 1c3e1fa674a021fef3510cae5d2e23e8b30da042
 
 
 //Tags
@@ -26,7 +33,7 @@ const Photos = {addPhoto, uploadPhoto};
 
 
 //Parking
-const getParkingByLocation = (urlParams) =>RequestType.getRequest("api/v1/parking/search", urlParams);
+const getParkingByLocation = (urlParams) =>RequestType.getRequest("api/v1/parking/searchAdmin", urlParams);
 const insertNewParking = (data) =>  RequestType.postRequest("api/v1/parking/insert", data);
 const Parking = {getParkingByLocation, insertNewParking};
 
@@ -52,7 +59,11 @@ const PhotoPlace = {updatePhotoForPlace};
 const updateScheduleForPlace = (data, urlParams) => RequestType.postRequest("api/v1/ws/update", data, urlParams);
 const Schedule = {updateScheduleForPlace};
 
-const API = {Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule};
+//ReviewsPlace
+const getPlaceReviews = (urlParams) => RequestType.getRequest("api/v1/reviews/all", urlParams);
+const Reviews = {getPlaceReviews};
+
+const API = {Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
 
 export default API
 

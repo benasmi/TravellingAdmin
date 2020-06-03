@@ -13,16 +13,13 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import { Router, Route, Link } from "react-router-dom";
 import Home from "../pages/Home";
 import Places from "../pages/Places";
-import withStyles from "@material-ui/core/styles/withStyles";
 import AddPlace from "../pages/AddPlace";
 import history from "../helpers/history";
+import ApiPlaces from "../pages/ApiPlaces";
 
 const drawerWidth = 240;
 
@@ -156,6 +153,9 @@ export default function Appbar() {
                     <ListItem button component={Link} to="/places" onClick={()=>setTitle("Place")} >
                         <ListItemText>Places</ListItemText>
                     </ListItem>
+                    <ListItem button component={Link} to="/apiplaces" onClick={()=>setTitle("Api places")} >
+                        <ListItemText>Explore API places</ListItemText>
+                    </ListItem>
                     <ListItem button component={Link} to="/addplace" onClick={()=>setTitle("Add Place")} >
                         <ListItemText>Add place</ListItemText>
                     </ListItem>
@@ -170,6 +170,8 @@ export default function Appbar() {
                 <Route exact path="/" component={Home} />
                 <Route path="/places" component={Places} />
                 <Route path="/addplace/:placeId?" component={AddPlace} />
+                <Route path="/apiplaces" component={ApiPlaces} />
+                <Route path="/addplace" component={AddPlace} />
             </main>
             </Router>
         </div>

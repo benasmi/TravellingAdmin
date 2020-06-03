@@ -8,6 +8,7 @@ const updatePlace = (data) => RequestType.postRequest("api/v1/place/update", dat
 const getPlaceById = (urlParams) => RequestType.getRequest("api/v1/place/getplace", urlParams);
 const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin};
 
+
 //Tags
 const getAllTags = () => RequestType.getRequest("api/v1/tags/all");
 const addTag = (params) => RequestType.postRequest("api/v1/tags/insert", params);

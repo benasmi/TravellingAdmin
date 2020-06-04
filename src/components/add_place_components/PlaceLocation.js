@@ -22,6 +22,7 @@ function PlaceLocation({locationData, setLocationData}) {
         const {name, value} = event.target;
         let data = Object.assign({}, locationData, {});
         data[name] = value;
+
         setLocationData(data)
     }
 
@@ -45,6 +46,7 @@ function PlaceLocation({locationData, setLocationData}) {
         </Typography>
         <br/>
         <TextField
+            required
             label="Address"
             style={{ margin: 8 }}
             placeholder="Enter place address"
@@ -60,6 +62,7 @@ function PlaceLocation({locationData, setLocationData}) {
             }}
         />
         <TextField
+            required
             label="City"
             disabled
             style={{ margin: 8 }}
@@ -75,6 +78,7 @@ function PlaceLocation({locationData, setLocationData}) {
             }}
         />
         <TextField
+            required
             label="Country"
             style={{ margin: 8 }}
             placeholder="Enter place country"

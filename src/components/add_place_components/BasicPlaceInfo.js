@@ -20,17 +20,20 @@ import AddSourceDialog from "../AddSourceDialog";
 const styles = theme => ({});
 let previousPrice = "";
 
-function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setSelectedSources}) {
+function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setSelectedSources, error, setError, checkErrors}) {
 
     const updatePlaceInfo = (event, newValue) => {
         const {name, value, id} = event.target;
-        let place = Object.assign({}, placeInfo, {})
+        let place = Object.assign({}, placeInfo, {});
+        let err = Object.assign({}, error, {});
         if (id !== "") {
             place[id] = valuetext(newValue[0]);
         } else {
+            //err[name] = name==='name' && value.length === 0;
             place[name] = value
         }
         console.log("Updated place", place);
+        setError(err);
         setPlaceInfo(place)
     };
 
@@ -65,7 +68,7 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
 
     console.log(placeInfo["averageTimeSpent"]);
     const [hasPrice, setHasPrice] = useState(placeInfo["price"] !== "");
-    const [hasAverageTime, setHasAverageTime] = useState( placeInfo["averageTimeSpent"] !== 0);
+    const [hasAverageTime, setHasAverageTime] = useState( parseInt(placeInfo["averageTimeSpent"]) !== 0);
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -86,6 +89,8 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
         </Typography>
         <br/>
         <TextField
+            required
+            error={checkErrors && error['name']}
             label="Place name"
             style={{margin: 8}}
             placeholder="Enter the place name"
@@ -224,12 +229,9 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
                     <Switch
                         checked={hasAverageTime}
                         onChange={() => setHasAverageTime(old => {
-                            if(old === true){
-                                console.log("patenku");
-                                let place = Object.assign({}, placeInfo, {})
-                                place["averageTimeSpent"] = 0;
-                                setPlaceInfo(place)
-                            }
+                            let place = Object.assign({}, placeInfo, {})
+                            place["averageTimeSpent"] = old === true ? 0 : 30
+                            setPlaceInfo(place)
                             return !old
                         })}
                         color="primary"
@@ -252,7 +254,7 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
                         name: 'averageTimeSpent'
                     }}
                 >
-                    <option value="0">0</option>
+                    <option disabled value="0">""</option>
                     {
                         averageTimeSpent.map(row=>{
                             return <option value={parseInt(row.value, 10)}> {row.value}</option>

@@ -10,6 +10,11 @@ import AddPlace from "./pages/AddPlace";
 import {AuthenticatedRoute} from "./components/AuthenticatedRoute";
 import NotFoundPage from "./pages/NotFoundPage";
 import Redirect from "react-router-dom/es/Redirect";
+import SnackbarProvider from "./contexts/SnackbarContext";
+import SnackbarFeedback from "./components/feedback/SnackbarFeedback";
+import {MuiPickersUtilsProvider} from "@material-ui/pickers";
+import AlertDialogProvider from "./contexts/AlertDialogContext";
+import AlertDialogFeedback from "./components/feedback/AlertDialogFeedback";
 
 
 var firebaseConfig = {
@@ -25,12 +30,17 @@ firebase.initializeApp(firebaseConfig);
 
 ReactDOM.render(
     <Router history={history}>
-        <Switch>
-            <Redirect exact from="/" to="/app"/>
-            <AuthenticatedRoute path="/app" component={App} />
-            <Route path="/login" component={LoginPage} />
-            <Route path="*" component={NotFoundPage}/>
-            <Redirect from="*" to="/404" />
-        </Switch>
-
+        <SnackbarProvider>
+            <AlertDialogProvider>
+                <SnackbarFeedback/>
+                <AlertDialogFeedback/>
+                <Switch>
+                    <Redirect exact from="/" to="/app"/>
+                    <AuthenticatedRoute path="/app" component={App} />
+                    <Route path="/login" component={LoginPage} />
+                    <Route path="*" component={NotFoundPage}/>
+                    <Redirect from="*" to="/404" />
+                </Switch>
+            </AlertDialogProvider>
+        </SnackbarProvider>
     </Router>, document.getElementById('root'));

@@ -99,7 +99,8 @@ function AddPlace({classes, match}){
     const [firstTimeLoading, setFirstTimeLoading] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
 
-
+    const [error, setError] = useState({name: false});
+    const [checkErrors, setCheckErrors] = useState(false);
 
 
     const { addConfig } = UseSnackbarContext();
@@ -205,7 +206,23 @@ function AddPlace({classes, match}){
         setIsLoading(false)
     }
 
+    function errorsExists(){
+        for (let key of Object.keys(error)) {
+            if(error[key] === true)
+                return true
+        }
+        return false
+    }
+
     function saveChanges(){
+        setCheckErrors(true);
+        if(errorsExists()){
+            addAlertConfig("Errors", "Make sure you filled required fields",function () {
+
+            });
+            return
+        }
+
         if(placeId === undefined){
             addAlertConfig(Strings.DIALOG_PLACE_INSERT_TITLE,Strings.DIALOG_PLACE_INSERT,function () {
                 setIsLoading(true);
@@ -213,7 +230,7 @@ function AddPlace({classes, match}){
             });
         }else{
             addAlertConfig(Strings.DIALOG_PLACE_UPDATE_TITLE, Strings.DIALOG_PLACE_UPDATE, function () {
-                setIsLoading(true)
+                setIsLoading(true);
                 updateAll()
             })
         }
@@ -335,6 +352,9 @@ function AddPlace({classes, match}){
 
                 <Paper elevation = {4} className={classes.paperContent}>
                     <BasicPlaceInfo
+                        error={error}
+                        setError={setError}
+                        checkErrors={checkErrors}
                         placeInfo={placeInfo}
                         setPlaceInfo={setPlaceInfo}
                         selectedSources={sources}
@@ -359,6 +379,9 @@ function AddPlace({classes, match}){
                 </Paper>
                 <Paper elevation = {4} className={classes.paperContent}>
                     <PlaceLocation
+                        error={error}
+                        setError={setError}
+                        checkErrors={checkErrors}
                         locationData={locationData}
                         setLocationData={setLocationData}/>
                 </Paper>

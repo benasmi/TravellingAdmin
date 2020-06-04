@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -50,36 +50,48 @@ export default function LoginPage() {
     const classes = useStyles();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [loading, setIsLoading] = useState(false)
+    const [loading, setIsLoading] = useState(false);
     const { addConfig } = UseSnackbarContext();
 
-
+    useEffect(()=>{
+    },[]);
     const handleLogin = () =>{
         setIsLoading(true);
-        firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
-            setIsLoading(false)
-            addConfig(false, error.message)
-        });
+        firebase.auth().signInWithEmailAndPassword(email , password)
+            .then(function(user) {
+                    if (user) {
 
-        firebase.auth().onAuthStateChanged(function(user) {
-            if (user) {
-                firebase.auth().currentUser.getIdToken(false).then(function(idToken) {
-                    Cookies.set("access_token", idToken);
-                    history.push("/app");
-                    setIsLoading(false)
-                }).catch(function(error) {
+                        firebase.auth().currentUser.getIdToken(false).then(function(idToken) {
+                            Cookies.set("access_token", idToken);
+                            history.push("/app");
+                            setIsLoading(false)
+                        }).catch(function(error) {
+                            setIsLoading(false);
+                            addConfig(false, "Unable to receive access token")
+                        });
+                    } else {
+                        console.log("Wrong credentials")
+                        setIsLoading(false);
+                        addConfig(false, "Wrong credentials")
+                    }
+            })
+            .catch(function(error) {
                     setIsLoading(false);
-                    addConfig(false, "Unable to recieve access token")
-                });
-            } else {
-                setIsLoading(false);
-                addConfig(false, "Wrong credentials")
-            }
-        });
+                    addConfig(false, error.message)
+                    console.log(error.message)
+            });
+    };
+
+    const handleKeyPress = (event) =>{
+        if (event.which === 13 || event.keyCode === 13) {
+            handleLogin();
+            return false;
+        }
+        return true;
     };
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="xs" onKeyPress={(e)=>handleKeyPress(e)}>
             {loading && <LinearProgress />}
             <CssBaseline />
             <div className={classes.paper}>

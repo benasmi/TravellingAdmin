@@ -1,127 +1,136 @@
-import {withStyles} from "@material-ui/core/styles";
-import {Card} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import Checkbox from "@material-ui/core/Checkbox";
-import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
-
+import {withStyles} from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import React, {useEffect, useState} from "react";
+import Button from "@material-ui/core/Button";
+import RemoveIcon from "@material-ui/icons/Remove";
+import Paper from "@material-ui/core/Paper";
+import {DatePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+import Divider from "@material-ui/core/Divider";
+import DayComponent from "./DayComponent";
+import Moment from "react-moment";
+import moment from "moment";
 
 const styles = theme => ({
-    scheduleCard: {
-        [theme.breakpoints.down("lg")]: {
-            margin: theme.spacing(0),
-            padding: theme.spacing(0),
-        },
-        [theme.breakpoints.up("lg")]: {
-            margin: theme.spacing(1),
-            padding: theme.spacing(1),
-        },
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-        //width: '100%'
+    header: {
+        display: "flex",
+        justifyContent : "space-between"
     },
-    text : {
-
-        [theme.breakpoints.down("lg")]: {
-            fontSize: '0.8rem'
-
-        },
-        [theme.breakpoints.only("lg")]: {
-            fontSize: '1rem'
-
-        },
+    root: {
+        padding: theme.spacing(2),
+        margin: theme.spacing(1)
+    },
+    pickerStyle: {
+        margin: theme.spacing(1)
+    },
+    headerLeft: {
+        width: "100%",
+        display: "flex",
+        justifyContent: "left"
     }
-})
+});
 
-function ScheduleCard({dayOfWeek, setData, data, classes}){
+function Schedule({classes, data, setData, index}){
 
-    const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const[periods, setPeriods] = useState([...data.periods])
 
-    const [openTime, setOpenTime] = useState(data.openTime);
-    const [closeTime, setCloseTime] = useState(data.closeTime);
-    const [isClosed, setIsClosed] = useState(data.isClosed);
+    const handleIntervalChange = (newIntervals, openDay) => {
+        setPeriods(oldPeriods => {
+            let filtered = oldPeriods.filter(item => item.openDay !== openDay)
+            if(newIntervals.length === 0)
+                return [...filtered]
+            return [
+                ...filtered,
+                ...newIntervals
+            ]
+        })
+    }
 
-    React.useEffect(() => {
+    useEffect(() => {
         setData(oldData => {
-            return oldData.map(item => {
-                if(item.dayOfWeek === dayOfWeek)
-                    return {dayOfWeek: dayOfWeek, openTime: openTime, closeTime: closeTime, isClosed: isClosed}
-                else return item
+            return oldData.map((schedule, i) => {
+                if( i === index){
+                    return {...schedule, periods: periods}
+                }else return schedule
             })
         })
-    }, [openTime, isClosed, closeTime])
+    }, [periods])
+
+    const generateWeekdayViews = () => {
+        let views = []
+        for(let i =0; i < 7; i++){
+            views.push(<DayComponent scheduleData={data} onChange={handleIntervalChange} setScheduleData={setData} openDay={i} key={i}/>)
+        }
+        return views
+    }
+
+    const updateFromTime = (value) => {
+        setData(oldData => {
+            return oldData.map((schedule, i) => {
+                if( i === index){
+                    return {...schedule, from: moment(value).format('MM-DD').toString()}
+                }else return schedule
+            })
+        })
+    }
+    const updateToTime = (value) => {
+        setData(oldData => {
+            return oldData.map((schedule, i) => {
+                if( i === index){
+                    return {...schedule, to: moment(value).format('MM-DD').toString()}
+                }else return schedule
+            })
+        })
+    }
+    const removeSchedule = () => {
+        setData(oldData => {
+            return oldData.filter((item, i) => index !== i)
+        })
+    }
 
     return(
-    <Card elevation={1} className={classes.scheduleCard}  >
+        <Paper className={classes.root}>
+            <div className={classes.header}>
+                <div className={classes.headerLeft}>
+                    {data.isDefault &&
+                    <Typography variant="h6" >
+                        Date: Year round
+                    </Typography>}
+                    {!data.isDefault &&
+                        <React.Fragment>
+                            <DatePicker
+                                className={classes.pickerStyle}
+                                views={["month", "date"]}
+                                label="From"
+                                value={moment(data.from, "MM-DD")}
+                                onChange={updateFromTime}
+                            />
+                            <DatePicker
+                                className={classes.pickerStyle}
+                                views={["month", "day"]}
+                                label="To"
+                                value={moment(data.to, "MM-DD")}
+                                onChange={updateToTime}
+                            />
+                        </React.Fragment>
+                    }
+                </div>
+                {!data.isDefault &&
+                <Button color="secondary" onClick = {removeSchedule}>
+                    <RemoveIcon/>
+                </Button>}
 
-        <Typography variant="subtitle1" className={classes.text}>
-            {weekDays[dayOfWeek]}
-        </Typography>
-
-        <div >
-
-            {!isClosed &&
-                <React.Fragment>
-                <TextField
-                    label="Opens"
-                    type="time"
-                    value={openTime}
-                    onChange={(e) => setOpenTime(e.target.value)}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    inputProps={{
-                        step: 300, // 5 min
-                    }}
-                />
-                <TextField
-                    label="Closes"
-                    type="time"
-                    onChange={(e) => setCloseTime(e.target.value)}
-                    value={closeTime}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    inputProps={{
-                        step: 300, // 5 min
-                    }}
-                />
-                </React.Fragment>
-            }
-            <Checkbox
-                name="checkedB"
-                color="primary"
-                onChange={() => setIsClosed(state => !state)}
-                checked={!isClosed}
-            />
-
-        </div>
-
-    </Card>
-    )
-}
-ScheduleCard.propTypes = {
-    dayOfWeek: PropTypes.number.isRequired,
-    setData: PropTypes.func.isRequired,
-    data: PropTypes.object.isRequired,
-    classes: PropTypes.object.isRequired,
-};
-
-function Schedule({scheduleData, setScheduleData, classes}) {
-    return(
-        <div>
-            {scheduleData.map((item, index) => {
-                return <ScheduleCard key={index} dayOfWeek={index} classes={classes} data = {scheduleData.filter(item => item.dayOfWeek === index)[0]}  setData={setScheduleData}/>
-            })}
-        </div>
+            </div>
+            <br/>
+            {generateWeekdayViews()}
+        </Paper>
     )
 }
 
 Schedule.propTypes = {
-    setScheduleData: PropTypes.func.isRequired,
-    scheduleData: PropTypes.array.isRequired,
     classes: PropTypes.object.isRequired,
+    data: PropTypes.object.isRequired,
+    setData: PropTypes.func.isRequired,
 };
+
 export default withStyles(styles)(Schedule)

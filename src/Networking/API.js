@@ -6,10 +6,14 @@ const getAllPlacesAdmin = (urlParams) => RequestType.getRequest("api/v1/place/se
 const insertPlace = (data) => RequestType.postRequest("api/v1/place/insert",data);
 const updatePlace = (data) => RequestType.postRequest("api/v1/place/update", data);
 const getPlaceById = (urlParams) => RequestType.getRequest("api/v1/place/getplace", urlParams);
+<<<<<<< HEAD
+const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin};
+=======
 const searchApiPlaces = (urlParams) => RequestType.getRequest("api/v1/placeApi/search", urlParams);
 const removePlace = (urlParams) => RequestType.getRequest("api/v1/place/delete", urlParams);
 
 const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin,searchApiPlaces, removePlace};
+>>>>>>> 1c3e1fa674a021fef3510cae5d2e23e8b30da042
 
 //Tags
 const getAllTags = () => RequestType.getRequest("api/v1/tags/all");

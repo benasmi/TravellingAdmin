@@ -11,7 +11,6 @@ const removePlace = (urlParams) => RequestType.getRequest("api/v1/place/delete",
 
 const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin,searchApiPlaces, removePlace};
 
-
 //Tags
 const getAllTags = () => RequestType.getRequest("api/v1/tags/all");
 const addTag = (params) => RequestType.postRequest("api/v1/tags/insert", params);

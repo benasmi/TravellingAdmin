@@ -164,7 +164,6 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
 
     function getCurrentPosition(onMarkerLocationChanged, onParkingDataChanged){
         navigator.geolocation.getCurrentPosition(function(position) {
-            alert("Get location was called")
             let newLat = position.coords.latitude,
                 newLng = position.coords.longitude;
 
@@ -177,20 +176,16 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                             country = getCountry( addressArray );
 
                         onMarkerLocationChanged(newLat, newLng, address, city, country);
-                        alert(newLat + ", " +newLng);
-
                         changeLocationData(city,country,address,newLat,newLng, onParkingDataChanged);
                     }
                 },
                 error => {
-                    alert("Error from geocoding");
-                    console.error(error);
                 }
             );
             console.log("Latitude is :", position.coords.latitude);
             console.log("Longitude is :", position.coords.longitude);
         }, error=>{
-            alert("Error form navigator:" + error.message + "\n" + JSON.stringify(error))
+            alert(error.message + "\n" + JSON.stringify(error))
         });
     }
 

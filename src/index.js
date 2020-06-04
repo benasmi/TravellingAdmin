@@ -26,8 +26,9 @@ firebase.initializeApp(firebaseConfig);
 ReactDOM.render(
     <Router history={history}>
         <Switch>
+            <Redirect exact from="/" to="/app"/>
             <AuthenticatedRoute path="/app" component={App} />
-            <Route exact path="/login" component={LoginPage} />
+            <Route path="/login" component={LoginPage} />
             <Route path="*" component={NotFoundPage}/>
             <Redirect from="*" to="/404" />
         </Switch>

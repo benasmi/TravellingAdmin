@@ -5,6 +5,8 @@ import SnackbarFeedback from "./components/feedback/SnackbarFeedback";
 import AlertDialogProvider from "./contexts/AlertDialogContext";
 import AlertDialogFeedback from "./components/feedback/AlertDialogFeedback";
 import AppBarTitleProvider from "./contexts/AppBarTitleContext";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from '@date-io/date-fns';
 
 class App extends Component {
     render() {
@@ -12,11 +14,15 @@ class App extends Component {
             <React.Fragment>
                 <AlertDialogProvider>
                 <SnackbarProvider>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <AppBarTitleProvider>
+
                         <Appbar />
                     </AppBarTitleProvider>
+
                     <SnackbarFeedback/>
-                    <AlertDialogFeedback/>
+                        <AlertDialogFeedback/>
+                    </MuiPickersUtilsProvider>
                 </SnackbarProvider>
                 </AlertDialogProvider>
             </React.Fragment>

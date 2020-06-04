@@ -9,7 +9,6 @@ import PlaceLocation from "../components/add_place_components/PlaceLocation";
 import ParkingLocation from "../components/add_place_components/ParkingLocation";
 import PlaceDiscovery from "../components/add_place_components/PlaceDiscovery";
 import initialScheduleData from "../components/add_place_components/initialScheduleData";
-import WorkingSchedule from "../components/add_place_components/WorkingSchedule";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import API from "../Networking/API";
@@ -21,6 +20,8 @@ import Strings from "../helpers/stringResources";
 import green from "@material-ui/core/colors/green";
 import Reviews from "../components/add_place_components/Reviews";
 import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
+import Schedule from "../components/add_place_components/SchedulesWrapper";
+import SchedulesWrapper from "../components/add_place_components/SchedulesWrapper";
 
 const styles = theme => ({
     button: {
@@ -91,6 +92,7 @@ function AddPlace({classes, match}){
     const [sources, setSources] = useState([]);
 
     const [scheduleData, setScheduleData] = useState(initialScheduleData);
+    const [isScheduleEnabled, setIsScheduleEnabled] = useState(false);
 
     const [placeId, setPlaceId] = useState(match.params.placeId);
 
@@ -188,8 +190,11 @@ function AddPlace({classes, match}){
         setSources(place.sources);
         setSelectedTags(place.tags);
         setSelectedCategories(place.categories);
-        if(place.schedule.length > 0)
-            setScheduleData(place.schedule);
+        if(place.schedule.length > 0) {
+            setScheduleData([...place.schedule]);
+            setIsScheduleEnabled(true)
+        }else setIsScheduleEnabled(false)
+
         setAllSelectedParkingData(place.parking);
         setPhotos(place.photos);
         setFirstTimeLoading(false)
@@ -293,8 +298,10 @@ function AddPlace({classes, match}){
 
     function updateSchedule(id){
         console.log(scheduleData);
-        if(placeInfo['hasSchedule'])
-            API.Schedule.updateScheduleForPlace(scheduleData, "?p="+id).then(response=>{}).catch(er=>{})
+        API.Schedule.updateScheduleForPlace(isScheduleEnabled ? scheduleData : [], "?id=" + id).then(response => {
+        }).catch(er => {
+        })
+
     }
 
     function formPlaceInfo(){
@@ -371,11 +378,7 @@ function AddPlace({classes, match}){
                 </Paper>
 
                 <Paper elevation = {4} className={classes.paperContent}>
-                    <WorkingSchedule
-                        workingScheduleEnabled={placeInfo}
-                        setWorkingScheduleEnabled={setPlaceInfo}
-                        scheduleData={scheduleData}
-                        setScheduleData={setScheduleData}/>
+                    <SchedulesWrapper isScheduleEnabled={isScheduleEnabled} setIsScheduleEnabled={setIsScheduleEnabled} setScheduleData={setScheduleData} scheduleData={scheduleData}/>
                 </Paper>
             </div> }
 

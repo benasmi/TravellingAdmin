@@ -85,8 +85,10 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
     const onMarkerDragEnd = ( event, onMarkerLocationChanged, onParkingDataChanged) => {
         let newLat = event.latLng.lat(),
             newLng = event.latLng.lng();
+            geocodeFromLatLng(newLat, newLng, onMarkerLocationChanged, onParkingDataChanged)
+    };
 
-
+    function geocodeFromLatLng(newLat, newLng, onMarkerLocationChanged, onParkingDataChanged){
         Geocode.fromLatLng( newLat , newLng ).then(
             response => {
                 const address = response.results[0].formatted_address
@@ -104,7 +106,29 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                 console.error(error);
             }
         );
-    };
+    }
+
+    function geocodeFromAddress(address, onMarkerLocationChanged, onParkingDataChanged){
+        Geocode.fromAddress( address ).then(
+            response => {
+                const { lat, lng } = response.results[0].geometry.location;
+                const address = response.results[0].formatted_address;
+                const addressArray =  response.results[0].address_components;
+                if(addressArray!==undefined){
+                    const city = getCity( addressArray ),
+                        country = getCountry( addressArray );
+
+                    console.log(lat, lng)
+                    onMarkerLocationChanged(lat, lng, address, city, country);
+                        console.log("Pateko")
+                    changeLocationData(city,country,address,lat,lng, onParkingDataChanged);
+                }
+            },
+            error => {
+                console.error(error);
+            }
+        );
+    }
 
     function changeLocationData(city,country,address,latitude,longitude, onParkingDataChanged) {
         let data = Object.assign({}, locationData, {});
@@ -140,7 +164,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
 
     function getCurrentPosition(onMarkerLocationChanged, onParkingDataChanged){
         navigator.geolocation.getCurrentPosition(function(position) {
-
+            alert("Get location was called")
             let newLat = position.coords.latitude,
                 newLng = position.coords.longitude;
 
@@ -153,16 +177,20 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                             country = getCountry( addressArray );
 
                         onMarkerLocationChanged(newLat, newLng, address, city, country);
+                        alert(newLat + ", " +newLng);
 
                         changeLocationData(city,country,address,newLat,newLng, onParkingDataChanged);
                     }
                 },
                 error => {
+                    alert("Error from geocoding");
                     console.error(error);
                 }
             );
             console.log("Latitude is :", position.coords.latitude);
             console.log("Longitude is :", position.coords.longitude);
+        }, error=>{
+            alert("Error form navigator:" + error.message + "\n" + JSON.stringify(error))
         });
     }
 
@@ -285,6 +313,23 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
         </GoogleMap>
     );
 
+
+    const handleKeyPress = (event, onMarkerLocationChange, onParkingDataChange) =>{
+        const value = event.target.value;
+        if (event.which === 13 || event.keyCode === 13) {
+            if (/[a-zA-Z]+/.test(value)){
+                geocodeFromAddress(value, onMarkerLocationChange, onParkingDataChange)
+            }else{
+                let position = value.split(/[ ,]+/);
+                if(position.length === 2){
+                    geocodeFromLatLng(parseFloat(position[0]), parseFloat(position[1]), onMarkerLocationChange, onParkingDataChange)
+                }
+            }
+            return false;
+        }
+        return true;
+    };
+
     /**
      * Places autocomplete and map. This component holds it's inner states like draggableMarkerLocation, parkingData etc.
      */
@@ -325,6 +370,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
     )(props=>
         <div className={classes.content}>
             <Autocomplete
+                onKeyPress={(event)=>{handleKeyPress(event, props.onMarkerLocationChanged, props.onParkingDataChange)}}
                 className={classes.autocomplete}
                 onPlaceSelected={(place)=>{onPlaceSelected(place, props.onMarkerLocationChanged, props.onParkingDataChange)} }
                 types={['(regions)']}

@@ -26,28 +26,42 @@ const styles = theme => ({
     autoCompleteChipContainer: {
         padding: theme.spacing(1)
     }
-})
+});
 
 function AutoCompleteChip(props){
 
-    const {options, selectedOptions, setSelectedOptions, classes, label, id} = props;
+    const {options, setOptions, selectedOptions, setSelectedOptions, classes, label, id} = props;
     const [getCurrentVal, setCurrentVal] = useState({"name": ""});
-    const [viableOptions, setViableOptions] = useState([]);
-
+    const [firstLoad, setFirstLoad] = useState(true);
 
     function handleDelete(data) {
         setSelectedOptions(selectedOptions.filter(item => item !== data));
-        setViableOptions(
+        setOptions(
             [
-                ...viableOptions,
+                ...options,
                 data
             ]
         )
     }
 
-    useEffect(() => {
-        setViableOptions(options.filter(item => !selectedOptions.includes(item)))
-    }, [options, selectedOptions]);
+    useEffect(()=>{
+        if(firstLoad && options.length>0){
+            let data = [];
+            options.map(row=>{
+                let found = false;
+                selectedOptions.map(row1=>{
+                    if(JSON.stringify(row) === JSON.stringify(row1)){
+                        found = true
+                    }
+                });
+                if(!found){
+                   data.push(row)
+                }
+            });
+            setOptions(data);
+            setFirstLoad(false)
+        }
+    },[options]);
 
     function handleInput(event, value){
         setCurrentVal({"name": ""});
@@ -57,7 +71,7 @@ function AutoCompleteChip(props){
                 value
             ]
         );
-        setViableOptions(viableOptions.filter(item => item !== value))
+        setOptions(options.filter(item => item !== value))
     }
 
     return(
@@ -85,7 +99,7 @@ function AutoCompleteChip(props){
                 <Autocomplete
                     className={classes.autoComplete}
                     value={getCurrentVal}
-                    options={viableOptions}
+                    options={options}
                     onChange={handleInput}
                     disableClearable
                     getOptionLabel={(option) =>  option.name}
@@ -99,6 +113,7 @@ function AutoCompleteChip(props){
 AutoCompleteChip.propTypes = {
     setSelectedOptions: PropTypes.func.isRequired,
     options: PropTypes.array.isRequired,
+    setOptions: PropTypes.func.isRequired,
     selectedOptions: PropTypes.array.isRequired,
     classes: PropTypes.object.isRequired,
     label: PropTypes.string.isRequired

@@ -18,9 +18,7 @@ import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Strings from "../helpers/stringResources";
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import green from "@material-ui/core/colors/green";
-import ThemeProvider from "react-bootstrap/ThemeProvider";
 import Reviews from "../components/add_place_components/Reviews";
 import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 
@@ -78,7 +76,7 @@ function AddPlace({classes, match}){
     const [placeInfo, setPlaceInfo] = useState({placeId: "",
         name: "", description: "",website: "", phoneNumber: "",
         hasSchedule: false, isPublic: false, isVerified: true, overallStarRating: 0, totalReviews: 0,
-        source: "", price: "", averageTimeSpent: ""});
+        source: "", price: "", averageTimeSpent: "0"});
 
 
     const [selectedTags, setSelectedTags] = useState([]);
@@ -89,6 +87,8 @@ function AddPlace({classes, match}){
     const [locationData, setLocationData] = useState({city: '', address: '', country: '', latitude: 54.687157, longitude: 25.279652});
     const [parkingMarkerData, setParkingMarkerData] = useState({city: '', address: '', country: '', latitude: 54.687157, longitude: 25.279652});
     const [allSelectedParkingData, setAllSelectedParkingData] = useState([]);
+
+    const [sources, setSources] = useState([]);
 
     const [scheduleData, setScheduleData] = useState(initialScheduleData);
 
@@ -116,6 +116,7 @@ function AddPlace({classes, match}){
     }))(Button);
 
     useEffect(()=>{
+        console.log(placeId)
         //Loaded place for editing
         if(placeId!==undefined){
             console.log("Getting place location");
@@ -134,7 +135,8 @@ function AddPlace({classes, match}){
                 updateParkingData(placeId),
                 updateCategoriesData(placeId),
                 updatePhotoData(placeId),
-                updateSchedule(placeId)
+                updateSchedule(placeId),
+                updateSources(placeId)
             ]).then(responses=>{
                 formFeedback(true, Strings.SNACKBAR_PLACE_INSERTED_SUCCESS)
             }).catch(error=>{
@@ -161,7 +163,7 @@ function AddPlace({classes, match}){
     }
 
     function setAllData(place){
-        console.log(place);
+        console.log("Got data:",place);
         setPlaceInfo({
             placeId: place.placeId,
             name: place.name,
@@ -172,7 +174,9 @@ function AddPlace({classes, match}){
             isPublic: place.isPublic,
             isVerified: place.isVerified,
             overallStarRating: place.overallStarRating,
-            totalReviews: place.totalReviews
+            totalReviews: place.totalReviews,
+            price: place.price,
+            averageTimeSpent: place.averageTimeSpent
         });
 
         setLocationData({city: place.city,
@@ -181,6 +185,7 @@ function AddPlace({classes, match}){
             latitude: place.latitude,
             longitude: place.longitude});
 
+        setSources(place.sources);
         setSelectedTags(place.tags);
         setSelectedCategories(place.categories);
         if(place.schedule.length > 0)
@@ -216,7 +221,8 @@ function AddPlace({classes, match}){
             updatePhotoData(placeId),
             updateCategoriesData(placeId),
             updateParkingData(placeId),
-            updateSchedule(placeId)
+            updateSchedule(placeId),
+            updateSources(placeId)
         ]).then(response=>{
             formFeedback(true, Strings.SNACKBAR_CHANGES_SAVED);
         }).catch(err=>{
@@ -225,6 +231,7 @@ function AddPlace({classes, match}){
     }
 
     function updatePlaceInfo() {
+        console.log(formPlaceInfo());
         API.Places.updatePlace(formPlaceInfo()).then(response=>{
 
         }).catch(error=>{
@@ -257,6 +264,16 @@ function AddPlace({classes, match}){
         })
     }
 
+    function updateSources(id) {
+        console.log("Hello")
+        API.SourcePlace.updateSourcesForPlace(sources, "?p="+id).then(response=>{
+            console.log(sources)
+        }).catch(error=>{
+
+        })
+    }
+
+
     function updateCategoriesData(id) {
         API.CategoriesPlace.updateCategoriesForPlace(selectedCategories, "?p="+id).then(response=>{
 
@@ -272,6 +289,7 @@ function AddPlace({classes, match}){
 
         })
     }
+
 
     function updateSchedule(id){
         console.log(scheduleData);
@@ -308,13 +326,14 @@ function AddPlace({classes, match}){
             {firstTimeLoading ? <div className={classes.loader}><CircularProgress /></div> : <div className={classes.content}>
 
 
-
-
                 <Paper elevation = {4} className={classes.paperContent}>
                     <BasicPlaceInfo
                         placeInfo={placeInfo}
                         setPlaceInfo={setPlaceInfo}
+                        selectedSources={sources}
+                        setSelectedSources={setSources}
                     />
+
                 </Paper>
 
                 {placeId !== undefined ?

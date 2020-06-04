@@ -1,14 +1,17 @@
 import React from "react";
 import axios from "axios"
+import history from "../helpers/history";
+import {getAccessToken} from "../helpers/auth"
 
 const request = async function(options, contentType) {
 
     const client = axios.create({
-        baseURL: false ? "http://localhost:8080/" : "http://izbg.l.dedikuoti.lt:8080/",
+        baseURL: true ? "http://localhost:8080/" : "http://izbg.l.dedikuoti.lt:8080/",
         headers: {
             'Content-Type': (contentType == null) ? 'application/json': contentType,
             'Accept':  'application/json',
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            "Authorization": getAccessToken()
         },
     });
 
@@ -17,12 +20,14 @@ const request = async function(options, contentType) {
         return response.data;
     };
 
-
-
     const onError = function (error) {
+        console.log(getAccessToken())
         console.debug('Request Failed:', error.config);
         if (error.response) {
             console.debug('Status:', error.response.status);
+            if(error.response.status === 403){
+                history.push("/login")
+            }
             console.debug('Data:', error.response.data);
             console.debug('Headers:', error.response.headers);
         } else {

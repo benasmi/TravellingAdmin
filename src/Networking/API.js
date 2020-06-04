@@ -59,7 +59,16 @@ const Schedule = {updateScheduleForPlace};
 const getPlaceReviews = (urlParams) => RequestType.getRequest("api/v1/reviews/all", urlParams);
 const Reviews = {getPlaceReviews};
 
-const API = {Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
+//Sources
+const getSources = () => RequestType.getRequest("api/v1/source/all");
+const addSource = (data) => RequestType.postRequest("api/v1/source/insert",data);
+const Source = {getSources, addSource};
+
+//SourcePlace
+const updateSourcesForPlace = (data, urlParams) => RequestType.postRequest("api/v1/sourceplace/update", data, urlParams);
+const SourcePlace = {updateSourcesForPlace};
+
+const API = {SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
 
 export default API
 

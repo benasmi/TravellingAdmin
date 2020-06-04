@@ -14,7 +14,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { Router, Route, Link } from "react-router-dom";
+import { Router, Route, Link, Switch } from "react-router-dom";
 import Home from "../pages/Home";
 import Places from "../pages/Places";
 import AddPlace from "../pages/AddPlace";
@@ -22,6 +22,8 @@ import history from "../helpers/history";
 import ApiPlaces from "../pages/ApiPlaces";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
 import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
+import NotFoundPage from "../pages/NotFoundPage";
+import Redirect from "react-router-dom/es/Redirect";
 
 const drawerWidth = 240;
 
@@ -91,12 +93,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function Appbar() {
+export default function Appbar(props) {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = useState(false);
     const { title, setTitle } = UseAppBarTitleContext();
 
+    console.log(props)
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -131,7 +134,6 @@ export default function Appbar() {
                 </Toolbar>
             </AppBar>
 
-            <Router history={history}>
             <Drawer
                 className={classes.drawer}
                 variant="persistent"
@@ -149,17 +151,17 @@ export default function Appbar() {
 
                 <Divider />
                 <List>
-                    <ListItem button component={Link} to="/" onClick={()=>setTitle("Home")}>
+                    <ListItem button component={Link} to="/app/" onClick={()=>setTitle("Home")}>
                         <ListItemText>Home</ListItemText>
                     </ListItem>
                     <Divider light />
-                    <ListItem button component={Link} to="/places" onClick={()=>setTitle("Places")} >
+                    <ListItem button component={Link} to="/app/places" onClick={()=>setTitle("Places")} >
                         <ListItemText>Places</ListItemText>
                     </ListItem>
-                    <ListItem button component={Link} to="/apiplaces" onClick={()=>setTitle("Api places")} >
+                    <ListItem button component={Link} to="/app/apiplaces" onClick={()=>setTitle("Api places")} >
                         <ListItemText>Explore API places</ListItemText>
                     </ListItem>
-                    <ListItem button component={Link} to="/addplace" onClick={()=>setTitle("Add Place")} >
+                    <ListItem button component={Link} to="/app/addplace" onClick={()=>setTitle("Add Place")} >
                         <ListItemText>Add place</ListItemText>
                     </ListItem>
                 </List>
@@ -170,13 +172,16 @@ export default function Appbar() {
                 })}
             >
                 <div className={classes.drawerHeader} />
-                <Route exact path="/" component={Home} />
-                <Route path="/places" component={Places} />
-                <Route path="/addplace/:placeId?" component={AddPlace} />
-                <Route path="/apiplaces" component={ApiPlaces} />
-                <Route path="/addplace" component={AddPlace} />
+                <Switch>
+                    <Route exact path="/app" component={Home} />
+                    <Route path="/app/places" component={Places} />
+                    <Route path="/app/addplace/:placeId?" component={AddPlace} />
+                    <Route path="/app/apiplaces" component={ApiPlaces} />
+                    <Route path="/app/addplace" component={AddPlace} />
+                    <Redirect from="*" to="/404"/>
+                </Switch>
+
             </main>
-            </Router>
         </div>
     );
 }

@@ -7,11 +7,6 @@ export const SnackbarContext = React.createContext({
     removeConfig: () => {}
 });
 
-export function UseSnackbarContext() {
-    const { config, addConfig, removeConfig } = useContext(SnackbarContext);
-    return { config, addConfig, removeConfig };
-}
-
 
 export default function SnackbarProvider({ children }) {
     const [config, setConfig] = useState(null);

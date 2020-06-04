@@ -53,7 +53,6 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
     };
 
     useEffect(()=>{
-        console.log("ParsiunciaasdasdkasfkjlasdnfoasdFJasdfn;FN;")
         updateTags();
         updateCategories();
     },[]);
@@ -108,7 +107,13 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
         <Typography variant="subtitle1" >
             Select tags
         </Typography>
-        <AutocompleteChip label="Select tags" id="tagId" options={availableTags} selectedOptions={selectedTags} setSelectedOptions ={setSelectedTags}/>
+        <AutocompleteChip label="Select tags"
+                          id="tagId"
+                          options={availableTags}
+                          setOptions={setAvailableTags}
+                          selectedOptions={selectedTags}
+                          setSelectedOptions ={setSelectedTags}/>
+
         <Button
             variant="text"
             color="primary"
@@ -125,7 +130,12 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
         <Typography variant="subtitle1" >
             Select categories
         </Typography>
-        <AutocompleteChip label="Select categories" id="categoryId" options={availableCategories} selectedOptions={selectedCategories} setSelectedOptions={setSelectedCategories}/>
+        <AutocompleteChip label="Select categories"
+                          id="categoryId"
+                          options={availableCategories}
+                          setOptions={setAvailableCategories}
+                          selectedOptions={selectedCategories} 
+                          setSelectedOptions={setSelectedCategories}/>
         <Button
             variant="text"
             color="primary"
@@ -135,8 +145,11 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
             startIcon={<AddIcon />}>
             Add missing category
         </Button>
-        <AddDialog action={handleAddCategory} textFieldLabel="Name" open={dialogAddCategoryOpen} onCloseCallback={() => setDialogAddCategoryOpen(false)} header = "Add a new category" />
-
+        <AddDialog action={handleAddCategory}
+                   textFieldLabel="Name"
+                   open={dialogAddCategoryOpen}
+                   onCloseCallback={() => setDialogAddCategoryOpen(false)}
+                   header = "Add a new category" />
     </div>
 }
 

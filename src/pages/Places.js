@@ -106,7 +106,7 @@ function Places(props) {
     }
 
     function updatePlaceCallback(id){
-        history.push("/addplace/"+id)
+        history.push("/app/addplace/"+id)
     }
     function removePlaceCallback(id){
         setIsLoading(true);
@@ -213,7 +213,7 @@ function Places(props) {
 
                 <Box display="flex" justifyContent="flex-end">
                     <Button
-                        onClick={()=>{history.push("/addplace")}}
+                        onClick={()=>{history.push("/app/addplace")}}
                         variant="text"
                         color="secondary"
                         size="large"

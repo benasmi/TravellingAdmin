@@ -25,6 +25,7 @@ function DayComponent({classes, scheduleData, setScheduleData, openDay, onChange
 
     useEffect(() => {
         onChange(intervals, openDay)
+        console.log(intervals)
     }, [intervals])
 
     let weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']

@@ -50,6 +50,7 @@ function AddImageDialog(props){
                 <DialogContent dividers>
                     <DropzoneArea
                         acceptedFiles={acceptedFileFormats}
+                        maxFileSize={25000000}
                         dropzoneProps = {{disabled: loading}} filesLimit={1} onDrop={(files) => handleFileUpload(files)}/>
                 </DialogContent>
                 <DialogActions>

@@ -24,7 +24,7 @@ import UseSnackbarContext from "../contexts/UseSnackbarContext";
 import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 import NotFoundPage from "../pages/NotFoundPage";
 import Redirect from "react-router-dom/es/Redirect";
-
+import { useLocation } from 'react-router-dom'
 const drawerWidth = 240;
 
 
@@ -98,8 +98,7 @@ export default function Appbar(props) {
     const theme = useTheme();
     const [open, setOpen] = useState(false);
     const { title, setTitle } = UseAppBarTitleContext();
-
-    console.log(props)
+    let location = useLocation();
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -107,6 +106,15 @@ export default function Appbar(props) {
 
     const handleDrawerClose = () => {
         setOpen(false);
+    };
+
+    const handleListItemClick = (url,title) =>{
+        handleDrawerClose();
+        setTitle(title);
+
+        if(location.pathname === url){
+            history.go(0)
+        }
     };
 
     return (
@@ -151,17 +159,17 @@ export default function Appbar(props) {
 
                 <Divider />
                 <List>
-                    <ListItem button component={Link} to="/app/" onClick={()=>setTitle("Home")}>
+                    <ListItem button component={Link} to="/app/" onClick={()=>handleListItemClick("/app/","Home")}>
                         <ListItemText>Home</ListItemText>
                     </ListItem>
                     <Divider light />
-                    <ListItem button component={Link} to="/app/places" onClick={()=>setTitle("Places")} >
+                    <ListItem button component={Link} to="/app/places" onClick={()=>handleListItemClick("/app/places","Places")} >
                         <ListItemText>Places</ListItemText>
                     </ListItem>
-                    <ListItem button component={Link} to="/app/apiplaces" onClick={()=>setTitle("Api places")} >
+                    <ListItem button component={Link} to="/app/apiplaces" onClick={()=>handleListItemClick("/app/apiplaces","Api places")} >
                         <ListItemText>Explore API places</ListItemText>
                     </ListItem>
-                    <ListItem button component={Link} to="/app/addplace" onClick={()=>setTitle("Add Place")} >
+                    <ListItem button component={Link} to="/app/addplace" onClick={()=>handleListItemClick("/app/addplace","Add Place")} >
                         <ListItemText>Add place</ListItemText>
                     </ListItem>
                 </List>

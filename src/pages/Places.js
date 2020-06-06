@@ -14,13 +14,8 @@ import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import Popover from "@material-ui/core/Popover";
-import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
 import Checkbox from "@material-ui/core/Checkbox";
-import {forEach} from "react-bootstrap/cjs/ElementChildren";
-import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
-
 
 const styles = theme => ({
     button: {
@@ -36,7 +31,6 @@ const styles = theme => ({
         flexDirection: "column"
 
 },
-
     root:{
         height:"100vh",
         width:"100%",
@@ -89,8 +83,10 @@ function Places(props) {
     const { addConfig } = UseSnackbarContext();
 
     useEffect(()=>{
-        console.log("Filter query", filterQuery);
-        getAllPlaces("?o="+filterQuery)
+        if(!isLoading){
+            getAllPlaces("?o="+filterQuery)
+            console.log("Filter query", filterQuery);
+        }
     },[filterQuery]);
 
     function parseData(data){
@@ -229,6 +225,7 @@ function Places(props) {
 
     function getAllPlaces(urlParams="") {
         API.Places.getAllPlacesAdmin(urlParams).then(response=>{
+            console.log(response)
             parseData(response)
         }).catch(error=>{
             console.log(error)

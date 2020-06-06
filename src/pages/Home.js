@@ -1,6 +1,8 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import app from "../helpers/firebaseInit";
+import Cookies from "js-cookie";
 
 const styles = theme => ({
     button: {
@@ -15,8 +17,10 @@ const styles = theme => ({
 
 
 
+
 const Home = props => {
     const { classes } = props;
+
     return (
         <div>
 

@@ -254,7 +254,7 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
                         name: 'averageTimeSpent'
                     }}
                 >
-                    <option disabled value="0">""</option>
+                    <option disabled value="0"></option>
                     {
                         averageTimeSpent.map(row=>{
                             return <option value={parseInt(row.value, 10)}> {row.value}</option>

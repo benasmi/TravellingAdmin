@@ -25,6 +25,7 @@ import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 import NotFoundPage from "../pages/NotFoundPage";
 import Redirect from "react-router-dom/es/Redirect";
 import { useLocation } from 'react-router-dom'
+import Tours from "../pages/Tours";
 const drawerWidth = 240;
 
 
@@ -166,6 +167,9 @@ export default function Appbar(props) {
                     <ListItem button component={Link} to="/app/places" onClick={()=>handleListItemClick("/app/places","Places")} >
                         <ListItemText>Places</ListItemText>
                     </ListItem>
+                    <ListItem button component={Link} to="/app/tours" onClick={()=>handleListItemClick("/app/tours","Tours")} >
+                        <ListItemText>Tours</ListItemText>
+                    </ListItem>
                     <ListItem button component={Link} to="/app/apiplaces" onClick={()=>handleListItemClick("/app/apiplaces","Api places")} >
                         <ListItemText>Explore API places</ListItemText>
                     </ListItem>
@@ -183,6 +187,9 @@ export default function Appbar(props) {
                 <Switch>
                     <Route exact path="/app" component={Home} />
                     <Route path="/app/places" component={Places} />
+                    <Route path="/app/tours" component={Tours} />
+                    <Route path="/app/addtour/:tourId?" component={Tours} />
+                    <Route path="/app/addtour/" component={Tours} />
                     <Route path="/app/addplace/:placeId?" component={AddPlace} />
                     <Route path="/app/apiplaces" component={ApiPlaces} />
                     <Route path="/app/addplace" component={AddPlace} />

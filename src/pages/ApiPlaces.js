@@ -33,6 +33,16 @@ const styles = theme => ({
     },
     searchBox: {
         margin: theme.spacing(1)
+    },
+    placeApiCard: {
+        [theme.breakpoints.down('lg')]: {
+            width: "95%",
+        },
+        [theme.breakpoints.up('lg')]: {
+            width: "28vw",
+        },
+        // minWidth: "400px",
+        margin: theme.spacing(1)
     }
 })
 
@@ -77,7 +87,7 @@ function ApiPlaces({classes}){
                 >
 
                     {data.map(item => {
-                        return <ApiPlaceCard key={item.placeId} placeData = {item} style={{boxSizing: 'border-box'}}/>
+                        return <ApiPlaceCard classes ={{ root: classes.placeApiCard}} key={item.placeId} placeData = {item} style={{boxSizing: 'border-box'}}/>
                     })}
 
                     {

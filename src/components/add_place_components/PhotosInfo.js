@@ -40,7 +40,6 @@ function PhotosInfo({classes, setPhotos, photos}) {
 
                 {photos.length > 0 && <ReorderablePhotos keyName="photoId" srcName = "url" setPhotos = {setPhotos} photos = {photos} />}
 
-
                 <Button
                     variant="text"
                     color="primary"

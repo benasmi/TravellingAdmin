@@ -9,6 +9,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@welldone-software/why-did-you-render": "^4.2.5",
     "bootstrap": "^4.4.1",
     "firebase": "^7.14.6",
     "js-cookie": "^2.2.1",
@@ -32,7 +33,8 @@
     "react-scripts": "3.4.1",
     "react-sortable-hoc": "^1.11.0",
     "react-stack-grid": "^0.7.1",
-    "recompose": "latest"
+    "recompose": "latest",
+    "shortid": "^2.2.15"
   },
   "scripts": {
     "start": "react-scripts start",

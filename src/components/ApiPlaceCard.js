@@ -21,13 +21,7 @@ import Box from "@material-ui/core/Box";
 
 const styles = theme => ({
     root: {
-        [theme.breakpoints.down('lg')]: {
-            width: "95%",
-        },
-        [theme.breakpoints.up('lg')]: {
-            width: "28vw",
-        },
-        margin: theme.spacing(1)
+
     },
     media: {
         height: 0,
@@ -77,7 +71,6 @@ function CategoriesDisplay({categories}){
 function SubheaderDisplay({city, address, priceRange, rating}){
     return(
         <div>
-
             {rating != null &&
             <Fragment><Rating
                 readOnly={true}
@@ -89,7 +82,7 @@ function SubheaderDisplay({city, address, priceRange, rating}){
     )
 }
 
-function ApiPlaceCard({classes, placeData}){
+function ApiPlaceCard({classes, placeData, renderActionArea}){
 
     function truncateText(text){
         if(text == null)
@@ -105,15 +98,13 @@ function ApiPlaceCard({classes, placeData}){
         <Card className={classes.root}>
             <CardHeader
                 action={
-                    <IconButton aria-label="settings">
-                        <InfoIcon />
-                    </IconButton>
+                    renderActionArea != null && renderActionArea()
                 }
                 title={placeData.name}
-                subheader={<SubheaderDisplay city={placeData.city} address={placeData.address} priceRange={placeData.priceRange} rating={placeData.overallStarRating}/>}
+                subheader={<SubheaderDisplay  city={placeData.city} address={placeData.address} priceRange={placeData.priceRange} rating={placeData.overallStarRating}/>}
 
             />
-            {placeData.photos != null &&
+            {placeData.photos != null && placeData.photos.length > 0 &&
             <CardMedia
                 className={classes.media}
                 image={placeData.photos[0].url}
@@ -137,7 +128,8 @@ function ApiPlaceCard({classes, placeData}){
 }
 
 ApiPlaceCard.propTypes = {
-    placeData: PropTypes.object.isRequired
+    placeData: PropTypes.object.isRequired,
+    renderActionArea: PropTypes.func
 };
 
 export default withStyles(styles)(ApiPlaceCard)

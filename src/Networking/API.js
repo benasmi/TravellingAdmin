@@ -67,7 +67,13 @@ const Source = {getSources, addSource};
 const updateSourcesForPlace = (data, urlParams) => RequestType.postRequest("api/v1/sourceplace/update", data, urlParams);
 const SourcePlace = {updateSourcesForPlace};
 
-const API = {SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
+//Tours
+const insertTour = (data) => RequestType.postRequest("api/v1/tour/insert",data)
+const updateTour = (data, urlParams) => RequestType.postRequest("api/v1/tour/update",data, urlParams)
+const getTour = (urlParams) => RequestType.getRequest("api/v1/tour",urlParams)
+const Tour = {insertTour, getTour, updateTour}
+
+const API = {Tour, SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
 
 export default API
 

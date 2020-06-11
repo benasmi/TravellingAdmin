@@ -16,7 +16,6 @@ import {MuiPickersUtilsProvider} from "@material-ui/pickers";
 import AlertDialogProvider from "./contexts/AlertDialogContext";
 import AlertDialogFeedback from "./components/feedback/AlertDialogFeedback";
 
-
 var firebaseConfig = {
     apiKey: "AIzaSyBRhTGXvKq0RD-ajkbOndOIK9c03wg9vRo",
     authDomain: "travel-fd76c.firebaseapp.com",

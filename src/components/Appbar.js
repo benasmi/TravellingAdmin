@@ -24,6 +24,7 @@ import UseSnackbarContext from "../contexts/UseSnackbarContext";
 import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 import NotFoundPage from "../pages/NotFoundPage";
 import Redirect from "react-router-dom/es/Redirect";
+import Tour from "./tour_components/Tour";
 
 const drawerWidth = 240;
 
@@ -164,6 +165,9 @@ export default function Appbar(props) {
                     <ListItem button component={Link} to="/app/addplace" onClick={()=>setTitle("Add Place")} >
                         <ListItemText>Add place</ListItemText>
                     </ListItem>
+                    <ListItem button component={Link} to="/app/addtour" onClick={()=>setTitle("Add tour")} >
+                        <ListItemText>Add tour</ListItemText>
+                    </ListItem>
                 </List>
             </Drawer>
             <main
@@ -178,6 +182,8 @@ export default function Appbar(props) {
                     <Route path="/app/addplace/:placeId?" component={AddPlace} />
                     <Route path="/app/apiplaces" component={ApiPlaces} />
                     <Route path="/app/addplace" component={AddPlace} />
+                    <Route path="/app/addtour/:tourId?" component={Tour} />
+                    <Route path="/app/addtour" component={Tour} />
                     <Redirect from="*" to="/404"/>
                 </Switch>
 

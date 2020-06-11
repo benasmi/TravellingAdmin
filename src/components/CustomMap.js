@@ -37,7 +37,6 @@ const styles = theme => ({
 var markerData = {};
 function CustomMap({classes, locationData, setLocationData, mapHeight, selectedParkingCallback, changedParkingMarkerCallback, addParkingCallback}){
 
-
     CustomMap.propTypes = {
         locationData: PropTypes.object,
         setLocationData: PropTypes.func,
@@ -190,8 +189,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
     }
 
     const getCountry = (addressArray) =>{
-        //getCurrentPosition()
-        if(addressArray!=undefined){
+        if(addressArray!==undefined){
         let country = '';
         for( let i = 0; i < addressArray.length; i++ ) {
             if ( addressArray[ i ].types[0] && 'country' === addressArray[ i ].types[0] ) {
@@ -400,7 +398,6 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
         return <FullMap/>;
     }, [])
 
-    //
 
 }
 

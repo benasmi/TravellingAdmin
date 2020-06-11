@@ -1,7 +1,6 @@
 import Route from "react-router-dom/es/Route";
 import React, {useContext} from "react";
 import Redirect from "react-router-dom/es/Redirect";
-import {AuthContext} from "../contexts/AuthContext";
 import {isAuthenticated} from "../helpers/tokens";
 
 export const AuthenticatedRoute = ({ component: Component, ...rest }) => {

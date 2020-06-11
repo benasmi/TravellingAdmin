@@ -20,20 +20,17 @@ import AddSourceDialog from "../AddSourceDialog";
 const styles = theme => ({});
 let previousPrice = "";
 
-function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setSelectedSources, error, setError, checkErrors}) {
+function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setSelectedSources}) {
 
     const updatePlaceInfo = (event, newValue) => {
         const {name, value, id} = event.target;
         let place = Object.assign({}, placeInfo, {});
-        let err = Object.assign({}, error, {});
         if (id !== "") {
             place[id] = valuetext(newValue[0]);
         } else {
-            //err[name] = name==='name' && value.length === 0;
             place[name] = value
         }
         console.log("Updated place", place);
-        setError(err);
         setPlaceInfo(place)
     };
 
@@ -66,12 +63,8 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
         getSources()
     },[]);
 
-    console.log(placeInfo["averageTimeSpent"]);
-    const [hasPrice, setHasPrice] = useState(placeInfo["price"] !== "");
-    const [hasAverageTime, setHasAverageTime] = useState( parseInt(placeInfo["averageTimeSpent"]) !== 0);
 
     const [dialogOpen, setDialogOpen] = useState(false);
-
     const [availableSources, setAvailableSources] = useState([]);
 
     function valuetext(value) {
@@ -90,7 +83,6 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
         <br/>
         <TextField
             required
-            error={checkErrors && error['name']}
             label="Place name"
             style={{margin: 8}}
             placeholder="Enter the place name"
@@ -179,37 +171,12 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
         <br/>
         <br/>
         <div style={{display: "flex"}}>
-            <FormControlLabel
-                control={
-                    <Switch
-                        checked={hasPrice}
-                        onChange={() => {
-                            setHasPrice(old => {
-                                let place = Object.assign({}, placeInfo, {});
-                                if (old === false) {
-                                        previousPrice = place['price'];
-                                        place["price"] = "";
-                                        setPlaceInfo(place);
-                                    }else{
-                                        place['price'] = previousPrice;
-                                        setPlaceInfo(place);
-                                    }
-                                    return !old
-                                }
-                            )
-                        }}
-                        name="price"
-                        color="primary"
-                    />
-                }
-                label="Price"
-                labelPlacement="start"
-            />
-
+            <Typography>
+                Price
+            </Typography>
             <Slider
                 id="price"
                 onChange={updatePlaceInfo}
-                disabled={!hasPrice}
                 value={priceRange.map(row => {
                     if (row.label === placeInfo['price']) return row.value
                 })}
@@ -218,34 +185,19 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
                 getAriaValueText={valuetext}
                 aria-labelledby="discrete-slider-always"
                 step={25}
+                max={125}
                 marks={priceRange}
             />
         </div>
         <br/>
         <br/>
         <div style={{display: "flex"}}>
-            <FormControlLabel
-                control={
-                    <Switch
-                        checked={hasAverageTime}
-                        onChange={() => setHasAverageTime(old => {
-                            let place = Object.assign({}, placeInfo, {})
-                            place["averageTimeSpent"] = old === true ? 0 : 30
-                            setPlaceInfo(place)
-                            return !old
-                        })}
-                        color="primary"
-                    />
-                }
-                label="Average time Spent"
-                labelPlacement="start"
-            />
-
-
+            <Typography>
+                Average time spent
+            </Typography>
             <FormControl variant="outlined" style={{width: "60%", marginLeft: "48px"}}>
                 <InputLabel>Minutes</InputLabel>
                 <Select
-                    disabled={!hasAverageTime}
                     native
                     value={parseInt(placeInfo['averageTimeSpent'], 10)}
                     onChange={updatePlaceInfo}
@@ -254,7 +206,7 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
                         name: 'averageTimeSpent'
                     }}
                 >
-                    <option disabled value="0"></option>
+                    <option value="-1">None</option>
                     {
                         averageTimeSpent.map(row=>{
                             return <option value={parseInt(row.value, 10)}> {row.value}</option>

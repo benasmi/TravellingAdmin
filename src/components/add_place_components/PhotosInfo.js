@@ -21,13 +21,14 @@ const styles = theme => ({
 function PhotosInfo({classes, setPhotos, photos}) {
     const [addImageDialogOpen, setAddImageDialogOpen] = useState(false);
 
-    function handleAddPhoto(file) {
+    function handleAddPhoto(files) {
         setAddImageDialogOpen(false);
-        if(file == null)
+        if(files == null)
             return;
+
         setPhotos([
             ...photos,
-            file]
+            ...files]
         )
     }
 
@@ -51,7 +52,7 @@ function PhotosInfo({classes, setPhotos, photos}) {
                     Add photo
                 </Button>
 
-                <AddImageDialog open={addImageDialogOpen} onFinishCallback={(file) => handleAddPhoto(file)} onCloseCallback={() => setAddImageDialogOpen(false)}/>
+                <AddImageDialog open={addImageDialogOpen} onFinishCallback={(files) => handleAddPhoto(files)} onCloseCallback={() => setAddImageDialogOpen(false)}/>
 
 
             </Card>

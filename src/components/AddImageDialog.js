@@ -2,66 +2,72 @@ import {withStyles} from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import React, {useState} from "react";
-import {Card} from "@material-ui/core";
 import {DropzoneArea} from "material-ui-dropzone";
-import Typography from "@material-ui/core/Typography";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import PropTypes from "prop-types";
 import API from "../Networking/API";
-import axios from "axios";
 
 const styles = theme => ({
+    dropzoneArea: {
+        overflow: "hidden"
+    }
 });
 
 const acceptedFileFormats = ['image/jpeg', 'image/png', 'image/bmp', 'image/jpg']
 
-function AddImageDialog(props){
+function AddImageDialog(props) {
 
-    const {onCloseCallback, open, onFinishCallback} = props
+    const {onCloseCallback, open, onFinishCallback, classes} = props
     const [loading, setIsLoading] = useState(false)
+    const [selectedFiles, setSelectedFiles] = useState([])
 
-    function handleFileUpload(files) {
+    const submitCallback = () => {
         setIsLoading(true)
 
-        var imagefile = files[0]
-        let formData = new FormData()
-        formData.append("image", imagefile)
-
-        API.Photos.uploadPhoto(formData).then(response => {
+        Promise.all(selectedFiles.map(imagefile => {
+            let formData = new FormData()
+            formData.append("image", imagefile)
+            return API.Photos.uploadPhoto(formData)
+        })).then(response => {
+            console.log(response)
             onFinishCallback(response)
-        }).catch(err => {
+        }).catch(error => {
             onFinishCallback()
         }).finally(() => {
             setIsLoading(false)
         })
     }
 
-    return(
+    return (
         <div>
             <Dialog aria-labelledby="customized-dialog-title" open={open} fullWidth={true}>
-                <DialogTitle id="customized-dialog-title" >
+                <DialogTitle id="customized-dialog-title">
                     Photo upload
                 </DialogTitle>
-                {loading && <LinearProgress variant="query" />}
+                {loading && <LinearProgress variant="query"/>}
                 <DialogContent dividers>
                     <DropzoneArea
+                        className={classes.dropzoneArea}
                         acceptedFiles={acceptedFileFormats}
                         maxFileSize={25000000}
-                        dropzoneProps = {{disabled: loading}} filesLimit={1} onDrop={(files) => handleFileUpload(files)}/>
+                        dropzoneProps={{disabled: loading}} filesLimit={5} onDrop={setSelectedFiles}/>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onCloseCallback} color="primary">
                         Cancel
+                    </Button>
+                    <Button onClick={submitCallback} color="primary">
+                        Submit
                     </Button>
                 </DialogActions>
             </Dialog>
         </div>
     )
 }
+
 AddImageDialog.propTypes = {
     classes: PropTypes.object.isRequired,
     open: PropTypes.bool.isRequired,

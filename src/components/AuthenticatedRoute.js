@@ -1,12 +1,20 @@
 import Route from "react-router-dom/es/Route";
-import React from "react";
+import React, {useContext} from "react";
 import Redirect from "react-router-dom/es/Redirect";
-import {isAuthenticated} from '../helpers/auth'
+import {AuthContext} from "../contexts/AuthContext";
+import {isAuthenticated} from "../helpers/tokens";
 
-export const AuthenticatedRoute = ({ component: Component, ...rest }) => (
-    <Route {...rest} render={(props) => (
-        isAuthenticated() === true
-            ? <Component {...props} />
-            : <Redirect to='/login' />
-    )} />
-);
+export const AuthenticatedRoute = ({ component: Component, ...rest }) => {
+    return (
+        <Route
+            {...rest}
+            render={routeProps =>
+                isAuthenticated() === true ? (
+                    <Component {...routeProps} />
+                ) : (
+                    <Redirect to={"/login"} />
+                )
+            }
+        />
+    );
+};

@@ -27,7 +27,7 @@ function TourMap({classes, tourInfo, currentDay}) {
     */
     return (
         <div className={classes.root}>
-            Map placeholder
+            {/*Map placeholder*/}
         </div>
     )
 }

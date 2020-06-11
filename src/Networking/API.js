@@ -3,6 +3,7 @@ import RequestType from '../Networking/NetworkLayerCentral'
 //Places
 const getAllPlaces = (urlParams) => RequestType.getRequest("api/v1/place/search", urlParams);
 const getAllPlacesAdmin = (urlParams) => RequestType.getRequest("api/v1/place/searchadmin", urlParams);
+
 const insertPlace = (data) => RequestType.postRequest("api/v1/place/insert",data);
 const updatePlace = (data) => RequestType.postRequest("api/v1/place/update", data);
 const getPlaceById = (urlParams) => RequestType.getRequest("api/v1/place/getplace", urlParams);
@@ -71,7 +72,9 @@ const SourcePlace = {updateSourcesForPlace};
 const insertTour = (data) => RequestType.postRequest("api/v1/tour/insert",data)
 const updateTour = (data, urlParams) => RequestType.postRequest("api/v1/tour/update",data, urlParams)
 const getTour = (urlParams) => RequestType.getRequest("api/v1/tour",urlParams)
-const Tour = {insertTour, getTour, updateTour}
+const removeTour = (urlParams) => RequestType.getRequest("api/v1/tour/delete", urlParams);
+const getAllToursAdmin = (urlParams) => RequestType.getRequest("api/v1/tour/searchadmin", urlParams);
+const Tour = {insertTour, getTour, updateTour, getAllToursAdmin, removeTour}
 
 const API = {Tour, SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
 

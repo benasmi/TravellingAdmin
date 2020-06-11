@@ -15,8 +15,15 @@ const Strings = {
     DIALOG_PLACE_DELETE_TITLE: "Delete place",
     DIALOG_PLACE_DELETE_MESSAGE: "This action will remove this place permanently. Are you sure you want to proceed?",
 
+    DIALOG_TOUR_DELETE_TITLE: "Delete tour",
+    DIALOG_TOUR_DELETE_MESSAGE: "This action will remove this tour permanently. Are you sure you want to proceed?",
+
     SNACKBAR_PLACE_INSERTED_SUCCESS: "Place inserted successfully",
     SNACKBAR_PLACE_REMOVE_SUCCESS: "Place was removed successfully",
+
+    SNACKBAR_TOUR_INSERTED_SUCCESS: "Tour inserted successfully",
+    SNACKBAR_TOUR_REMOVE_SUCCESS: "Tour was removed successfully",
+
     SNACKBAR_ERROR: "Something went wrong!",
     SNACKBAR_CHANGES_SAVED: "All changes saved!"
 };

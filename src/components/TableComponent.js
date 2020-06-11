@@ -139,7 +139,6 @@ const EnhancedTableToolbar = (props) => {
     const debouncedSearch = useDebounce(keyword, 300);
 
 
-
     useEffect( () => {
             changePageCallback(1,keyword)
         },
@@ -359,7 +358,7 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.name}
+                                            key={row[id]}
                                             selected={isItemSelected}
                                         >
                                             {checkable ? <TableCell padding="checkbox">

@@ -1,6 +1,6 @@
 const initialScheduleData = [
     {
-        "isDefault": true,
+        "scheduleDefault": true,
         "periods": [
             {
                 openDay: 0,

@@ -91,11 +91,11 @@ function Schedule({classes, data, setData, index}){
         <Paper className={classes.root}>
             <div className={classes.header}>
                 <div className={classes.headerLeft}>
-                    {data.isDefault &&
+                    {data.scheduleDefault &&
                     <Typography variant="h6" >
                         Date: Year round
                     </Typography>}
-                    {!data.isDefault &&
+                    {!data.scheduleDefault &&
                         <React.Fragment>
                             <DatePicker
                                 className={classes.pickerStyle}
@@ -114,7 +114,7 @@ function Schedule({classes, data, setData, index}){
                         </React.Fragment>
                     }
                 </div>
-                {!data.isDefault &&
+                {!data.scheduleDefault &&
                 <Button color="secondary" onClick = {removeSchedule}>
                     <RemoveIcon/>
                 </Button>}

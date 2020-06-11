@@ -8,7 +8,7 @@ import app from "../helpers/firebaseInit";
 const request = async function (options, contentType) {
 
     const client = axios.create({
-        baseURL: false ? "http://localhost:8080/" : "https://www.traveldirection.ax.lt:8080/",
+        baseURL: true ? "http://localhost:8080/" : "https://www.traveldirection.ax.lt:8080/",
         headers: {
             'Content-Type': (contentType == null) ? 'application/json' : contentType,
             'Accept': 'application/json',

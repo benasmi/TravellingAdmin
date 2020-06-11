@@ -12,8 +12,9 @@ const AlertDialogFeedback = () => {
     const {alertConfig, removeAlertConfig} = UseAlertDialogContext();
 
     function remove() {
-        if(alertConfig.onClose !== undefined)
+        if(alertConfig.onClose !== undefined){
             alertConfig.onClose()
+        }
         removeAlertConfig()
     }
 
@@ -35,12 +36,16 @@ const AlertDialogFeedback = () => {
                         color="primary">
                     Close
                 </Button>
-                <Button onClick={!!alertConfig ? ()=>{
-                    removeAlertConfig();
-                    alertConfig.func()} : {}
-                } color="primary" autoFocus>
-                    Agree
-                </Button>
+                {!!alertConfig && alertConfig.actions.map(row=>{
+                    return <Button onClick={()=>{
+                        remove();
+                        row.action();
+                    }}
+                    color="primary"
+                    >
+                            {row.name}
+                    </Button>
+                })}
             </DialogActions>
         </Dialog>
     )

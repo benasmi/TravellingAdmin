@@ -206,33 +206,23 @@ function AddPlace({classes, match}){
         setIsLoading(false)
     }
 
-    function errorsExists(){
-        for (let key of Object.keys(error)) {
-            if(error[key] === true)
-                return true
-        }
-        return false
-    }
-
     function saveChanges(){
-        setCheckErrors(true);
-        if(errorsExists()){
-            addAlertConfig("Errors", "Make sure you filled required fields",function () {
-
-            });
-            return
-        }
-
         if(placeId === undefined){
-            addAlertConfig(Strings.DIALOG_PLACE_INSERT_TITLE,Strings.DIALOG_PLACE_INSERT,function () {
-                setIsLoading(true);
-                insertBasicPlaceInfo()
-            });
+            addAlertConfig(Strings.DIALOG_PLACE_INSERT_TITLE, Strings.DIALOG_PLACE_INSERT, [{name: "Insert", action: ()=>{
+                    setIsLoading(true);
+                    insertBasicPlaceInfo()
+                }}])
         }else{
-            addAlertConfig(Strings.DIALOG_PLACE_UPDATE_TITLE, Strings.DIALOG_PLACE_UPDATE, function () {
-                setIsLoading(true);
-                updateAll()
-            })
+            addAlertConfig(Strings.DIALOG_PLACE_UPDATE_TITLE, Strings.DIALOG_PLACE_UPDATE, [{name: "save and publish", action: ()=>{
+                    let plc = Object.assign({}, placeInfo, {});
+                    plc.isPublic = 1;
+                    setPlaceInfo(plc);
+                    setIsLoading(true);
+                    updateAll()
+                }},{name: "save", action: ()=>{
+                    setIsLoading(true);
+                    updateAll()
+                }}])
         }
     }
 
@@ -322,27 +312,28 @@ function AddPlace({classes, match}){
     }
 
     function formPlaceInfo(){
-        let d = Object.assign(placeInfo, locationData)
-        console.log(d);
+        let d = Object.assign(placeInfo, locationData);
         return d
     }
 
 
     function publishPlace(){
-        addAlertConfig(Strings.DIALOG_PLACE_PUBLISH_TITLE, placeInfo['isPublic'] ? Strings.DIALOG_PLACE_UNPUBLISH_MESSAGE : Strings.DIALOG_PLACE_PUBLISH_MESSAGE, function(){
-            let obj = Object.assign({}, placeInfo, {});
-            obj['isPublic'] = !obj['isPublic'];
-            setPlaceInfo(obj);
-        })
+        addAlertConfig(Strings.DIALOG_PLACE_PUBLISH_TITLE, placeInfo['isPublic'] ? Strings.DIALOG_PLACE_UNPUBLISH_MESSAGE : Strings.DIALOG_PLACE_PUBLISH_MESSAGE,
+            [{name: "Agree", action: ()=>{
+                let obj = Object.assign({}, placeInfo, {});
+                obj['isPublic'] = !obj['isPublic'];
+                setPlaceInfo(obj);
+            }}])
+
     }
 
     function verifyPlace(){
-        addAlertConfig(Strings.DIALOG_PLACE_VERIFY_TITLE, Strings.DIALOG_PLACE_VERIFY_MESSAGE, function(){
-            let obj = Object.assign({}, placeInfo, {});
-            obj['isPublic'] = 1;
-            obj['isVerified'] = 1;
-            setPlaceInfo(obj);
-        })
+        addAlertConfig(Strings.DIALOG_PLACE_VERIFY_TITLE, Strings.DIALOG_PLACE_VERIFY_MESSAGE, [{name: "agree", action: ()=>{
+                let obj = Object.assign({}, placeInfo, {});
+                obj['isPublic'] = 1;
+                obj['isVerified'] = 1;
+                setPlaceInfo(obj);
+            }}])
     }
 
     return(

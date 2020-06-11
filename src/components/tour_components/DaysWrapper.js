@@ -82,11 +82,12 @@ function DaysWrapper({classes, currentDay, setCurrentDay, tourInfo, tourInfoRedu
 
     const removeDayCallback = (day) => {
         if(tourInfo.days.length === 1){
-            //Display alert dialog, saying that the tour has to have at least one day
+            addAlertConfig("Warning", "The tour has to have at least one day", [])
         }else{
             if(tourInfo.days[day].tour.length > 0){ //This day has at least one place/transport added to it
-                addAlertConfig("Warning", "Are you sure you want to remove this day?", () => {
+                addAlertConfig("Warning", "Are you sure you want to remove this day?",[{name: "yes", action: ()=>{
                     removeDay(day)
+                    }}],() => {
                 })
             }else removeDay(day)
         }

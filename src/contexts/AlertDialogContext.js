@@ -9,11 +9,10 @@ export const AlertDialogContext = React.createContext({
 
 export default function AlertDialogProvider({ children }) {
     const [alertConfig, setAlertConfig] = useState(null);
-
     const contextValue = {
         alertConfig,
-        addAlertConfig: (title, message, func, onClose=undefined) => setAlertConfig({ title, message, func,onClose}),
-        removeAlertConfig: (onCloseFunc) => setAlertConfig(null)
+        addAlertConfig: (title, message, actions, onClose = undefined) => setAlertConfig({ title, message, actions, onClose}),
+        removeAlertConfig: () => setAlertConfig(null)
     };
 
     return (

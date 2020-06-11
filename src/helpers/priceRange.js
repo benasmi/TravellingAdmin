@@ -1,22 +1,26 @@
 export const priceRange = [
     {
         value: 0,
-        label: "$",
+        label: "FREE",
     },
     {
         value: 25,
-        label: "$$",
+        label: "$",
     },
     {
         value: 50,
-        label: "$$$",
+        label: "$$",
     },
     {
         value: 75,
-        label: "$$$$",
+        label: "$$$",
     },
     {
         value: 100,
+        label: "$$$$",
+    },
+    {
+        value: 125,
         label: "$$$$$",
     }
 ];

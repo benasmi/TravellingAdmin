@@ -16,7 +16,7 @@ const styles = theme => ({
     }
 });
 
-function PlaceLocation({locationData, setLocationData}) {
+function PlaceLocation({locationData, setLocationData, placeInfo}) {
 
     function changeLocationData(event){
         const {name, value} = event.target;
@@ -38,6 +38,7 @@ function PlaceLocation({locationData, setLocationData}) {
         <CustomMap mapHeight={200}
                    locationData={locationData}
                    setLocationData={setLocationData}
+                   initialLock={placeInfo['placeId'] !== ""}
         />
         <br/>
         <br/>

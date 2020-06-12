@@ -370,14 +370,13 @@ function AddPlace({classes, match}){
                 </Paper>
                 <Paper elevation = {4} className={classes.paperContent}>
                     <PlaceLocation
-                        error={error}
-                        setError={setError}
-                        checkErrors={checkErrors}
+                        placeInfo={placeInfo}
                         locationData={locationData}
                         setLocationData={setLocationData}/>
                 </Paper>
                 <Paper elevation = {4} className={classes.paperContent}>
                     <ParkingLocation
+                        placeInfo={placeInfo}
                         allSelectedParkingData={allSelectedParkingData}
                         setAllSelectedParkingData={setAllSelectedParkingData}
                         parkingMarkerData={parkingMarkerData}

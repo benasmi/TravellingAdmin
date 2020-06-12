@@ -28,7 +28,7 @@ const styles = theme => ({
     },
 });
 
-function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allSelectedParkingData, setAllSelectedParkingData}) {
+function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allSelectedParkingData, setAllSelectedParkingData, placeInfo}) {
     const { addConfig } = UseSnackbarContext();
 
     const onSortEnd = ({oldIndex, newIndex}) => {
@@ -106,6 +106,7 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
             Select parking
         </Typography>
         <CustomMap mapHeight={350}
+                   initialLock={placeInfo['placeId'] !== ""}
                    locationData={parkingMarkerData}
                    setLocationData={setParkingMarkerData}
                    selectedParkingCallback={(location)=>{

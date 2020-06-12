@@ -1,5 +1,5 @@
 import {withStyles} from "@material-ui/core/styles";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {createRef, useEffect, useMemo, useRef, useState} from "react";
 import useTheme from "@material-ui/core/styles/useTheme";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import TourPlaceComponent from "./TourPlaceComponent";
@@ -52,13 +52,13 @@ const styles = theme => ({
     },
     rightLayout: {
         flex: 2,
-        overflowY: "scroll",
-        // flexDirection: "row",
         '&::-webkit-scrollbar': {
             display: "none"
         },
         [theme.breakpoints.only("lg")]: {
             height: "100%",
+            overflowY: "scroll",
+
         },
     },
     leftLayout: {
@@ -240,7 +240,7 @@ function Tour({classes, match}) {
     ), [tourInfo.days, currentDay, errorInfo])
 
     const rightLayout = useMemo(() => (
-        <Paper className={classes.rightLayout}>
+        <Paper className={classes.rightLayout} >
             <TourInfoComponent tourInfo={tourInfo} tourInfoReducer={dispatchTourInfo} errorInfo={errorInfo} setErrorInfo={setErrorInfo}/>
             <Divider variant="middle"/>
             {tourDaysComponents}

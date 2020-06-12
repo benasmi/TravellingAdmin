@@ -38,24 +38,28 @@ const styles = theme => ({
             padding: theme.spacing(4),
         },
     },
-    root:{
-        height:"100vh"
+    root: {
+        height: "100vh",
+        [theme.breakpoints.down("lg")]: {
+            height: "100%",
+        },
     },
-    loader:{
+    loader: {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         width: "100vw",
         height: "100vh"
     },
-    content:{
-        display:"flex",
+    content: {
+        display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        height:`calc(93vh - 64px)`,
+        height: `calc(93vh - 64px)`,
         [theme.breakpoints.down("lg")]: {
             width: "100%",
             padding: theme.spacing(1),
+
         },
         [theme.breakpoints.up("lg")]: {
             width: "auto",
@@ -63,21 +67,31 @@ const styles = theme => ({
         },
         overflowY: "auto"
     },
-    bottom:{
+    bottom: {
+        height: "7vh",
+        [theme.breakpoints.down("lg")]: {
+            position: "fixed",
+            height: "50px",
+            bottom: 0,
+            right: 0,
+        },
+        width: "100%",
+        zIndex: 5,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-around",
         padding: theme.spacing(1),
-        height: "7vh"
     }
 });
 
 
-function AddPlace({classes, match}){
-    const [placeInfo, setPlaceInfo] = useState({placeId: "",
-        name: "", description: "",website: "", phoneNumber: "",
+function AddPlace({classes, match}) {
+    const [placeInfo, setPlaceInfo] = useState({
+        placeId: "",
+        name: "", description: "", website: "", phoneNumber: "",
         hasSchedule: false, isPublic: false, isVerified: true, overallStarRating: 0, totalReviews: 0,
-        source: "", price: "", averageTimeSpent: "0"});
+        source: "", price: "", averageTimeSpent: "0"
+    });
 
 
     const [selectedTags, setSelectedTags] = useState([]);
@@ -85,8 +99,20 @@ function AddPlace({classes, match}){
 
     const [photos, setPhotos] = useState([]);
 
-    const [locationData, setLocationData] = useState({city: '', address: '', country: '', latitude: 54.687157, longitude: 25.279652});
-    const [parkingMarkerData, setParkingMarkerData] = useState({city: '', address: '', country: '', latitude: 54.687157, longitude: 25.279652});
+    const [locationData, setLocationData] = useState({
+        city: '',
+        address: '',
+        country: '',
+        latitude: 54.687157,
+        longitude: 25.279652
+    });
+    const [parkingMarkerData, setParkingMarkerData] = useState({
+        city: '',
+        address: '',
+        country: '',
+        latitude: 54.687157,
+        longitude: 25.279652
+    });
     const [allSelectedParkingData, setAllSelectedParkingData] = useState([]);
 
     const [sources, setSources] = useState([]);
@@ -103,10 +129,10 @@ function AddPlace({classes, match}){
     const [checkErrors, setCheckErrors] = useState(false);
 
 
-    const { addConfig } = UseSnackbarContext();
-    const { addAlertConfig } = UseAlertDialogContext();
+    const {addConfig} = UseSnackbarContext();
+    const {addAlertConfig} = UseAlertDialogContext();
 
-    const { title, setTitle } = UseAppBarTitleContext();
+    const {title, setTitle} = UseAppBarTitleContext();
 
     const ColorButton = withStyles((theme) => ({
         root: {
@@ -118,20 +144,20 @@ function AddPlace({classes, match}){
         },
     }))(Button);
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log(placeId)
         //Loaded place for editing
-        if(placeId!==undefined){
+        if (placeId !== undefined) {
             console.log("Getting place location");
             getPlaceInfo()
-        }else{
+        } else {
             setTitle("Add new place");
             console.log("Came here to add new place");
             setFirstTimeLoading(false) //Just loaded add place window
         }
 
         //New Place has been just inserted, thus inserting other place info
-        if(placeId!==undefined && firstTimeLoading===false){
+        if (placeId !== undefined && firstTimeLoading === false) {
             console.log("Just added new place");
             Promise.all([
                 updateTagsData(placeId),
@@ -140,33 +166,33 @@ function AddPlace({classes, match}){
                 updatePhotoData(placeId),
                 updateSchedule(placeId),
                 updateSources(placeId)
-            ]).then(responses=>{
+            ]).then(responses => {
                 formFeedback(true, Strings.SNACKBAR_PLACE_INSERTED_SUCCESS)
-            }).catch(error=>{
+            }).catch(error => {
                 formFeedback(false)
             })
         }
 
-    },[placeId]);
+    }, [placeId]);
 
-    useEffect(()=>{
-        if(firstTimeLoading === false){
+    useEffect(() => {
+        if (firstTimeLoading === false) {
             console.log("Making this place public");
             updateAll()
         }
-    },[placeInfo['isPublic']]);
+    }, [placeInfo['isPublic']]);
 
     function getPlaceInfo() {
-        API.Places.getPlaceById("?full=true&p="+placeId).then(response=>{
+        API.Places.getPlaceById("?full=true&p=" + placeId).then(response => {
             setAllData(response)
-            setTitle("Editing place/"+response.name);
-        }).catch(error=>{
+            setTitle("Editing place/" + response.name);
+        }).catch(error => {
             formFeedback(false)
         })
     }
 
-    function setAllData(place){
-        console.log("Got data:",place);
+    function setAllData(place) {
+        console.log("Got data:", place);
         setPlaceInfo({
             placeId: place.placeId,
             name: place.name,
@@ -182,51 +208,59 @@ function AddPlace({classes, match}){
             averageTimeSpent: place.averageTimeSpent
         });
 
-        setLocationData({city: place.city,
+        setLocationData({
+            city: place.city,
             address: place.address,
             country: place.country,
             latitude: place.latitude,
-            longitude: place.longitude});
+            longitude: place.longitude
+        });
 
         setSources(place.sources);
         setSelectedTags(place.tags);
         setSelectedCategories(place.categories);
-        if(place.schedule.length > 0) {
+        if (place.schedule.length > 0) {
             setScheduleData([...place.schedule]);
             setIsScheduleEnabled(true)
-        }else setIsScheduleEnabled(false)
+        } else setIsScheduleEnabled(false)
 
         setAllSelectedParkingData(place.parking);
         setPhotos(place.photos);
         setFirstTimeLoading(false)
     }
 
-    function formFeedback(success, message=Strings.SNACKBAR_ERROR){
+    function formFeedback(success, message = Strings.SNACKBAR_ERROR) {
         addConfig(success, message);
         setIsLoading(false)
     }
 
-    function saveChanges(){
-        if(placeId === undefined){
-            addAlertConfig(Strings.DIALOG_PLACE_INSERT_TITLE, Strings.DIALOG_PLACE_INSERT, [{name: "Insert", action: ()=>{
+    function saveChanges() {
+        if (placeId === undefined) {
+            addAlertConfig(Strings.DIALOG_PLACE_INSERT_TITLE, Strings.DIALOG_PLACE_INSERT, [{
+                name: "Insert", action: () => {
                     setIsLoading(true);
                     insertBasicPlaceInfo()
-                }}])
-        }else{
-            addAlertConfig(Strings.DIALOG_PLACE_UPDATE_TITLE, Strings.DIALOG_PLACE_UPDATE, [{name: "save and publish", action: ()=>{
+                }
+            }])
+        } else {
+            addAlertConfig(Strings.DIALOG_PLACE_UPDATE_TITLE, Strings.DIALOG_PLACE_UPDATE, [{
+                name: "save and publish", action: () => {
                     let plc = Object.assign({}, placeInfo, {});
                     plc.isPublic = 1;
                     setPlaceInfo(plc);
                     setIsLoading(true);
                     updateAll()
-                }},{name: "save", action: ()=>{
+                }
+            }, {
+                name: "save", action: () => {
                     setIsLoading(true);
                     updateAll()
-                }}])
+                }
+            }])
         }
     }
 
-    function updateAll(){
+    function updateAll() {
         Promise.all([
             updatePlaceInfo(),
             updateTagsData(placeId),
@@ -235,75 +269,75 @@ function AddPlace({classes, match}){
             updateParkingData(placeId),
             updateSchedule(placeId),
             updateSources(placeId)
-        ]).then(response=>{
+        ]).then(response => {
             formFeedback(true, Strings.SNACKBAR_CHANGES_SAVED);
-        }).catch(err=>{
+        }).catch(err => {
             formFeedback(false)
         })
     }
 
     function updatePlaceInfo() {
         console.log(formPlaceInfo());
-        API.Places.updatePlace(formPlaceInfo()).then(response=>{
+        API.Places.updatePlace(formPlaceInfo()).then(response => {
 
-        }).catch(error=>{
+        }).catch(error => {
 
         })
 
     }
 
-    function insertBasicPlaceInfo(){
-            API.Places.insertPlace(formPlaceInfo()).then(placeId=>{
-                setPlaceId(placeId)
-            }).catch(error=>{
+    function insertBasicPlaceInfo() {
+        API.Places.insertPlace(formPlaceInfo()).then(placeId => {
+            setPlaceId(placeId)
+        }).catch(error => {
 
-            })
+        })
     }
 
     function updateParkingData(id) {
-        API.ParkingPlace.updateParkingForPlace(allSelectedParkingData, "?p="+id).then(response=>{
+        API.ParkingPlace.updateParkingForPlace(allSelectedParkingData, "?p=" + id).then(response => {
 
-        }).catch(error=>{
+        }).catch(error => {
 
         })
     }
 
     function updateTagsData(id) {
-        API.TagsPlace.updateTagsForPlace(selectedTags, "?p="+id).then(response=>{
+        API.TagsPlace.updateTagsForPlace(selectedTags, "?p=" + id).then(response => {
 
-        }).catch(error=>{
+        }).catch(error => {
 
         })
     }
 
     function updateSources(id) {
         console.log("Hello")
-        API.SourcePlace.updateSourcesForPlace(sources, "?p="+id).then(response=>{
+        API.SourcePlace.updateSourcesForPlace(sources, "?p=" + id).then(response => {
             console.log(sources)
-        }).catch(error=>{
+        }).catch(error => {
 
         })
     }
 
 
     function updateCategoriesData(id) {
-        API.CategoriesPlace.updateCategoriesForPlace(selectedCategories, "?p="+id).then(response=>{
+        API.CategoriesPlace.updateCategoriesForPlace(selectedCategories, "?p=" + id).then(response => {
 
-        }).catch(error=>{
+        }).catch(error => {
 
         })
     }
 
     function updatePhotoData(id) {
-        API.PhotoPlace.updatePhotoForPlace(photos, "?p="+id).then(response=>{
+        API.PhotoPlace.updatePhotoForPlace(photos, "?p=" + id).then(response => {
 
-        }).catch(error=>{
+        }).catch(error => {
 
         })
     }
 
 
-    function updateSchedule(id){
+    function updateSchedule(id) {
         console.log(scheduleData);
         API.Schedule.updateScheduleForPlace(isScheduleEnabled ? scheduleData : [], "?id=" + id).then(response => {
         }).catch(er => {
@@ -311,53 +345,66 @@ function AddPlace({classes, match}){
 
     }
 
-    function formPlaceInfo(){
+    function formPlaceInfo() {
         let d = Object.assign(placeInfo, locationData);
         return d
     }
 
 
-    function publishPlace(){
+    function publishPlace() {
         addAlertConfig(Strings.DIALOG_PLACE_PUBLISH_TITLE, placeInfo['isPublic'] ? Strings.DIALOG_PLACE_UNPUBLISH_MESSAGE : Strings.DIALOG_PLACE_PUBLISH_MESSAGE,
-            [{name: "Agree", action: ()=>{
-                let obj = Object.assign({}, placeInfo, {});
-                obj['isPublic'] = !obj['isPublic'];
-                setPlaceInfo(obj);
-            }}])
+            [{
+                name: "Agree", action: () => {
+                    let obj = Object.assign({}, placeInfo, {});
+                    obj['isPublic'] = !obj['isPublic'];
+                    setPlaceInfo(obj);
+                }
+            }])
 
     }
 
-    function verifyPlace(){
-        addAlertConfig(Strings.DIALOG_PLACE_VERIFY_TITLE, Strings.DIALOG_PLACE_VERIFY_MESSAGE, [{name: "agree", action: ()=>{
+    function verifyPlace() {
+        addAlertConfig(Strings.DIALOG_PLACE_VERIFY_TITLE, Strings.DIALOG_PLACE_VERIFY_MESSAGE, [{
+            name: "agree", action: () => {
                 let obj = Object.assign({}, placeInfo, {});
                 obj['isPublic'] = 1;
                 obj['isVerified'] = 1;
                 setPlaceInfo(obj);
-            }}])
+            }
+        }])
     }
 
-    return(
+    return (
         <div className={classes.root}>
-            {firstTimeLoading ? <div className={classes.loader}><CircularProgress /></div> : <div className={classes.content}>
+            {firstTimeLoading ? <div className={classes.loader}><CircularProgress/></div> :
+                <div className={classes.content}>
 
 
-                <Paper elevation = {4} className={classes.paperContent}>
-                    <BasicPlaceInfo
-                        error={error}
-                        setError={setError}
-                        checkErrors={checkErrors}
-                        placeInfo={placeInfo}
-                        setPlaceInfo={setPlaceInfo}
-                        selectedSources={sources}
-                        setSelectedSources={setSources}
-                    />
-
-                </Paper>
-
-                {placeId !== undefined ?
-                    <Paper elevation = {4} className={classes.paperContent}>
-                        <Reviews
+                    <Paper elevation={4} className={classes.paperContent}>
+                        <BasicPlaceInfo
+                            error={error}
+                            setError={setError}
+                            checkErrors={checkErrors}
                             placeInfo={placeInfo}
+                            setPlaceInfo={setPlaceInfo}
+                            selectedSources={sources}
+                            setSelectedSources={setSources}
+                        />
+
+                    </Paper>
+
+                    {placeId !== undefined ?
+                        <Paper elevation={4} className={classes.paperContent}>
+                            <Reviews
+                                placeInfo={placeInfo}
+                            />
+                        </Paper>
+                        : null}
+
+                    <Paper elevation={4} className={classes.paperContent}>
+                        <PhotosInfo
+                            photos={photos}
+                            setPhotos={setPhotos}
                         />
                     </Paper>
                     : null}
@@ -395,6 +442,7 @@ function AddPlace({classes, match}){
                 </Paper>
             </div> }
 
+
             {isLoading ? <LinearProgress/> : null}
 
             <Paper elevation={1} className={classes.bottom}>
@@ -405,23 +453,25 @@ function AddPlace({classes, match}){
                         <ColorButton
                             variant="contained"
                             color="primary"
-                            onClick={()=>{verifyPlace()}}
+                            onClick={() => {
+                                verifyPlace()
+                            }}
                             className={classes.button}
                         >
                             Verify place
                         </ColorButton>
-                    :
-                    <FormControlLabel
-                    control={<Switch checked={placeInfo['isPublic']} onChange={()=> {
-                        publishPlace()
-                    }
-                    } name="isPublic" />}
-                    label="Make this place public"
-                />}
+                        :
+                        <FormControlLabel
+                            control={<Switch checked={placeInfo['isPublic']} onChange={() => {
+                                publishPlace()
+                            }
+                            } name="isPublic"/>}
+                            label="Make this place public"
+                        />}
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={()=>saveChanges()}
+                    onClick={() => saveChanges()}
                     className={classes.button}>
                     Save
                 </Button>

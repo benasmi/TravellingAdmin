@@ -25,7 +25,7 @@ function SchedulesWrapper({classes, scheduleData, setScheduleData, isScheduleEna
         setScheduleData(oldData => {
             return [
                 ...oldData,
-                {isDefault: false, from: "01-01", to: "01-02", periods : []}
+                {scheduleDefault: false, from: "01-01", to: "01-02", periods : []}
             ]
         })
     }

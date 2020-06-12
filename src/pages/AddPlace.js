@@ -407,35 +407,41 @@ function AddPlace({classes, match}) {
                             setPhotos={setPhotos}
                         />
                     </Paper>
-                    <Paper elevation={4} className={classes.paperContent}>
-                        <PlaceLocation
-                            error={error}
-                            setError={setError}
-                            checkErrors={checkErrors}
-                            locationData={locationData}
-                            setLocationData={setLocationData}/>
-                    </Paper>
-                    <Paper elevation={4} className={classes.paperContent}>
-                        <ParkingLocation
-                            allSelectedParkingData={allSelectedParkingData}
-                            setAllSelectedParkingData={setAllSelectedParkingData}
-                            parkingMarkerData={parkingMarkerData}
-                            setParkingMarkerData={setParkingMarkerData}/>
-                    </Paper>
-                    <Paper elevation={4} className={classes.paperContent}>
-                        <PlaceDiscovery
-                            selectedTags={selectedTags}
-                            setSelectedTags={setSelectedTags}
-                            selectedCategories={selectedCategories}
-                            setSelectedCategories={setSelectedCategories}/>
-                    </Paper>
+                    : null}
 
-                    <Paper elevation={4} className={classes.paperContent}>
-                        <SchedulesWrapper isScheduleEnabled={isScheduleEnabled}
-                                          setIsScheduleEnabled={setIsScheduleEnabled} setScheduleData={setScheduleData}
-                                          scheduleData={scheduleData}/>
-                    </Paper>
-                </div>}
+                <Paper elevation = {4} className={classes.paperContent}>
+                    <PhotosInfo
+                        photos={photos}
+                        setPhotos={setPhotos}
+                    />
+                </Paper>
+                <Paper elevation = {4} className={classes.paperContent}>
+                    <PlaceLocation
+                        placeInfo={placeInfo}
+                        locationData={locationData}
+                        setLocationData={setLocationData}/>
+                </Paper>
+                <Paper elevation = {4} className={classes.paperContent}>
+                    <ParkingLocation
+                        placeInfo={placeInfo}
+                        allSelectedParkingData={allSelectedParkingData}
+                        setAllSelectedParkingData={setAllSelectedParkingData}
+                        parkingMarkerData={parkingMarkerData}
+                        setParkingMarkerData={setParkingMarkerData}/>
+                </Paper>
+                <Paper elevation = {4} className={classes.paperContent}>
+                    <PlaceDiscovery
+                        selectedTags={selectedTags}
+                        setSelectedTags={setSelectedTags}
+                        selectedCategories={selectedCategories}
+                        setSelectedCategories={setSelectedCategories}/>
+                </Paper>
+
+                <Paper elevation = {4} className={classes.paperContent}>
+                    <SchedulesWrapper isScheduleEnabled={isScheduleEnabled} setIsScheduleEnabled={setIsScheduleEnabled} setScheduleData={setScheduleData} scheduleData={scheduleData}/>
+                </Paper>
+            </div> }
+
 
             {isLoading ? <LinearProgress/> : null}
 

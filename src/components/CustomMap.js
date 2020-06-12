@@ -11,6 +11,10 @@ import history from "../helpers/history";
 import AddIcon from "@material-ui/icons/Add";
 import MyLocationIcon from '@material-ui/icons/MyLocation';
 import IconButton from "@material-ui/core/IconButton";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
+import Alert from "@material-ui/lab/Alert";
+import Grid from "@material-ui/core/Grid";
 
 
 //
@@ -31,11 +35,15 @@ const styles = theme => ({
         borderBottom: "2px solid grey",
         outline:"0",
         marginBottom: "4px"
+    },
+    root: {
+        flexGrow: 1,
+        marginTop: "8px"
     }
 });
 
 var markerData = {};
-function CustomMap({classes, locationData, setLocationData, mapHeight, selectedParkingCallback, changedParkingMarkerCallback, addParkingCallback}){
+function CustomMap({classes, locationData, setLocationData, mapHeight, selectedParkingCallback, changedParkingMarkerCallback, addParkingCallback, initialLock}){
 
     CustomMap.propTypes = {
         locationData: PropTypes.object,
@@ -43,13 +51,10 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
         mapHeight: PropTypes.number
     };
 
-
-
     var parkingIcon = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png';
 
     Geocode.setApiKey("AIzaSyDGFjZHSoRrZ2AEO0ONXvjuN4RiCmknXf8");
     Geocode.enableDebug();
-
 
     function useFunction(callback) {
         const ref = React.useRef();
@@ -181,8 +186,6 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                 error => {
                 }
             );
-            console.log("Latitude is :", position.coords.latitude);
-            console.log("Longitude is :", position.coords.longitude);
         }, error=>{
             alert(error.message + "\n" + JSON.stringify(error))
         });
@@ -208,7 +211,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
      * @param parking data
      * @returns {*}
      */
-    const markers = (onToggleOpen, infoWindows, parking) =>{
+    const markers = (onToggleOpen, infoWindows, parking, mapIsLocked) =>{
         return parking.map((location, i) => {
 
             const latitude = parseFloat(location.latitude);
@@ -219,7 +222,9 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                     key={location.parkingId}
                     position={{ lat: latitude, lng: longitude}}
                     options={{icon: parkingIcon}}
-                    onClick={()=>onToggleOpen(location.parkingId)}
+                    onClick={()=>{
+                        if(!mapIsLocked)
+                            onToggleOpen(location.parkingId)}}
                 >
 
                     {infoWindows[i].showInfo && (
@@ -227,7 +232,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                             <div style={{display:"flex", flexDirection: "column"}}>
                                 {location.address}
                                 <Button
-                                    onClick={()=>{selectParkingHandler(location)}}
+                                    onClick={()=>{if(!mapIsLocked)selectParkingHandler(location)}}
                                     variant="text"
                                     color="secondary"
                                     size="large"
@@ -275,8 +280,8 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
             <Marker
                 name={'Dolores park'}
                 visible={true}
-                draggable={true}
-                onClick={()=>props.toggleDraggableInfoWindow(true)}
+                draggable={!props.isDraggable}
+                onClick={()=>{if(!props.isDraggable)props.toggleDraggableInfoWindow(true)}}
                 onDragEnd={e=>onMarkerDragEnd(e, props.markerChanger, props.onParkingDataChange)}
                 position={{ lat: props.markerLocation.latitude, lng: props.markerLocation.longitude }} >
 
@@ -302,7 +307,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                 )}
             </Marker>
 
-            {markers(props.onToggleOpen, props.infoWindows, props.parkingData)}
+            {markers(props.onToggleOpen, props.infoWindows, props.parkingData, props.isDraggable)}
         </GoogleMap>
     );
 
@@ -333,7 +338,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                 latitude: locationData.latitude,
                 longitude: locationData.longitude,
                 address:  locationData.address
-            },parkingData: [], infoWindows: []
+            },parkingData: [], infoWindows: [], isDraggable: initialLock === undefined ? true : initialLock
         },{
             onMarkerLocationChanged: ({draggableMarkerLocation}) => (newLat, newLng, address, city, country) => ({
                 draggableMarkerLocation: {
@@ -357,7 +362,10 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                         iw.showInfo = selectedIndex === iw.parkingId;
                         return iw;
                     })
-                })
+                }),
+               switchLock: ({isDraggable}) => (isLocked) =>({
+                    isDraggable: isLocked
+               })
             }
             )
     )(props=>
@@ -385,8 +393,26 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                             parkingData={props.parkingData}
                             onToggleOpen={props.onToggleOpen}
                             infoWindows={props.infoWindows}
+                            isDraggable={props.isDraggable}
             />
 
+            <div className={classes.root}>
+                <Grid container spacing={3}>
+                    <Grid item xs={6}>
+                        <FormControlLabel
+                            control={<Switch />}
+                            label="Lock"
+                            checked={props.isDraggable}
+                            onChange={()=>{
+                                props.switchLock(!props.isDraggable)
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        {props.isDraggable ? <Alert  severity="info">Map is currently locked. If you want to do any changes unlock it.</Alert> : null}
+                    </Grid>
+                </Grid>
+            </div>
 
         </div>
     );

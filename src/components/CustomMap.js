@@ -1,7 +1,7 @@
 import React, {memo, useEffect, useMemo, useState} from 'react'
 import Autocomplete from 'react-google-autocomplete';
 import Geocode from "react-geocode";
-import {compose, withProps, withStateHandlers} from "recompose"
+import {compose, withProps, withReducer, withStateHandlers} from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
 import withStyles from "@material-ui/core/styles/withStyles";
 import {map} from "react-bootstrap/cjs/ElementChildren";
@@ -52,9 +52,11 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
     };
 
     var parkingIcon = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png';
+    var firstTime = true;
 
     Geocode.setApiKey("AIzaSyDGFjZHSoRrZ2AEO0ONXvjuN4RiCmknXf8");
     Geocode.enableDebug();
+
 
     function useFunction(callback) {
         const ref = React.useRef();
@@ -69,7 +71,6 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
     }
     const selectParkingHandler = useFunction(selectedParkingCallback);
     const addNewParkingHandler = useFunction(addParkingCallback);
-
 
     const onPlaceSelected = (place, onMarkerLocationChanged, onParkingDataChanged) => {
 
@@ -122,9 +123,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                     const city = getCity( addressArray ),
                         country = getCountry( addressArray );
 
-                    console.log(lat, lng)
                     onMarkerLocationChanged(lat, lng, address, city, country);
-                        console.log("Pateko")
                     changeLocationData(city,country,address,lat,lng, onParkingDataChanged);
                 }
             },
@@ -133,6 +132,23 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
             }
         );
     }
+
+
+    const handleKeyPress = (event, onMarkerLocationChange, onParkingDataChange) =>{
+        const value = event.target.value;
+        if (event.which === 13 || event.keyCode === 13) {
+            if (/[a-zA-Z]+/.test(value)){
+                geocodeFromAddress(value, onMarkerLocationChange, onParkingDataChange)
+            }else{
+                let position = value.split(/[ ,]+/);
+                if(position.length === 2){
+                    geocodeFromLatLng(parseFloat(position[0]), parseFloat(position[1]), onMarkerLocationChange, onParkingDataChange)
+                }
+            }
+            return false;
+        }
+        return true;
+    };
 
     function changeLocationData(city,country,address,latitude,longitude, onParkingDataChanged) {
         let data = Object.assign({}, locationData, {});
@@ -166,7 +182,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
         }
     };
 
-    function getCurrentPosition(onMarkerLocationChanged, onParkingDataChanged){
+    function getCurrentPosition(onMarkerLocationChanged, onParkingDataChanged, toggleParkingInfoWindow){
         navigator.geolocation.getCurrentPosition(function(position) {
             let newLat = position.coords.latitude,
                 newLng = position.coords.longitude;
@@ -179,6 +195,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                         const city = getCity( addressArray ),
                             country = getCountry( addressArray );
 
+                        toggleParkingInfoWindow(true);
                         onMarkerLocationChanged(newLat, newLng, address, city, country);
                         changeLocationData(city,country,address,newLat,newLng, onParkingDataChanged);
                     }
@@ -202,6 +219,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
         }
         }
     };
+
     /**
      *
      * Renders parking data markers
@@ -250,6 +268,18 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
     };
 
 
+    function initialParkingLoad(onParkingDataChange) {
+        if(changedParkingMarkerCallback!== undefined && firstTime){
+            changedParkingMarkerCallback(locationData.city,
+                locationData.address,
+                locationData.country,
+                locationData.latitude,
+                locationData.longitude,
+                onParkingDataChange);
+                firstTime = false
+        }
+    }
+
     /**
      * Map component that renders parking data and has draggable marker
      */
@@ -258,25 +288,13 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
             containerElement: <div style={{ height: mapHeight }} />,
             mapElement: <div style={{ height: `100%` }} />,
         }),
-        withStateHandlers({
-                infoWindow: {show: false}
-            },{
-            toggleDraggableInfoWindow: ({draggableMarkerLocation}) => (show) => ({
-                infoWindow: {show: show}
-            })
-            }
-        ),
         withGoogleMap
     )(props =>
-
         <GoogleMap
             defaultZoom={12}
             center={{lat: props.markerLocation.latitude, lng: props.markerLocation.longitude }}
             defaultCenter={{ lat: props.markerLocation.latitude, lng: props.markerLocation.longitude }}
         >
-
-
-
             <Marker
                 name={'Dolores park'}
                 visible={true}
@@ -306,31 +324,11 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                     </InfoWindow>
                 )}
             </Marker>
-
             {markers(props.onToggleOpen, props.infoWindows, props.parkingData, props.isDraggable)}
         </GoogleMap>
     );
 
 
-    const handleKeyPress = (event, onMarkerLocationChange, onParkingDataChange) =>{
-        const value = event.target.value;
-        if (event.which === 13 || event.keyCode === 13) {
-            if (/[a-zA-Z]+/.test(value)){
-                geocodeFromAddress(value, onMarkerLocationChange, onParkingDataChange)
-            }else{
-                let position = value.split(/[ ,]+/);
-                if(position.length === 2){
-                    geocodeFromLatLng(parseFloat(position[0]), parseFloat(position[1]), onMarkerLocationChange, onParkingDataChange)
-                }
-            }
-            return false;
-        }
-        return true;
-    };
-
-    /**
-     * Places autocomplete and map. This component holds it's inner states like draggableMarkerLocation, parkingData etc.
-     */
     const FullMap = compose(
         withProps(),
         withStateHandlers({
@@ -338,7 +336,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                 latitude: locationData.latitude,
                 longitude: locationData.longitude,
                 address:  locationData.address
-            },parkingData: [], infoWindows: [], isDraggable: initialLock === undefined ? true : initialLock
+            },parkingData: [], infoWindows: [], isDraggable: initialLock === undefined ? true : initialLock, infoWindow: {show: false}
         },{
             onMarkerLocationChanged: ({draggableMarkerLocation}) => (newLat, newLng, address, city, country) => ({
                 draggableMarkerLocation: {
@@ -349,6 +347,9 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                     country: country
                 }
             }),
+                toggleDraggableInfoWindow: ({draggableMarkerLocation}) => (show) => ({
+                    infoWindow: {show: show}
+                }),
                 onParkingDataChange: ({parkingData}) => (parking) => ({
                     parkingData: parking.map(row=>{
                         return row
@@ -381,12 +382,14 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                     fontSize="large"
                     color="primary"
                     onClick={()=>{
-                        getCurrentPosition(props.onMarkerLocationChanged, props.onParkingDataChange)
+                        getCurrentPosition(props.onMarkerLocationChanged,
+                            props.onParkingDataChange,
+                            props.toggleDraggableInfoWindow)
                     }}
 
                 />
             </IconButton>
-
+            {initialParkingLoad(props.onParkingDataChange)}
             <MyMapComponent markerChanger={props.onMarkerLocationChanged}
                             markerLocation={props.draggableMarkerLocation}
                             onParkingDataChange={props.onParkingDataChange}
@@ -394,6 +397,8 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                             onToggleOpen={props.onToggleOpen}
                             infoWindows={props.infoWindows}
                             isDraggable={props.isDraggable}
+                            infoWindow={props.infoWindow}
+                            toggleDraggableInfoWindow={props.toggleDraggableInfoWindow}
             />
 
             <div className={classes.root}>
@@ -409,7 +414,7 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        {props.isDraggable ? <Alert  severity="info">Map is currently locked. If you want to do any changes unlock it.</Alert> : null}
+                        {props.isDraggable ? <Alert  severity="error">Map is currently locked. If you want to do any changes unlock it.</Alert> : null}
                     </Grid>
                 </Grid>
             </div>

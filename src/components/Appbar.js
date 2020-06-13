@@ -115,7 +115,12 @@ export default function Appbar(props) {
         handleDrawerClose();
         setTitle(title);
 
-        if(location.pathname === url){
+        // console.log("Current url",location.pathname);
+        // console.log("Requested new url", url);
+        let re = new RegExp(url+'([0-9]*)?');
+        // console.log(re);
+
+        if(re.test(location.pathname)){
             history.go(0)
         }
     };
@@ -195,9 +200,7 @@ export default function Appbar(props) {
                     <Route path="/app/tours" component={Tours} />
                     <Route path="/app/addplace/:placeId?" component={AddPlace} />
                     <Route path="/app/apiplaces" component={ApiPlaces} />
-                    <Route path="/app/addplace" component={AddPlace} />
                     <Route path="/app/addtour/:tourId?" component={Tour} />
-                    <Route path="/app/addtour" component={Tour} />
                     <Redirect from="*" to="/404"/>
                 </Switch>
 

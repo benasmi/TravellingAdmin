@@ -9,6 +9,7 @@ import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete"
 import UseSnackbarContext from "../../contexts/UseSnackbarContext";
 import Button from "@material-ui/core/Button";
+import Alert from "@material-ui/lab/Alert";
 
 const styles = theme => ({
     outline: {
@@ -39,8 +40,6 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
         getClosestParking(parseFloat(lat),parseFloat(lng), parkingDataChanged);
     }
 
-
-
     function addNewParking(markerData){
         if(!parkingExists(markerData)){
             API.Parking.insertNewParking([markerData]).then(response=>{
@@ -62,7 +61,6 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
     const getClosestParking = (lat, lng, parkingDataChanged)=>{
         API.Parking.getParkingByLocation("?lat="+lat+"&lng="+lng).then(response=>{
             let placesData = [];
-            console.log("ParkingData", response)
             response.map(row => {
                 placesData.push(row)
             });
@@ -84,7 +82,7 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
     ));
 
     useEffect(()=>{
-        getClosestParking(parkingMarkerData.lat, parkingMarkerData.lng)
+        getClosestParking(parkingMarkerData.latitude, parkingMarkerData.longitude)
     },[]);
 
     const SortableList = SortableContainer(({items}) => {
@@ -110,19 +108,31 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
                    locationData={parkingMarkerData}
                    setLocationData={setParkingMarkerData}
                    selectedParkingCallback={(location)=>{
-                       if(!parkingExists(location))
+                       if(!parkingExists(location)){
                            setAllSelectedParkingData(oldArray=> [...oldArray, location])
+                       }else{
+                           addConfig(false, "This parking is already attached!")
+                       }
                        }}
                    changedParkingMarkerCallback={changedParkingMarkerCallback}
                    addParkingCallback={addNewParking}
-
         />
         <br/>
         <Typography variant="subtitle1" >
             Selected parking locations
         </Typography>
+        {allSelectedParkingData.length === 0 ? <Alert severity="error">
+            This place has no selected parking! To select parking for this place do the following:
+            <br/>
+            1. Select your current location or any other location
+            <br/>
+            2. Select already existing nearby parking locations and click add
+            <br/>
+            3. If none of the location is valid, click on the orange marker and add new parking
+            </Alert> :
+            <SortableList pressDelay={200} disableAutoscroll={false} items={allSelectedParkingData} onSortEnd={onSortEnd} />
+        }
 
-        <SortableList distance={10} items={allSelectedParkingData} onSortEnd={onSortEnd} />
 
     </div>
 }

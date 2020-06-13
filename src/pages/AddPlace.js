@@ -20,7 +20,6 @@ import Strings from "../helpers/stringResources";
 import green from "@material-ui/core/colors/green";
 import Reviews from "../components/add_place_components/Reviews";
 import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
-import Schedule from "../components/add_place_components/SchedulesWrapper";
 import SchedulesWrapper from "../components/add_place_components/SchedulesWrapper";
 
 const styles = theme => ({
@@ -144,18 +143,20 @@ function AddPlace({classes, match}) {
         },
     }))(Button);
 
-    useEffect(() => {
-        console.log(placeId)
-        //Loaded place for editing
-        if (placeId !== undefined) {
+    useEffect(()=>{
+        if(placeId!==undefined){
             console.log("Getting place location");
             getPlaceInfo()
-        } else {
+        }
+    },[]);
+
+    useEffect(() => {
+        //Loaded place for editing
+        if (placeId === undefined) {
             setTitle("Add new place");
             console.log("Came here to add new place");
             setFirstTimeLoading(false) //Just loaded add place window
         }
-
         //New Place has been just inserted, thus inserting other place info
         if (placeId !== undefined && firstTimeLoading === false) {
             console.log("Just added new place");
@@ -192,7 +193,6 @@ function AddPlace({classes, match}) {
     }
 
     function setAllData(place) {
-        console.log("Got data:", place);
         setPlaceInfo({
             placeId: place.placeId,
             name: place.name,
@@ -216,13 +216,21 @@ function AddPlace({classes, match}) {
             longitude: place.longitude
         });
 
+        setParkingMarkerData({
+            city: place.city,
+            address: place.address,
+            country: place.country,
+            latitude: place.latitude,
+            longitude: place.longitude
+        });
+
         setSources(place.sources);
         setSelectedTags(place.tags);
         setSelectedCategories(place.categories);
         if (place.schedule.length > 0) {
             setScheduleData([...place.schedule]);
             setIsScheduleEnabled(true)
-        } else setIsScheduleEnabled(false)
+        } else setIsScheduleEnabled(false);
 
         setAllSelectedParkingData(place.parking);
         setPhotos(place.photos);
@@ -277,7 +285,6 @@ function AddPlace({classes, match}) {
     }
 
     function updatePlaceInfo() {
-        console.log(formPlaceInfo());
         API.Places.updatePlace(formPlaceInfo()).then(response => {
 
         }).catch(error => {
@@ -311,9 +318,7 @@ function AddPlace({classes, match}) {
     }
 
     function updateSources(id) {
-        console.log("Hello")
         API.SourcePlace.updateSourcesForPlace(sources, "?p=" + id).then(response => {
-            console.log(sources)
         }).catch(error => {
 
         })
@@ -338,7 +343,6 @@ function AddPlace({classes, match}) {
 
 
     function updateSchedule(id) {
-        console.log(scheduleData);
         API.Schedule.updateScheduleForPlace(isScheduleEnabled ? scheduleData : [], "?id=" + id).then(response => {
         }).catch(er => {
         })
@@ -401,13 +405,6 @@ function AddPlace({classes, match}) {
                         </Paper>
                         : null}
 
-                    <Paper elevation={4} className={classes.paperContent}>
-                        <PhotosInfo
-                            photos={photos}
-                            setPhotos={setPhotos}
-                        />
-                    </Paper>
-                    : null}
 
                 <Paper elevation = {4} className={classes.paperContent}>
                     <PhotosInfo
@@ -448,7 +445,6 @@ function AddPlace({classes, match}) {
             <Paper elevation={1} className={classes.bottom}>
 
                 {
-
                     placeInfo['isVerified'] === false && placeId !== undefined ?
                         <ColorButton
                             variant="contained"

@@ -59,7 +59,6 @@ const styles = theme => ({
         [theme.breakpoints.down("lg")]: {
             width: "100%",
             padding: theme.spacing(1),
-
         },
         [theme.breakpoints.up("lg")]: {
             width: "auto",
@@ -68,10 +67,9 @@ const styles = theme => ({
         overflowY: "auto"
     },
     bottom: {
-        height: "7vh",
         [theme.breakpoints.down("lg")]: {
             position: "fixed",
-            height: "50px",
+            height: "7vh",
             bottom: 0,
             right: 0,
         },

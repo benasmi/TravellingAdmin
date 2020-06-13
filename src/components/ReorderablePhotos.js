@@ -11,9 +11,9 @@ import Button from "@material-ui/core/Button";
 import CardActions from "@material-ui/core/CardActions";
 import DeleteIcon from "@material-ui/icons/Delete";
 
-const imgWithClick = { cursor: "pointer" };
+const imgWithClick = {cursor: "pointer"};
 
-const Photo = ({ index, onItemDelete, photo, margin, direction, top, left }) => {
+const Photo = ({index, onItemDelete, photo, margin, direction, top, left}) => {
 
     const styles = {
         imgContainer: {
@@ -34,61 +34,68 @@ const Photo = ({ index, onItemDelete, photo, margin, direction, top, left }) => 
         onItemDelete(photo);
     }
 
-        return (
+    return (
 
-            <Card style={styles.imgContainer}>
-                <CardMedia
-                    style={{height: 0, paddingTop: '80%'}}
-                    image={photo.src}
-                />
-                <CardActions disableSpacing>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        startIcon={<DeleteIcon />}
-                        onClick = {(event) => {handleDelete(event)}}
-                    >
-                        Delete
-                    </Button>
-                </CardActions>
+        <Card style={styles.imgContainer}>
+            <CardMedia
+                style={{height: 0, paddingTop: '80%'}}
+                image={photo.src}
+            />
+            <CardActions disableSpacing>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<DeleteIcon/>}
+                    onClick={(event) => {
+                        handleDelete(event)
+                    }}
+                >
+                    Delete
+                </Button>
+            </CardActions>
 
-            </Card>
-        )
+        </Card>
+    )
 
 };
 
 const SortablePhoto = SortableElement((item) => <Photo {...item} />);
 //const SortablePhoto = SortableElement(item => <img {...item}/>)
-const SortableGallery = SortableContainer(({ items, onItemDelete}) => (
-    <Gallery photos={items} renderImage={props => <SortablePhoto {...props} onItemDelete={onItemDelete}/>} />
+const SortableGallery = SortableContainer(({items, onItemDelete}) => (
+    <Gallery photos={items} renderImage={props => <SortablePhoto {...props} onItemDelete={onItemDelete}/>}/>
 ));
 
-function ReorderablePhotos(props){
+function ReorderablePhotos(props) {
     let {setPhotos, photos, srcName, keyName} = props
-    const onSortEnd = ({ oldIndex, newIndex }) => {
+    const onSortEnd = ({oldIndex, newIndex}) => {
         setPhotos(arrayMove(photos, oldIndex, newIndex));
     };
-    function handleItemDelete(photo){
-        setPhotos(photos.filter(item => {return item[keyName].toString() !== photo.key}))
+
+    function handleItemDelete(photo) {
+        setPhotos(photos.filter(item => {
+            return item[keyName].toString() !== photo.key
+        }))
     }
 
-    let modifiedData = photos.map(item =>  {
-        return(
-    {
-        key: item[keyName].toString(),
-        src: item[srcName],
-        width: 1,
-        height: 1
-    })
-
-})
+    let modifiedData = photos.map(item => {
         return (
-            <div >
-                <SortableGallery distance={10} items={modifiedData} onSortEnd={onSortEnd} axis={"xy"} onItemDelete = {handleItemDelete} />
-            </div>
-        );
+            {
+                key: item[keyName].toString(),
+                src: item[srcName],
+                width: 1,
+                height: 1
+            })
+
+    })
+    return (
+        <div>
+            <SortableGallery pressDelay={200}
+                             disableAutoscroll={false} items={modifiedData} onSortEnd={onSortEnd}
+                             axis={"xy"} onItemDelete={handleItemDelete}/>
+        </div>
+    );
 
 }
 
 
-export default  ReorderablePhotos
+export default ReorderablePhotos

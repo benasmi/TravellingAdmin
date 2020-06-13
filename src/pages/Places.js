@@ -89,6 +89,14 @@ function Places(props) {
         }
     },[filterQuery]);
 
+    function getPlaceNameById(id){
+        for(var i = 0; i<data.length; i++){
+            if(data[i].placeId === id)
+                return data[i].name
+        }
+
+    }
+
     function parseData(data){
         setIsLoading(false);
         let placesData = [];
@@ -105,8 +113,9 @@ function Places(props) {
         history.push("/app/addplace/"+id)
     }
     function removePlaceCallback(id){
+        console.log("Name",getPlaceNameById(id));
         setIsLoading(true);
-        addAlertConfig(Strings.DIALOG_PLACE_DELETE_TITLE, Strings.DIALOG_PLACE_DELETE_MESSAGE, [{
+        addAlertConfig(Strings.DIALOG_PLACE_DELETE_TITLE +" - " + getPlaceNameById(id), Strings.DIALOG_PLACE_DELETE_MESSAGE, [{
             name: "Remove",
             action: () =>{
                     API.Places.removePlace("?p="+id).then(response=>{

@@ -14,7 +14,10 @@ import Alert from "@material-ui/lab/Alert";
 
 const styles = theme => ({
     cardRoot: {
-        display: 'flex',
+        [theme.breakpoints.only("lg")]: {
+            display: 'flex',
+            // alignItems: "flex-start"
+        },
     },
     details: {
         display: 'flex',
@@ -25,7 +28,13 @@ const styles = theme => ({
         flex: '1 0 auto',
     },
     cover: {
-        flex: 1
+        [theme.breakpoints.down("lg")]: {
+            height: "200px",
+        },
+        [theme.breakpoints.only("lg")]: {
+            flex: 1,
+            height: "auto",
+        },
     },
     root: {
         display: "flex",
@@ -39,17 +48,17 @@ const styles = theme => ({
 
 function TourPlaceComponent({classes, elementData, removeCallback, addTransportCallback, displayNoTransportWarning}) {
 
-    function truncateText(text){
-        if(text == null)
+    function truncateText(text) {
+        if (text == null)
             return ""
-        if(text.length > 500){
+        if (text.length > 500) {
             return text.substring(0, 500) + "...";
-        }else{
+        } else {
             return text
         }
     }
 
-    return(
+    return (
         <div className={classes.root}>
             <Card className={classes.cardRoot}>
 
@@ -57,6 +66,7 @@ function TourPlaceComponent({classes, elementData, removeCallback, addTransportC
                 <CardMedia
                     className={classes.cover}
                     image={elementData.data.details.photos[0].url}
+
                 />
                 }
 
@@ -73,7 +83,7 @@ function TourPlaceComponent({classes, elementData, removeCallback, addTransportC
                 <CardHeader
                     action={
                         <IconButton aria-label="remove" onClick={() => removeCallback(elementData)}>
-                            <RemoveIcon />
+                            <RemoveIcon/>
                         </IconButton>
                     }
                 />
@@ -83,7 +93,7 @@ function TourPlaceComponent({classes, elementData, removeCallback, addTransportC
             <Alert severity="error">No transport from this place specified</Alert>}
 
             <div className={classes.addParkingWrapper}>
-                <Button style={{display: "inline"}}  color="secondary" onClick={() => addTransportCallback(elementData)}>
+                <Button style={{display: "inline"}} color="secondary" onClick={() => addTransportCallback(elementData)}>
                     <AddIcon/>
                 </Button>
                 <Typography style={{display: "inline"}} variant="subtitle1">
@@ -95,6 +105,7 @@ function TourPlaceComponent({classes, elementData, removeCallback, addTransportC
 
     )
 }
+
 TourPlaceComponent.propTypes = {
     elementData: PropTypes.object.isRequired,
     removeCallback: PropTypes.func.isRequired,

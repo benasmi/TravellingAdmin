@@ -104,12 +104,14 @@ function TourPlacesWrapper({classes, tourInfo, tourInfoReducer, currentDay, erro
         console.log(tourInfo.days[currentDay].tour)
     }, [tourInfo])
 
+
     return (
         <div className={classes.root}>
             {tourInfo.days[currentDay].tour.length === 0 &&
             <Alert severity="warning">You have not added any places for the currently selected day.</Alert>}
             <SortableList
-                distance={10}
+                pressDelay={200}
+                disableAutoscroll={false}
                 currentDay={currentDay}
                 tourInfo={tourInfo}
                 transportChangeCallback={handleTransportChange}

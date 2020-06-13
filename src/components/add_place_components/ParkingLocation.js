@@ -53,7 +53,10 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
 
     function parkingExists(markerData){
         for(let i = 0; i<allSelectedParkingData.length; i++){
-            if(allSelectedParkingData[i].address === markerData.address) return true;
+            if(allSelectedParkingData[i].address === markerData.address){
+                addConfig(false, "This parking is already attached!");
+                return true;
+            }
         }
         return false
     }
@@ -110,8 +113,6 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
                    selectedParkingCallback={(location)=>{
                        if(!parkingExists(location)){
                            setAllSelectedParkingData(oldArray=> [...oldArray, location])
-                       }else{
-                           addConfig(false, "This parking is already attached!")
                        }
                        }}
                    changedParkingMarkerCallback={changedParkingMarkerCallback}

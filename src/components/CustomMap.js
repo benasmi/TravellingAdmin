@@ -37,8 +37,10 @@ const styles = theme => ({
         marginBottom: "4px"
     },
     root: {
-        flexGrow: 1,
-        marginTop: "8px"
+        display:"flex",
+        flexDirection: "column",
+        marginTop: "8px",
+        padding: theme.spacing(1)
     }
 });
 
@@ -402,21 +404,24 @@ function CustomMap({classes, locationData, setLocationData, mapHeight, selectedP
             />
 
             <div className={classes.root}>
-                <Grid container spacing={3}>
-                    <Grid item xs={6}>
-                        <FormControlLabel
-                            control={<Switch />}
-                            label="Lock"
-                            checked={props.isDraggable}
-                            onChange={()=>{
-                                props.switchLock(!props.isDraggable)
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        {props.isDraggable ? <Alert  severity="error">Map is currently locked. If you want to do any changes unlock it.</Alert> : null}
-                    </Grid>
-                </Grid>
+                <FormControlLabel
+                    control={<Switch />}
+                    label="Lock"
+                    checked={props.isDraggable}
+                    onChange={()=>{
+                        props.switchLock(!props.isDraggable)
+                    }}
+                />
+                {props.isDraggable ?
+                    <Alert  severity="error">Map is currently locked. If you want to do any changes unlock it.</Alert> : null}
+                {/*<Grid container spacing={3}>*/}
+                {/*    <Grid item xs={6}>*/}
+                {/*       */}
+                {/*    </Grid>*/}
+                {/*    <Grid item xs={6}>*/}
+                {/*       */}
+                {/*    </Grid>*/}
+                {/*</Grid>*/}
             </div>
 
         </div>

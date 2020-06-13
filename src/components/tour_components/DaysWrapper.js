@@ -10,7 +10,7 @@ import UseAlertDialogContext from "../../contexts/UseAlertDialogContext";
 
 const styles = theme => ({
     root: {
-        margin: theme.spacing(2)
+        margin: theme.spacing(1),
     },
     addDayButton: {
         marginTop: theme.spacing(1)
@@ -35,7 +35,7 @@ const DayCardSortable = SortableElement(({dayInfo, day, currentDay, onSelectCall
 const SortableList = SortableContainer(({elements, currentDay, onSelectCallback, tourInfoReducer, removeDayCallback}) => {
 
     return (
-        <ul>
+        <ul style={{padding: "0px"}}>
             {elements.map((item, index) => {
                 return <DayCardSortable
                     currentDay={currentDay}

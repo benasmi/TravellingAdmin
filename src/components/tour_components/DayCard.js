@@ -15,17 +15,16 @@ import Button from "@material-ui/core/Button";
 const styles = theme => ({
     root: {
         display: "flex",
-        margin: theme.spacing(2)
+        margin: theme.spacing(1)
     },
     radioButtonArea: {
-        marginRight: theme.spacing(1)
     },
     cardArea: {
         flex: 1,
         display: "flex"
     },
     content: {
-        flex: '1 0 auto',
+        flex: '1 1 auto',
     },
     descriptionInput: {
         marginTop: theme.spacing(2),

@@ -62,6 +62,8 @@ function PlaceSearch({classes, addPlaceCallback, apiPlacesFound, setApiPlacesFou
     }
 
     const searchCallback = (keyword) => {
+        if(keyword.length < 3)
+            return;
         setLocalPlacesFound([])
         setApiPlacesFound([])
         setApiPlacesLoading(true)

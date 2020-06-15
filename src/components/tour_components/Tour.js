@@ -160,6 +160,7 @@ function Tour({classes, match}) {
             dispatchTourInfo({type: 'SET_ALL', data: aggregatedTour})
         }).catch((error) => {
             addConfig(false, "Tour has failed to load")
+            setTourId(undefined)
         }).finally(() => {
             setIsLoading(false)
         })

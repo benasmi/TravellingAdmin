@@ -81,7 +81,6 @@ function Tours(props) {
     useEffect(()=>{
         if(!isLoading){
             getAllTours("?o="+filterQuery);
-            console.log("Filter query", filterQuery);
         }
     },[filterQuery]);
 
@@ -98,28 +97,29 @@ function Tours(props) {
         setPageData(data);
     }
 
-    function updatePlaceCallback(id){
+    function updateTourCallback(id){
         history.push("/app/addtour/"+id)
     }
     function removePlaceCallback(id){
         console.log("tour id", id)
-        setIsLoading(true);
-        addAlertConfig(Strings.DIALOG_TOUR_DELETE_TITLE, Strings.DIALOG_TOUR_DELETE_MESSAGE, function () {
-            API.Tour.removeTour("?id="+id).then(response=>{
-                let tmp = [];
-                data.map(row=>{
-                    if(row.placeId !== id){
-                        tmp.push(row)
-                    }
-                });
-                setData(tmp);
-                addConfig(true, Strings.SNACKBAR_TOUR_REMOVE_SUCCESS)
-                setIsLoading(false)
-            }).catch(error=>{
-                setIsLoading(false);
-                addConfig(false, Strings.SNACKBAR_ERROR)
-            })
-        }, ()=>{setIsLoading(false)})
+
+        addAlertConfig(Strings.DIALOG_TOUR_DELETE_TITLE, Strings.DIALOG_TOUR_DELETE_MESSAGE, [{name: "Delete", action: () => {
+                setIsLoading(true);
+                API.Tour.removeTour("?id="+id).then(response=>{
+                    let tmp = [];
+                    data.map(row=>{
+                        if(row["tourId"] !== id){
+                            tmp.push(row)
+                        }
+                    });
+                    setData(tmp);
+                    addConfig(true, Strings.SNACKBAR_TOUR_REMOVE_SUCCESS)
+                    setIsLoading(false)
+                }).catch(error=>{
+                    setIsLoading(false);
+                    addConfig(false, Strings.SNACKBAR_ERROR)
+                })
+            }}],  ()=>{setIsLoading(false)})
     }
 
     const changePageCallback = (p=0, keyword="") => {
@@ -198,7 +198,7 @@ function Tours(props) {
                     pagingInfo={pageData}
                     checkable={false}
                     changePageCallback={changePageCallback}
-                    updateCallback={updatePlaceCallback}
+                    updateCallback={updateTourCallback}
                     removeCallback={removePlaceCallback}
                     id={"tourId"}
                     isLoading={isLoading}

@@ -98,7 +98,7 @@ function Tour({classes, match}) {
     const [apiPlacesFound, setApiPlacesFound] = useState([])
     const [currentDay, setCurrentDay] = useState(0)
     const [tourId, setTourId] = useState(match.params.tourId)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(match.params.tourId !== undefined);
 
     const [errorInfo, setErrorInfo] = useState({
             errors: {
@@ -124,20 +124,20 @@ function Tour({classes, match}) {
                 }
             }
         })
-    }
+    };
 
     useEffect(() => {
         if (tourId !== undefined) {
-            setIsLoading(true)
+            // setIsLoading(true)
             loadData()
         }
     }, [])
 
     const loadData = () => {
         API.Tour.getTour("?id=" + tourId).then((response) => {
-            let aggregatedDays = []
+            let aggregatedDays = [];
             response.days.forEach(day => {
-                let aggregatedElements = []
+                let aggregatedElements = [];
                 day.data.forEach(place => {
                     let aggregatedPlace = {
                         type: ElementType.place,
@@ -229,15 +229,15 @@ function Tour({classes, match}) {
 
 
     const tourDaysComponents = useMemo(() => (
-        <React.Fragment>
+        <div>
             <DaysWrapper currentDay={currentDay} setCurrentDay={setCurrentDay} tourInfo={tourInfo}
                          tourInfoReducer={dispatchTourInfo}/>
             <Divider variant="middle"/>
             <TourPlacesWrapper errorInfo={errorInfo} setErrorInfo={setErrorInfo}
                                currentDay={currentDay} tourInfoReducer={dispatchTourInfo} tourInfo={tourInfo}/>
             <TourMap tourInfo={tourInfo} currentDay={currentDay}/>
-        </React.Fragment>
-    ), [tourInfo.days, currentDay, errorInfo])
+        </div>
+    ), [tourInfo.days, currentDay, errorInfo]);
 
     const rightLayout = useMemo(() => (
         <Paper className={classes.rightLayout} >
@@ -250,7 +250,7 @@ function Tour({classes, match}) {
                 </Button>
             </div>
         </Paper>
-    ), [tourInfo, currentDay, errorInfo])
+    ), [tourInfo, currentDay, errorInfo]);
 
     const theme = useTheme();
     const largeScreen = useMediaQuery(theme.breakpoints.only('lg'));
@@ -268,7 +268,7 @@ function Tour({classes, match}) {
                 </React.Fragment>
             }
         </React.Fragment>
-    )
+    );
 
     return (
         <div className={classes.root}>

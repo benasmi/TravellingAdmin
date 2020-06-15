@@ -105,11 +105,12 @@ function DaysWrapper({classes, currentDay, setCurrentDay, tourInfo, tourInfoRedu
     return (
         <div className={classes.root}>
             <SortableList
+                pressDelay={200}
+                disableAutoscroll={false}
                 elements={tourInfo.days}
                 currentDay={currentDay}
                 onSortEnd={onSortEnd}
                 removeDayCallback={removeDayCallback}
-                distance={10}
                 onSelectCallback={handleSelect}
                 tourInfoReducer={tourInfoReducer}/>
             <div className={classes.footerWrapper}>

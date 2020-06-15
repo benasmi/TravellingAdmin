@@ -73,7 +73,7 @@ const styles = theme => ({
         },
     },
     actionsArea: {
-        margin: theme.spacing(1),
+        padding: theme.spacing(1),
         display: "flex",
         justifyContent: "flex-end"
     },

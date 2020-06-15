@@ -73,7 +73,7 @@ const styles = theme => ({
         },
     },
     actionsArea: {
-        margin: theme.spacing(1),
+        padding: theme.spacing(1),
         display: "flex",
         justifyContent: "flex-end"
     },
@@ -160,6 +160,7 @@ function Tour({classes, match}) {
             dispatchTourInfo({type: 'SET_ALL', data: aggregatedTour})
         }).catch((error) => {
             addConfig(false, "Tour has failed to load")
+            setTourId(undefined)
         }).finally(() => {
             setIsLoading(false)
         })

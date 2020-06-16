@@ -21,6 +21,8 @@ import green from "@material-ui/core/colors/green";
 import Reviews from "../components/add_place_components/Reviews";
 import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 import SchedulesWrapper from "../components/add_place_components/SchedulesWrapper";
+import MapToolbar from "../components/maps/MapToolbar";
+import PlaceMap from "../components/maps/PlaceMap";
 
 const styles = theme => ({
     button: {
@@ -376,8 +378,13 @@ function AddPlace({classes, match}) {
         }])
     }
 
+    function locationCallback(location) {
+        console.log("Undefined", location)
+    }
+
     return (
         <div className={classes.root}>
+
             {firstTimeLoading ? <div className={classes.loader}><CircularProgress/></div> :
                 <div className={classes.content}>
 
@@ -416,14 +423,14 @@ function AddPlace({classes, match}) {
                         locationData={locationData}
                         setLocationData={setLocationData}/>
                 </Paper>
-                <Paper elevation = {4} className={classes.paperContent}>
-                    <ParkingLocation
-                        placeInfo={placeInfo}
-                        allSelectedParkingData={allSelectedParkingData}
-                        setAllSelectedParkingData={setAllSelectedParkingData}
-                        parkingMarkerData={parkingMarkerData}
-                        setParkingMarkerData={setParkingMarkerData}/>
-                </Paper>
+            <Paper elevation = {4} className={classes.paperContent}>
+                <ParkingLocation
+                    placeInfo={placeInfo}
+                    allSelectedParkingData={allSelectedParkingData}
+                    setAllSelectedParkingData={setAllSelectedParkingData}
+                    locationData={parkingMarkerData}
+                    setLocationData={setParkingMarkerData}/>
+            </Paper>
                 <Paper elevation = {4} className={classes.paperContent}>
                     <PlaceDiscovery
                         selectedTags={selectedTags}

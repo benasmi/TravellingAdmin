@@ -1,15 +1,14 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
-import CustomMap from "../CustomMap";
 import API from "../../Networking/API";
 import {arrayMove, SortableContainer, SortableElement} from 'react-sortable-hoc';
 import Paper from "@material-ui/core/Paper";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete"
 import UseSnackbarContext from "../../contexts/UseSnackbarContext";
-import Button from "@material-ui/core/Button";
 import Alert from "@material-ui/lab/Alert";
+import ParkingMap from "../maps/ParkingMap";
 
 const styles = theme => ({
     outline: {
@@ -29,16 +28,12 @@ const styles = theme => ({
     },
 });
 
-function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allSelectedParkingData, setAllSelectedParkingData, placeInfo}) {
+function ParkingLocation({classes, locationData, setLocationData, allSelectedParkingData, setAllSelectedParkingData, placeInfo}) {
     const { addConfig } = UseSnackbarContext();
 
     const onSortEnd = ({oldIndex, newIndex}) => {
         setAllSelectedParkingData(arrayMove(allSelectedParkingData,oldIndex, newIndex))
     };
-
-    function changedParkingMarkerCallback(city,address,country,lat,lng, parkingDataChanged) {
-        getClosestParking(parseFloat(lat),parseFloat(lng), parkingDataChanged);
-    }
 
     function addNewParking(markerData){
         if(!parkingExists(markerData)){
@@ -48,6 +43,12 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
             }).catch(error=>{
                 addConfig(false)
             })
+        }
+    }
+
+    function addExistingParking(location) {
+        if(!parkingExists(location)){
+            setAllSelectedParkingData(oldArray=> [...oldArray, location])
         }
     }
 
@@ -61,16 +62,6 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
         return false
     }
 
-    const getClosestParking = (lat, lng, parkingDataChanged)=>{
-        API.Parking.getParkingByLocation("?lat="+lat+"&lng="+lng).then(response=>{
-            let placesData = [];
-            response.map(row => {
-                placesData.push(row)
-            });
-            parkingDataChanged(response);
-        }).catch(error=>{
-        })
-    };
 
     const SortableItem = SortableElement(({value}) => (
         <Paper className={classes.paper} elevation={3}>
@@ -84,9 +75,6 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
         </Paper>
     ));
 
-    useEffect(()=>{
-        getClosestParking(parkingMarkerData.latitude, parkingMarkerData.longitude)
-    },[]);
 
     const SortableList = SortableContainer(({items}) => {
         return (
@@ -106,18 +94,15 @@ function ParkingLocation({classes, parkingMarkerData, setParkingMarkerData, allS
         <Typography variant="subtitle1" >
             Select parking
         </Typography>
-        <CustomMap mapHeight={350}
-                   initialLock={placeInfo['placeId'] !== ""}
-                   locationData={parkingMarkerData}
-                   setLocationData={setParkingMarkerData}
-                   selectedParkingCallback={(location)=>{
-                       if(!parkingExists(location)){
-                           setAllSelectedParkingData(oldArray=> [...oldArray, location])
-                       }
-                       }}
-                   changedParkingMarkerCallback={changedParkingMarkerCallback}
-                   addParkingCallback={addNewParking}
+
+        <ParkingMap
+            placeInfo={placeInfo}
+            locationMarker={locationData}
+            setLocationMarker={setLocationData}
+            addNewParking={addNewParking}
+            addExistingParking={addExistingParking}
         />
+
         <br/>
         <Typography variant="subtitle1" >
             Selected parking locations

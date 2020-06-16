@@ -1,8 +1,8 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
-import CustomMap from "../CustomMap";
 import TextField from "@material-ui/core/TextField";
+import PlaceMap from "../maps/PlaceMap";
 
 
 const styles = theme => ({
@@ -35,10 +35,10 @@ function PlaceLocation({locationData, setLocationData, placeInfo}) {
             Select place location from map
         </Typography>
         <br/>
-        <CustomMap mapHeight={200}
-                   locationData={locationData}
-                   setLocationData={setLocationData}
-                   initialLock={placeInfo['placeId'] !== ""}
+        <PlaceMap
+            placeInfo={placeInfo}
+            locationMarker={locationData}
+            setLocationMarker={setLocationData}
         />
         <br/>
         <br/>

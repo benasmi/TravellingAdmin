@@ -103,14 +103,18 @@ function AddPlace({classes, match}) {
         address: '',
         country: '',
         latitude: 54.687157,
-        longitude: 25.279652
+        longitude: 25.279652,
+        county: '',
+        municipality: ''
     });
     const [parkingMarkerData, setParkingMarkerData] = useState({
         city: '',
         address: '',
         country: '',
         latitude: 54.687157,
-        longitude: 25.279652
+        longitude: 25.279652,
+        county: '',
+        municipality: ''
     });
     const [allSelectedParkingData, setAllSelectedParkingData] = useState([]);
 

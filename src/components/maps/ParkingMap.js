@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {GoogleMap, InfoWindow, Marker, withGoogleMap} from "react-google-maps";
 import {geocodeFromLatLng} from "./MapGeolocation";
 import MapToolbar from "./MapToolbar";
@@ -8,6 +8,9 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import withStyles from "@material-ui/core/styles/withStyles";
 import MapLock from "./MapLock";
+import CustomControlsManager from "./CustomControlsManager";
+import IconButton from "@material-ui/core/IconButton";
+import ExploreIcon from "@material-ui/icons/Explore";
 
 
 const styles = theme =>({
@@ -19,6 +22,7 @@ const parkingIcon = 'https://developers.google.com/maps/documentation/javascript
 
 const MapComponent = withGoogleMap(props =>
     <GoogleMap
+        ref={props.refInstance}
         defaultZoom={12}
         center={{lat: props.position.latitude, lng: props.position.longitude }}
         defaultCenter={{lat: props.position.latitude, lng: props.position.longitude}}>
@@ -49,6 +53,22 @@ const MapComponent = withGoogleMap(props =>
                 </InfoWindow>
             )}
         </Marker>
+
+        <CustomControlsManager position={window.google.maps.ControlPosition.BOTTOM_CENTER}>
+            <div>
+                <IconButton aria-label="delete" onClick={()=>{
+                    if(!props.isLocked){
+                        let loc = Object.assign({},props.position, {});
+                        const mapCenter = props.refInstance.current.getCenter();
+                        loc.latitude = mapCenter.lat();
+                        loc.longitude = mapCenter.lng();
+                        props.setPosition(loc)
+                    }
+                }}>
+                    <ExploreIcon fontSize={"large"}/>
+                </IconButton>
+            </div>
+        </CustomControlsManager>
 
         {
             props.parkingData.map((location, i) =>{
@@ -109,7 +129,8 @@ function ParkingMap({placeInfo, locationMarker, setLocationMarker, addNewParking
     const [parkingData, setParkingData] = useState([]);
     const [mainInfoWindow, setMainInfoWindow] = useState(false);
     const [parkingInfoWindows, setParkingInfoWindows] = useState(false);
-    const [isLocked, setIsLocked] = useState(placeInfo.placeId !== undefined);
+    const [isLocked, setIsLocked] = useState(placeInfo.placeId !== "");
+    const refMap = useRef(null);
 
     function getClosestParking(){
         API.Parking.getParkingByLocation("?lat="+locationMarker.latitude+"&lng="+locationMarker.longitude).then(response=>{
@@ -147,6 +168,7 @@ function ParkingMap({placeInfo, locationMarker, setLocationMarker, addNewParking
             position={locationMarker}
             setPosition={setLocationMarker}
             isLocked={isLocked}
+            refInstance={refMap}
         />
 
         <MapLock

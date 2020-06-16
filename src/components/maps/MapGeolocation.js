@@ -28,13 +28,50 @@ export const getCountry = (addressArray) =>{
  */
 export const getCity = ( addressArray ) => {
     if(addressArray !== undefined){
+        console.log("Address array", addressArray);
         let city = '';
         for( let i = 0; i < addressArray.length; i++ ) {
-            if ( addressArray[ i ].types[0] && 'administrative_area_level_2' === addressArray[ i ].types[0] ) {
+            if ( addressArray[ i ].types[0] && 'locality' === addressArray[ i ].types[0] ) {
                 city = addressArray[ i ].long_name;
                 return city;
             }
         }
+        return city;
+    }
+};
+
+/**
+ * Get district from google maps address array
+ * @param addressArray
+ * @returns {*|string}
+ */
+export const getCounty = ( addressArray ) => {
+        if(addressArray !== undefined){
+            let county = '';
+            for( let i = 0; i < addressArray.length; i++ ) {
+                if ( addressArray[ i ].types[0] && 'administrative_area_level_1' === addressArray[ i ].types[0] ) {
+                    county = addressArray[ i ].long_name;
+                    return county;
+                }
+            }
+            return county
+        }
+    };
+/**
+ * Get district from google maps address array
+ * @param addressArray
+ * @returns {*|string}
+ */
+export const getMunicipality = ( addressArray ) => {
+    if(addressArray !== undefined){
+        let municipality = '';
+        for( let i = 0; i < addressArray.length; i++ ) {
+            if ( addressArray[ i ].types[0] && 'administrative_area_level_2' === addressArray[ i ].types[0] ) {
+                municipality = addressArray[ i ].long_name;
+                return municipality;
+            }
+        }
+        return municipality;
     }
 };
 
@@ -52,8 +89,10 @@ export function geocodeFromAddress(address){
             const addressArray =  response.results[0].address_components;
             if(addressArray!==undefined){
                 const city = getCity( addressArray ),
-                    country = getCountry( addressArray );
-                let loc = {address: address, city: city, country: country, latitude: lat, longitude: lng};
+                    country = getCountry( addressArray ),
+                    county = getCounty(addressArray),
+                    municipality = getMunicipality(addressArray);
+                let loc = {address: address, city: city, country: country, latitude: lat, longitude: lng, county: county, municipality: municipality};
                 return loc
             }
             return null
@@ -77,8 +116,10 @@ export function geocodeFromLatLng(newLat, newLng){
             const addressArray =  response.results[0].address_components
             if(addressArray!==undefined){
                 const city = getCity( addressArray ),
-                    country = getCountry( addressArray );
-                let loc = {address: address, city: city, country: country, latitude: newLat, longitude: newLng};
+                    country = getCountry( addressArray ),
+                    county = getCounty(addressArray),
+                    municipality = getMunicipality(addressArray);
+                let loc = {address: address, city: city, country: country, latitude: newLat, longitude: newLng, county: county, municipality: municipality};
                 return loc;
             }
             return null

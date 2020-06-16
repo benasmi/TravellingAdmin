@@ -80,6 +80,38 @@ function PlaceLocation({locationData, setLocationData, placeInfo}) {
         />
         <TextField
             required
+            label="County"
+            disabled
+            style={{ margin: 8 }}
+            placeholder="Enter place county"
+            fullWidth
+            value={locationData['county']}
+            name='county'
+            onChange={e=>{changeLocationData(e)}}
+            variant="outlined"
+            margin="normal"
+            InputLabelProps={{
+                shrink: true,
+            }}
+        />
+        <TextField
+            required
+            label="Municipality"
+            disabled
+            style={{ margin: 8 }}
+            placeholder="Enter place municipality"
+            fullWidth
+            value={locationData['municipality']}
+            name='municipality'
+            onChange={e=>{changeLocationData(e)}}
+            variant="outlined"
+            margin="normal"
+            InputLabelProps={{
+                shrink: true,
+            }}
+        />
+        <TextField
+            required
             label="Country"
             style={{ margin: 8 }}
             placeholder="Enter place country"

@@ -4,7 +4,7 @@ import Autocomplete from "react-google-autocomplete";
 import IconButton from "@material-ui/core/IconButton";
 import MyLocationIcon from "@material-ui/icons/MyLocation";
 import PropTypes from "prop-types";
-import {geocodeFromAddress, geocodeFromLatLng, getCity, getCountry} from "./MapGeolocation";
+import {geocodeFromAddress, geocodeFromLatLng, getCity, getCountry, getCounty, getMunicipality} from "./MapGeolocation";
 
 const styles = theme => ({
     content: {
@@ -60,14 +60,16 @@ function MapToolbar({classes, isLocked, locationCallback}) {
      * @return {{country: (*|string), address: *, city: (*|string), latitude: *, longitude: *}|null}
      */
     const onPlaceSelected = (place) => {
-        const address = place.formatted_address
-        const addressArray =  place.address_components
+        const address = place.formatted_address;
+        const addressArray =  place.address_components;
         if(addressArray !== undefined){
             const city = getCity( addressArray ),
                 country = getCountry(addressArray),
+                county = getCounty(addressArray),
+                municipality = getMunicipality(addressArray),
                 lat = place.geometry.location.lat(),
                 lng = place.geometry.location.lng();
-                locationCallback({address: address, city: city, country: country, latitude: lat, longitude: lng})
+                locationCallback({address: address, city: city, country: country, latitude: lat, longitude: lng, county: county, municipality: municipality})
         }
         return null
     };

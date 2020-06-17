@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
 import RemoveIcon from "@material-ui/icons/Remove";
 import Paper from "@material-ui/core/Paper";
-import {DatePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+import {DatePicker, MuiPickersUtilsProvider, TimePicker} from '@material-ui/pickers';
 import Divider from "@material-ui/core/Divider";
 import DayComponent from "./DayComponent";
 import moment from "moment";
@@ -26,12 +26,27 @@ const styles = theme => ({
         width: "100%",
         display: "flex",
         justifyContent: "left"
+    },
+    globalTimeEditLayout: {
+        display: "flex",
+        justifyContent : "space-between",
+        margin: theme.spacing(0.5),
+        alignItems: "center",
+        flexFlow: "row wrap"
+    },
+    globalTimeEditLeft: {
+
+    },
+    globalTimePicker: {
+        margin: theme.spacing(0.5),
+        width: "30%"
     }
 });
 
 function Schedule({classes, data, setData, index}){
 
     const[periods, setPeriods] = useState([...data.periods])
+    const[globalTime, setGlobalTime] = useState({openTime: "07:00", closeTime: "19:00"})
 
     const handleIntervalChange = (newIntervals, openDay) => {
         setPeriods(oldPeriods => {
@@ -58,7 +73,7 @@ function Schedule({classes, data, setData, index}){
     const generateWeekdayViews = () => {
         let views = []
         for(let i =0; i < 7; i++){
-            views.push(<DayComponent scheduleData={data} onChange={handleIntervalChange} setScheduleData={setData} openDay={i} key={i}/>)
+            views.push(<DayComponent globalTime={globalTime} scheduleData={data} onChange={handleIntervalChange} setScheduleData={setData} openDay={i} key={i}/>)
         }
         return views
     }
@@ -84,6 +99,17 @@ function Schedule({classes, data, setData, index}){
     const removeSchedule = () => {
         setData(oldData => {
             return oldData.filter((item, i) => index !== i)
+        })
+    }
+
+    const handleUpdateGlobalOpenTime = (value) => {
+        setGlobalTime(data => {
+            return {...data, openTime: moment(value).format("HH:mm").toString()}
+        })
+    }
+    const handleUpdateGlobalCloseTime = (value) => {
+        setGlobalTime(data => {
+            return {...data, closeTime: moment(value).format("HH:mm").toString()}
         })
     }
 
@@ -121,6 +147,34 @@ function Schedule({classes, data, setData, index}){
 
             </div>
             <br/>
+            <div className={classes.globalTimeEditLayout}>
+                <div className={classes.globalTimeEditLeft}>
+                    <TimePicker
+                        margin="normal"
+                        ampm={false}
+                        label="Opens"
+                        className={classes.globalTimePicker}
+                        format="HH:mm"
+                        value={moment(globalTime.openTime, "HH:mm")}
+                        onChange={handleUpdateGlobalOpenTime}
+                        InputProps={{
+                            disableUnderline: true,
+                        }}
+                    />
+                    <TimePicker
+                        margin="normal"
+                        ampm={false}
+                        className={classes.globalTimePicker}
+                        label="Closes"
+                        format="HH:mm"
+                        value={moment(globalTime.closeTime, "HH:mm")}
+                        onChange={handleUpdateGlobalCloseTime}
+                        InputProps={{
+                            disableUnderline: true,
+                        }}
+                    />
+                </div>
+            </div>
             {generateWeekdayViews()}
         </Paper>
     )

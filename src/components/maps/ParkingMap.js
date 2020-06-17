@@ -11,14 +11,15 @@ import MapLock from "./MapLock";
 import CustomControlsManager from "./CustomControlsManager";
 import IconButton from "@material-ui/core/IconButton";
 import ExploreIcon from "@material-ui/icons/Explore";
-
+import IconParking from '../../res/availableParking.svg'
 
 const styles = theme =>({
 
 });
 
 
-const parkingIcon = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png';
+
+// const parkingIcon = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png';
 
 const MapComponent = withGoogleMap(props =>
     <GoogleMap
@@ -78,7 +79,15 @@ const MapComponent = withGoogleMap(props =>
                 return <Marker
                     key={location.parkingId}
                     position={{ lat: latitude, lng: longitude}}
-                    options={{icon: parkingIcon}}
+                    icon={{
+                        url: require('../../res/availableParking.svg'),
+                        // This marker is 20 pixels wide by 32 pixels high.
+                        scaledSize: new window.google.maps.Size(20, 48),
+                        // The origin for this image is (0, 0).
+                        origin: new window.google.maps.Point(0, 0),
+                        // The anchor for this image is the base of the flagpole at (0, 32).
+                        anchor: new window.google.maps.Point(10, 35)
+                    }}
                     onClick={()=>{
                         if(!props.isLocked){
                             let markers = Object.assign({},props.parkingInfoWindows, {});
@@ -131,6 +140,17 @@ function ParkingMap({placeInfo, locationMarker, setLocationMarker, addNewParking
     const [parkingInfoWindows, setParkingInfoWindows] = useState(false);
     const [isLocked, setIsLocked] = useState(placeInfo.placeId !== "");
     const refMap = useRef(null);
+
+    // const parkingIcon = {
+    //     url: require('../../res/availableParking.svg'),
+    //     // This marker is 20 pixels wide by 32 pixels high.
+    //     size: window.google.maps.Size(20, 32),
+    //     // The origin for this image is (0, 0).
+    //     origin: window.google.maps.Point(0, 0),
+    //     // The anchor for this image is the base of the flagpole at (0, 32).
+    //     anchor: window.google.maps.Point(0, 32)
+    // };
+
 
     function getClosestParking(){
         API.Parking.getParkingByLocation("?lat="+locationMarker.latitude+"&lng="+locationMarker.longitude).then(response=>{

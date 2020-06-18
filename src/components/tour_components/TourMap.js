@@ -117,8 +117,11 @@ function TourMap({classes, tourInfo, currentDay}) {
                 stopover: true
             }));
             const origin = waypoints.shift().location;
-            const destination = waypoints.pop().location;
-
+            let destination = null
+            if(waypoints.length > 0)
+                destination = waypoints.pop().location;
+            else
+                destination = origin
 
             const directionsService = new google.maps.DirectionsService();
 

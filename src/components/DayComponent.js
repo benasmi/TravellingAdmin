@@ -19,14 +19,41 @@ const styles = theme => ({
     }
 });
 
-function DayComponent({classes, scheduleData, setScheduleData, openDay, onChange}){
+function DayComponent({classes, scheduleData, setScheduleData, openDay, onChange, globalTime}){
 
     let [intervals, setIntervals] = useState(scheduleData.periods.filter(item => item.openDay === openDay))
-
+    let [ignoreGlobalTime, setIgnoreGlobalTime] = useState({ignoreOpenTime: true, ignoreCloseTime: true})
     useEffect(() => {
         onChange(intervals, openDay)
-        console.log(intervals)
     }, [intervals])
+
+    useEffect(() => {
+        if(ignoreGlobalTime.ignoreOpenTime){
+            setIgnoreGlobalTime(data => {
+                return {...data, ignoreOpenTime: false}
+            })
+            return
+        }
+        setIntervals(oldIntervals => {
+            return oldIntervals.map(item => {
+                return {...item, openTime: globalTime.openTime}
+            })
+        })
+    }, [globalTime.openTime])
+
+    useEffect(() => {
+        if(ignoreGlobalTime.ignoreCloseTime){
+            setIgnoreGlobalTime(data => {
+                return {...data, ignoreCloseTime: false}
+            })
+            return
+        }
+        setIntervals(oldIntervals => {
+            return oldIntervals.map(item => {
+                return {...item, closeTime: globalTime.closeTime}
+            })
+        })
+    }, [globalTime.closeTime])
 
     let weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 

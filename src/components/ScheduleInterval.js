@@ -19,7 +19,6 @@ const styles = theme => ({
         display: "flex",
         justifyContent : "space-between",
         margin: theme.spacing(0.5),
-        // padding: theme.spacing(0.5),
         alignItems: "center",
         flexFlow: "row wrap"
     },
@@ -29,8 +28,6 @@ const styles = theme => ({
     },
     intervalRightSide: {
         display: "flex",
-        // width: "100%",
-        // justifyContent : "space-between",
         alignItems: "center",
     },
     intervalLeftSide: {

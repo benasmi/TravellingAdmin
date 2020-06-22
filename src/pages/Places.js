@@ -16,6 +16,14 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import Popover from "@material-ui/core/Popover";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import Autocomplete from "react-google-autocomplete";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import {KeyboardDatePicker} from "@material-ui/pickers";
+import AutocompleteChip from "../components/AutocompleteChip";
+import FilterBlock from "../components/add_place_components/FilterBlock";
+import * as moment from "moment";
 
 const styles = theme => ({
     button: {
@@ -24,13 +32,6 @@ const styles = theme => ({
     input: {
         display: "none"
     },
-
-    sortingButtons: {
-        padding: theme.spacing(2),
-        display: "flex",
-        flexDirection: "column"
-
-},
     root:{
         height:"100vh",
         width:"100%",
@@ -51,6 +52,15 @@ const styles = theme => ({
         [theme.breakpoints.up("lg")]: {
             padding: theme.spacing(8),
         },
+    },
+    autocomplete:{
+        width: '200px',
+        height: '40px',
+        fontSize: "14px",
+        border: "0",
+        borderBottom: "2px solid grey",
+        outline:"0",
+        marginBottom: "4px"
     }
 });
 
@@ -60,7 +70,7 @@ const headCells = [
     { id: 'address', numeric: false, disablePadding: false, label: 'Address',isId: false},
     { id: 'city', numeric: false, disablePadding: false, label: 'City',isId: false },
     { id: 'country', numeric: false, disablePadding: false, label: 'Country',isId: false },
-    { id: 'phoneNumber', numeric: false, disablePadding: false, label: 'Phone Number',isId: false },
+    { id: 'dateModified', numeric: false, disablePadding: false, label: 'Date modified',isId: false },
     { id: 'actions', numeric: false, disablePadding: false, label: 'Actions', isId: false }
 ];
 
@@ -71,20 +81,38 @@ function Places(props) {
     const [isLoading, setIsLoading] = useState(true);
     const { classes } = props;
 
+    const [availableCategories, setAvailableCategories] = useState([]);
 
-    const [filterOptions, setFilterOptions] = useState([
-        {filterLabel: "Unverified", filter: false, filterName: "unverified"},
-        {filterLabel: "Unpublished", filter: false, filterName: "unpublished"}]);
 
-    const [filterQuery, setFilterQuery] = useState("");
+    const [filterQuery, setFilterQuery] = useState(
+        {
+            generalOptions: "",
+            categories: "",
+            insertionStart: moment(new Date('2020-05-01T21:11:54')).format("YYYY-MM-DD"),
+            insertionEnd: moment(new Date()).format(),
+            modificationStart: moment(new Date('2014-05-01T21:11:54')).format("YYYY-MM-DD"),
+            modificationEnd: moment(new Date()).format()
+        });
 
+    const getCategories = () => {
+        API.Categories.getAllCategories().then(response=>{
+            setAvailableCategories(response);
+            console.log(response);
+        }).catch(error=>{
+            console.log(error)
+        });
+    };
+
+    useEffect(()=>{
+        getCategories()
+    },[]);
 
     const { addAlertConfig } = UseAlertDialogContext();
     const { addConfig } = UseSnackbarContext();
 
     useEffect(()=>{
         if(!isLoading){
-            getAllPlaces("?o="+filterQuery)
+            requestAllPlaces();
             console.log("Filter query", filterQuery);
         }
     },[filterQuery]);
@@ -94,7 +122,11 @@ function Places(props) {
             if(data[i].placeId === id)
                 return data[i].name
         }
+    }
 
+    function requestAllPlaces(p=1,keyword=""){
+        console.log(filterQuery);
+        getAllPlaces("?p="+p+"&s="+10+"&keyword="+keyword+"&o="+filterQuery.generalOptions+"&c="+filterQuery.categories+"&di="+filterQuery.insertionStart+","+filterQuery.insertionEnd+ "&dm="+filterQuery.modificationStart+","+filterQuery.modificationEnd);
     }
 
     function parseData(data){
@@ -106,6 +138,7 @@ function Places(props) {
 
         delete data.list;
         setData(placesData);
+        console.log(placesData);
         setPageData(data);
     }
 
@@ -138,7 +171,8 @@ function Places(props) {
 
     const changePageCallback = (p=0, keyword="") => {
         setIsLoading(true);
-        getAllPlaces("?p="+p+"&s="+10+"&keyword="+keyword+"&o="+filterQuery)
+        requestAllPlaces(p, keyword)
+        // getAllPlaces("?p="+p+"&s="+10+"&keyword="+keyword+"&o="+filterQuery.generalOptions)
     };
 
 
@@ -150,22 +184,6 @@ function Places(props) {
         setAnchorEl(event.currentTarget);
     };
 
-    const filterOptionsChanged = (name) =>{
-        let filters = [];
-        let fq = [];
-        filterOptions.map(row=>{
-            if(row.filterName === name){
-                row.filter = !row.filter
-            }
-            if(row.filter){
-                fq.push(row.filterName)
-            }
-            filters.push(row)
-        });
-
-        setFilterQuery(fq.join(","));
-        setFilterOptions(filters)
-    };
 
     const customToolbarElements = () =>{
         return <div>
@@ -188,14 +206,14 @@ function Places(props) {
                     horizontal: 'center',
                 }}
             >
-                <div className={classes.sortingButtons}>
-                    {filterOptions.map(row=>{
-                        return <FormControlLabel
-                            control={<Checkbox checked={row.filter} onChange={()=>filterOptionsChanged(row.filterName)} name={row.filterName} />}
-                            label={row.filterLabel}
-                        />
-                    })}
-                </div>
+
+                <FilterBlock
+                    filterQuery={filterQuery}
+                    setFilterQuery={setFilterQuery}
+                    availableCategories={availableCategories}
+                    setAvailableCategories={setAvailableCategories}
+                />
+
 
             </Popover>
         </div>
@@ -231,13 +249,14 @@ function Places(props) {
                     </Button>
                 </Box>
             </div>
-
+            <Button>
+                Clear filters
+            </Button>
         </div>
     );
 
     function getAllPlaces(urlParams="") {
         API.Places.getAllPlacesAdmin(urlParams).then(response=>{
-            console.log(response)
             parseData(response)
         }).catch(error=>{
             console.log(error)

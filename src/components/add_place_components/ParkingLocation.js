@@ -96,6 +96,7 @@ function ParkingLocation({classes, locationData, setLocationData, allSelectedPar
         </Typography>
 
         <ParkingMap
+            selectedParkingData={allSelectedParkingData}
             placeInfo={placeInfo}
             locationMarker={locationData}
             setLocationMarker={setLocationData}

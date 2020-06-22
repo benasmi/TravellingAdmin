@@ -70,7 +70,7 @@ const headCells = [
     { id: 'address', numeric: false, disablePadding: false, label: 'Address',isId: false},
     { id: 'city', numeric: false, disablePadding: false, label: 'City',isId: false },
     { id: 'country', numeric: false, disablePadding: false, label: 'Country',isId: false },
-    { id: 'phoneNumber', numeric: false, disablePadding: false, label: 'Phone Number',isId: false },
+    { id: 'dateModified', numeric: false, disablePadding: false, label: 'Date modified',isId: false },
     { id: 'actions', numeric: false, disablePadding: false, label: 'Actions', isId: false }
 ];
 
@@ -89,11 +89,10 @@ function Places(props) {
             generalOptions: "",
             categories: "",
             insertionStart: moment(new Date('2020-05-01T21:11:54')).format("YYYY-MM-DD"),
-            insertionEnd: moment(new Date()).format("YYYY-MM-DD"),
+            insertionEnd: moment(new Date()).format(),
             modificationStart: moment(new Date('2014-05-01T21:11:54')).format("YYYY-MM-DD"),
-            modificationEnd: moment(new Date()).format("YYYY-MM-DD")
+            modificationEnd: moment(new Date()).format()
         });
-
 
     const getCategories = () => {
         API.Categories.getAllCategories().then(response=>{
@@ -126,6 +125,7 @@ function Places(props) {
     }
 
     function requestAllPlaces(p=1,keyword=""){
+        console.log(filterQuery);
         getAllPlaces("?p="+p+"&s="+10+"&keyword="+keyword+"&o="+filterQuery.generalOptions+"&c="+filterQuery.categories+"&di="+filterQuery.insertionStart+","+filterQuery.insertionEnd+ "&dm="+filterQuery.modificationStart+","+filterQuery.modificationEnd);
     }
 
@@ -138,6 +138,7 @@ function Places(props) {
 
         delete data.list;
         setData(placesData);
+        console.log(placesData);
         setPageData(data);
     }
 
@@ -256,7 +257,6 @@ function Places(props) {
 
     function getAllPlaces(urlParams="") {
         API.Places.getAllPlacesAdmin(urlParams).then(response=>{
-            console.log(response);
             parseData(response)
         }).catch(error=>{
             console.log(error)

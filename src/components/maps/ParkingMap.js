@@ -11,15 +11,9 @@ import MapLock from "./MapLock";
 import CustomControlsManager from "./CustomControlsManager";
 import IconButton from "@material-ui/core/IconButton";
 import ExploreIcon from "@material-ui/icons/Explore";
-import IconParking from '../../res/availableParking.svg'
+import Alert from "@material-ui/lab/Alert";
+import Typography from "@material-ui/core/Typography";
 
-const styles = theme =>({
-
-});
-
-
-
-// const parkingIcon = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png';
 
 const MapComponent = withGoogleMap(props =>
     <GoogleMap
@@ -75,17 +69,15 @@ const MapComponent = withGoogleMap(props =>
             props.parkingData.map((location, i) =>{
                 const latitude = parseFloat(location.latitude);
                 const longitude = parseFloat(location.longitude);
-
+                console.log(parkingIsAttached(location, props.selectedParkingData));
                 return <Marker
                     key={location.parkingId}
                     position={{ lat: latitude, lng: longitude}}
                     icon={{
-                        url: require('../../res/availableParking.svg'),
-                        // This marker is 20 pixels wide by 32 pixels high.
+                        url: parkingIsAttached(location, props.selectedParkingData) ? require('../../res/selectedParking.svg') :
+                            require('../../res/availableParking.svg'),
                         scaledSize: new window.google.maps.Size(20, 48),
-                        // The origin for this image is (0, 0).
                         origin: new window.google.maps.Point(0, 0),
-                        // The anchor for this image is the base of the flagpole at (0, 32).
                         anchor: new window.google.maps.Point(10, 35)
                     }}
                     onClick={()=>{
@@ -104,7 +96,12 @@ const MapComponent = withGoogleMap(props =>
                             }
                         }>
                             <div style={{display:"flex", flexDirection: "column"}}>
-                                {location.address}
+                                <Typography variant="h6">
+                                    {location.address}
+                                </Typography>
+                                {parkingIsAttached(location, props.selectedParkingData) ? <div>
+                                        <Alert severity="success">This parking location is already attached! See below in "Selected parking locations" section.</Alert>
+                                </div> :
                                 <Button
                                     onClick={()=>{props.addExistingParking(location)}}
                                     variant="text"
@@ -113,6 +110,7 @@ const MapComponent = withGoogleMap(props =>
                                     startIcon={<AddIcon />}>
                                     Add parking
                                 </Button>
+                                }
                             </div>
                         </InfoWindow>
                     )}
@@ -125,6 +123,14 @@ const MapComponent = withGoogleMap(props =>
     </GoogleMap>
 );
 
+function parkingIsAttached(parking, selectedParkingData) {
+    for(let i = 0; i<selectedParkingData.length; i++){
+        if(selectedParkingData[i].address === parking.address)
+            return true
+    }
+    return false
+}
+
 function onMarkerDragEnd(event, setLocationMarker) {
     let newLat = event.latLng.lat(),
         newLng = event.latLng.lng();
@@ -133,23 +139,19 @@ function onMarkerDragEnd(event, setLocationMarker) {
     })
 }
 
-function ParkingMap({placeInfo, locationMarker, setLocationMarker, addNewParking, addExistingParking}) {
+function ParkingMap({placeInfo,
+                        locationMarker,
+                        setLocationMarker,
+                        addNewParking,
+                        addExistingParking,
+                        selectedParkingData
+                    }) {
 
     const [parkingData, setParkingData] = useState([]);
     const [mainInfoWindow, setMainInfoWindow] = useState(false);
     const [parkingInfoWindows, setParkingInfoWindows] = useState(false);
-    const [isLocked, setIsLocked] = useState(placeInfo.placeId !== "");
+    const [isLocked, setIsLocked] = useState(false);
     const refMap = useRef(null);
-
-    // const parkingIcon = {
-    //     url: require('../../res/availableParking.svg'),
-    //     // This marker is 20 pixels wide by 32 pixels high.
-    //     size: window.google.maps.Size(20, 32),
-    //     // The origin for this image is (0, 0).
-    //     origin: window.google.maps.Point(0, 0),
-    //     // The anchor for this image is the base of the flagpole at (0, 32).
-    //     anchor: window.google.maps.Point(0, 32)
-    // };
 
 
     function getClosestParking(){
@@ -189,12 +191,9 @@ function ParkingMap({placeInfo, locationMarker, setLocationMarker, addNewParking
             setPosition={setLocationMarker}
             isLocked={isLocked}
             refInstance={refMap}
+            selectedParkingData={selectedParkingData}
         />
 
-        <MapLock
-            isLocked={isLocked}
-            setIsLocked={setIsLocked}
-        />
     </React.Fragment>
 }
 
@@ -207,4 +206,4 @@ ParkingMap.propTypes = {
     addExistingParking: PropTypes.func.isRequired
 };
 
-export default withStyles(styles)(ParkingMap)
+export default ParkingMap

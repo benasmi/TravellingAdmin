@@ -1,10 +1,12 @@
-import React from "react";
+import React, {useState} from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Autocomplete from "react-google-autocomplete";
 import IconButton from "@material-ui/core/IconButton";
 import MyLocationIcon from "@material-ui/icons/MyLocation";
 import PropTypes from "prop-types";
 import {geocodeFromAddress, geocodeFromLatLng, getCity, getCountry, getCounty, getMunicipality} from "./MapGeolocation";
+import {load} from "dotenv";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const styles = theme => ({
     content: {
@@ -29,6 +31,8 @@ const styles = theme => ({
 
 function MapToolbar({classes, isLocked, locationCallback}) {
 
+    const [loading, setIsLoading] = useState(false);
+
     /**
      * Handle manual address and coordinates filling with key presses and return location
      * @param event
@@ -36,17 +40,19 @@ function MapToolbar({classes, isLocked, locationCallback}) {
      */
     function handleKeyPress(event){
         const value = event.target.value;
-        console.log("Value", value);
         if (event.which === 13 || event.keyCode === 13) {
+            setIsLoading(true);
             if (/[a-zA-Z]+/.test(value)){
                 geocodeFromAddress(value).then(location=>{
                     locationCallback(location)
+                    setIsLoading(false)
                 });
             }else{
                 let position = value.split(/[ ,]+/);
                 if(position.length === 2){
                     geocodeFromLatLng(parseFloat(position[0]), parseFloat(position[1])).then(location=>{
                         locationCallback(location);
+                        setIsLoading(false)
                     })
                 }
             }
@@ -60,6 +66,7 @@ function MapToolbar({classes, isLocked, locationCallback}) {
      * @return {{country: (*|string), address: *, city: (*|string), latitude: *, longitude: *}|null}
      */
     const onPlaceSelected = (place) => {
+        setIsLoading(true);
         const address = place.formatted_address;
         const addressArray =  place.address_components;
         if(addressArray !== undefined){
@@ -69,6 +76,7 @@ function MapToolbar({classes, isLocked, locationCallback}) {
                 municipality = getMunicipality(addressArray),
                 lat = place.geometry.location.lat(),
                 lng = place.geometry.location.lng();
+                setIsLoading(false)
                 locationCallback({address: address, city: city, country: country, latitude: lat, longitude: lng, county: county, municipality: municipality})
         }
         return null
@@ -78,31 +86,37 @@ function MapToolbar({classes, isLocked, locationCallback}) {
      * Get current location
      */
     function getCurrentPosition(){
+        setIsLoading(true)
         navigator.geolocation.getCurrentPosition(function(position) {
             let newLat = position.coords.latitude,
                 newLng = position.coords.longitude;
             geocodeFromLatLng(newLat, newLng).then(location=>{
+                setIsLoading(false)
                 locationCallback(location)
             });
         }, error=>{
+            setIsLoading(false)
             alert(error.message + "\n" + JSON.stringify(error))
         });
     }
 
-    return <div className={classes.content}>
-        <Autocomplete
-            onKeyPress={(event)=>{if(!isLocked)handleKeyPress(event)}}
-            onPlaceSelected={(place)=>{if(!isLocked)onPlaceSelected(place)} }
-            className={classes.autocomplete}
-            types={['(regions)']}
-        />
-        <IconButton aria-label="delete" className={classes.margin} size="small">
-            <MyLocationIcon
-                onClick={()=>{if(!isLocked)getCurrentPosition()}}
-                fontSize="large"
-                color="primary"
+    return <div className={classes.root}>
+        <div className={classes.content}>
+            <Autocomplete
+                onKeyPress={(event)=>{if(!isLocked)handleKeyPress(event)}}
+                onPlaceSelected={(place)=>{if(!isLocked)onPlaceSelected(place)} }
+                className={classes.autocomplete}
+                types={['(regions)']}
             />
-        </IconButton>
+            <IconButton aria-label="delete" className={classes.margin} size="small">
+                <MyLocationIcon
+                    onClick={()=>{if(!isLocked)getCurrentPosition()}}
+                    fontSize="large"
+                    color="primary"
+                />
+            </IconButton>
+        </div>
+        {loading ? <LinearProgress /> : null}
 
     </div>
 

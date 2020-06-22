@@ -382,10 +382,6 @@ function AddPlace({classes, match}) {
         }])
     }
 
-    function locationCallback(location) {
-        console.log("Undefined", location)
-    }
-
     return (
         <div className={classes.root}>
 

@@ -13,29 +13,26 @@ export const TextInputDialog = () => {
 
     const {dialogConfig, removeEditDialogConfig, dialogOpen, setDialogOpen} = UseEditDialogContext();
     const [inputText, setInputText] = useState("")
-    const [error, setError] = useState(false)
+    const [error, setError] = useState(0)
 
-    useEffect(() => {
-        if(dialogOpen) {
-            setError(false)
-            setInputText("")
-        }
-    }, dialogOpen)
+    const deInit = () => {
+        setError(0)
+        setDialogOpen(false)
+        setInputText("")
+    }
 
     const handleClose = () => {
-        if(dialogConfig.onCloseCallback !== undefined)
-            dialogConfig.onCloseCallback()
-        setDialogOpen(false)
+        deInit()
     }
 
     const handleDone = () => {
-        if(!dialogConfig.validateInput(inputText)) {
-            setError(true)
-            return
-        }
+        let errorCode = dialogConfig.validateInput(inputText)
+        setError(errorCode)
+        if(errorCode !== 0) return
+
         if(dialogConfig.onDoneCallback !== undefined)
             dialogConfig.onDoneCallback(inputText)
-        setDialogOpen(false)
+        deInit()
     }
     const handleInput = (e) => {
         setInputText(e.target.value)
@@ -51,7 +48,8 @@ export const TextInputDialog = () => {
                     </DialogContentText>
                     <TextField
                         autoFocus
-                        error={error}
+                        helperText={error !== 0 && dialogConfig.errorMessages[error] !== null ? dialogConfig.errorMessages[error] : ""}
+                        error={error !== 0}
                         margin="dense"
                         id="name"
                         onInput={handleInput}

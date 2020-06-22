@@ -9,12 +9,53 @@ export const EditDialogContext = React.createContext({
 });
 
 const defaultOptions = {
+
+    /**
+     * The dialog's title.
+     */
     title: "Sample title",
+
+    /**
+     * Object, that defines an error message for each error returned by validateInput function.
+     * Should follow this structure: {errorCode: "message", differentErrorCode: "Message"}
+     * Keys of this object are integers (that represent the error code)
+     */
+    errorMessages: {},
+
+    /**
+     * Explanation text for this dialog.
+     */
     explanation: "Sample explanation",
+
+    /**
+     * A callback for when user presses cancel.
+     */
     onCloseCallback: () => {},
-    onDoneCallback: () => {},
+
+    /**
+     * A callback for when the user input passes error checks and done button is pressed
+     * @param input is the input text
+     */
+    onDoneCallback: (input) => {},
+
+    /**
+     * The label text to be displayed above textfield
+     */
     textFieldLabel: "Type here",
-    validateInput: (input) => true,
+
+    /**
+     * Should return 0 if input is valid.
+     * If the input is not valid, it should return an error code.
+     * Any returned code, that is not 0 is considered to be an error.
+     * The error code returned may have a message in errorMessages prop.
+     * @param input
+     * @returns {number}
+     */
+    validateInput: (input) => 0,
+
+    /**
+     * The default text to be displayed in TextField
+     */
     defaultText: ""
 }
 

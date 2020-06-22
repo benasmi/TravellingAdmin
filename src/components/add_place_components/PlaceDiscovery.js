@@ -6,6 +6,8 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import AddDialog from "../AddDialog";
 import API from "../../Networking/API";
+import UseEditDialogContext from "../../contexts/UseEditDialogContext";
+import UseSnackbarContext from "../../contexts/UseSnackbarContext";
 
 
 const styles = theme => ({
@@ -28,12 +30,11 @@ const styles = theme => ({
 
 function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategories, setSelectedCategories}) {
 
-    const [dialogAddTagOpen, setDialogAddTagOpen] = useState(false);
-    const [dialogAddCategoryOpen, setDialogAddCategoryOpen] = useState(false);
-
     const [availableCategories, setAvailableCategories] = useState([]);
     const [availableTags, setAvailableTags] = useState([]);
 
+    const {addEditDialogConfig} = UseEditDialogContext();
+    const {addConfig} = UseSnackbarContext();
 
     const updateTags = () => {
         API.Tags.getAllTags().then(response=>{
@@ -57,47 +58,81 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
         updateCategories();
     },[]);
 
-    const handleAddCategory = (value) => {
-        API.Categories.addCategory([{name: value}]).then(response=>{
-            let newCat = {categoryId: response[0], name: value};
-            setAvailableCategories(
-                [
-                    ...availableCategories,
-                    newCat
-                ]
-            );
-            setSelectedCategories([
-                ...selectedCategories,
-                newCat
-            ]);
-            setDialogAddCategoryOpen(false)
 
-        }).catch(error=>{
-            console.log(error)
+    const promptAddTag = () => {
+        addEditDialogConfig({
+            title: "Add tag",
+            explanation: "Type the tag name",
+            onDoneCallback: (tagName) => {
+                API.Tags.addTag([{name: tagName}]).then(response=>{
+                    let newTag = {tagId: response[0], name: tagName}
+                    setAvailableTags(
+                        [
+                            ...availableTags,
+                            newTag
+                        ]
+                    );
+                    setSelectedTags([
+                        ...selectedTags,
+                        newTag
+                    ]);
+
+                }).catch(()=>{
+                    addConfig(false, "Failed to add tag.")
+                })
+            },
+            errorMessages: {
+                1: "The tag name is too short",
+                2: "A tag with identical name already exists. You should choose the existing tag instead"
+            },
+            validateInput: (input) => {
+                if(input.length < 4){
+                    return 1 //Input too short
+                }else if(availableTags.filter(item => item.name === input).length !== 0){
+                    return 2 //Identical tag already exists
+                }
+                return 0
+            },
+            textFieldLabel: "Warm, quick, cozy..."
         })
-    };
+    }
 
-
-
-    const handleAddTag = (value) => {
-        API.Tags.addTag([{name: value}]).then(response=>{
-            let newTag = {tagId: response[0], name: value}
-            setAvailableTags(
-                [
-                    ...availableTags,
-                    newTag
-                ]
-            );
-            setSelectedTags([
-                ...selectedTags,
-                newTag
-            ]);
-            setDialogAddTagOpen(false)
-
-        }).catch(error=>{
-            console.log(error)
+    const promptAddCategory = () => {
+        addEditDialogConfig({
+            title: "Add category",
+            explanation: "Type the category name",
+            onDoneCallback: (categoryName) => {
+                API.Categories.addCategory([{name: categoryName}]).then(response=>{
+                    let newCat = {categoryId: response[0], name: categoryName};
+                    setAvailableCategories(
+                        [
+                            ...availableCategories,
+                            newCat
+                        ]
+                    );
+                    setSelectedCategories([
+                        ...selectedCategories,
+                        newCat
+                    ]);
+                }).catch(error=>{
+                    addConfig(false, "Failed to add category.")
+                })
+            },
+            errorMessages: {
+                1: "The category name is too short",
+                2: "A category with identical name already exists. You should choose the existing category instead"
+            },
+            validateInput: (input) => {
+                if(input.length < 4){
+                    return 1 //Input too short
+                }else if(availableCategories.filter(item => item.name === input).length !== 0){
+                    return 2 //Identical category already exists
+                }
+                return 0
+            },
+            textFieldLabel: "Restaurant, hotel, hiking..."
         })
-    };
+    }
 
     return <div>
         <Typography variant="h6" >
@@ -119,11 +154,10 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
             color="primary"
             size="small"
             className={classes.button}
-            onClick={() => setDialogAddTagOpen(true)}
+            onClick={promptAddTag}
             startIcon={<AddIcon />}>
             Add missing tag
         </Button>
-        <AddDialog action={handleAddTag} textFieldLabel="Name" open={dialogAddTagOpen} onCloseCallback={() => setDialogAddTagOpen(false)} header = "Add a new tag" />
 
         <br/>
         <br/>
@@ -141,15 +175,10 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
             color="primary"
             size="small"
             className={classes.button}
-            onClick={() => setDialogAddCategoryOpen(true)}
+            onClick={promptAddCategory}
             startIcon={<AddIcon />}>
             Add missing category
         </Button>
-        <AddDialog action={handleAddCategory}
-                   textFieldLabel="Name"
-                   open={dialogAddCategoryOpen}
-                   onCloseCallback={() => setDialogAddCategoryOpen(false)}
-                   header = "Add a new category" />
     </div>
 }
 

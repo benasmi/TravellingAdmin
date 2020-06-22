@@ -28,6 +28,7 @@ import Redirect from "react-router-dom/es/Redirect";
 import Tour from "./tour_components/Tour";
 import { useLocation } from 'react-router-dom'
 import Tours from "../pages/Tours";
+import Resources from "./Resources";
 const drawerWidth = 240;
 
 
@@ -186,6 +187,9 @@ export default function Appbar(props) {
                     <ListItem button component={Link} to="/app/addtour" onClick={()=>setTitle("Add tour")} >
                         <ListItemText>Add tour</ListItemText>
                     </ListItem>
+                    <ListItem button component={Link} to="/app/resources" onClick={()=>setTitle("Manage resources")} >
+                        <ListItemText>Resources</ListItemText>
+                    </ListItem>
                 </List>
             </Drawer>
             <main
@@ -201,6 +205,7 @@ export default function Appbar(props) {
                     <Route path="/app/addplace/:placeId?" component={AddPlace} />
                     <Route path="/app/apiplaces" component={ApiPlaces} />
                     <Route path="/app/addtour/:tourId?" component={Tour} />
+                    <Route path="/app/resources" component={Resources} />
                     <Redirect from="*" to="/404"/>
                 </Switch>
 

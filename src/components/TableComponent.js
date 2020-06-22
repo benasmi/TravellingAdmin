@@ -177,7 +177,7 @@ const EnhancedTableToolbar = (props) => {
 
 EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired
+    title: PropTypes.string.isRequired,
 };
 
 
@@ -222,7 +222,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function TableComponent({title, headCells, pagingInfo, data, checkable, changePageCallback, updateCallback, removeCallback, id, isLoading, customToolbarElements}) {
+export default function TableComponent({title, searchFunction, headCells, pagingInfo, data, checkable, changePageCallback, updateCallback, removeCallback, id, isLoading, customToolbarElements}) {
 
     TableComponent.propTypes = {
         title: PropTypes.string.isRequired,
@@ -237,8 +237,6 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
         isLoading: PropTypes.bool,
         customToolbarElements: PropTypes.object
     };
-
-
 
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
@@ -341,6 +339,7 @@ export default function TableComponent({title, headCells, pagingInfo, data, chec
 
                         <TableBody>
                             {stableSort(data, getComparator(order, orderBy))
+                                .filter(item => searchFunction === undefined ? true : searchFunction(keyword, item))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
 

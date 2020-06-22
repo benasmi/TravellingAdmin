@@ -15,12 +15,16 @@ const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlace
 //Tags
 const getAllTags = () => RequestType.getRequest("api/v1/tags/all");
 const addTag = (params) => RequestType.postRequest("api/v1/tags/insert", params);
-const Tags = {getAllTags, addTag};
+const removeTags = (params) => RequestType.postRequest("api/v1/tags/delete", params);
+const updateTags = (params) => RequestType.postRequest("api/v1/tags/update", params);
+const Tags = {getAllTags, addTag, removeTags, updateTags};
 
 //Category
 const addCategory = (params) => RequestType.postRequest("api/v1/categories/insert", params);
+const removeCategory = (params) => RequestType.postRequest("api/v1/categories/delete", params);
+const updateCategory = (params) => RequestType.postRequest("api/v1/categories/update", params);
 const getAllCategories = () => RequestType.getRequest("api/v1/categories/all");
-const Categories = {addCategory, getAllCategories};
+const Categories = {addCategory, getAllCategories, removeCategory, updateCategory};
 
 //Photo
 const addPhoto = (params) => RequestType.postRequest("api/v1/photo/insert", params);
@@ -37,7 +41,6 @@ const Parking = {getParkingByLocation, insertNewParking};
 //TagsPlace
 const updateTagsForPlace = (data, urlParams) => RequestType.postRequest("api/v1/tagsplace/update", data, urlParams);
 const TagsPlace = {updateTagsForPlace};
-
 
 //CategoriesPlace
 const updateCategoriesForPlace = (data, urlParams) => RequestType.postRequest("api/v1/categoryplace/update", data, urlParams);

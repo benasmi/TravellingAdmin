@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Typography from "@material-ui/core/Typography";
@@ -10,6 +10,7 @@ import moment from "moment";
 import DateFnsUtils from "@date-io/date-fns";
 import MuiPickersUtilsProvider from "@material-ui/pickers/MuiPickersUtilsProvider";
 import Button from "@material-ui/core/Button";
+import {PlacesFilterContext} from "../../contexts/PlacesFilterContext";
 
 const style = theme =>({
     filterDiv: {
@@ -39,93 +40,61 @@ const style = theme =>({
 
 
 
-function FilterBlock({classes,
-                         filterQuery,
-                         setFilterQuery,
-                         availableCategories,
-                         setAvailableCategories}) {
-    const [initialFiltering, setInitialFiltering] = useState(Object.assign({},filterQuery));
-    const options = [
-        {filterLabel: "Unverified", filter: false, filterName: "unverified"},
-        {filterLabel: "Unpublished", filter: false, filterName: "unpublished"}];
-
-    const [filterOptions, setFilterOptions] = useState(()=>{
-        if(filterQuery.generalOptions.length !== 0){
-
-            filterQuery.generalOptions.split(",").map(row=>{
-                options.map(op=>{
-                    if(op.filterName===row){
-                        op.filter = true
-                    }
-                })
-            })
-        }
-        return options
-
-    });
-
-    const [selectedCategories, setSelectedCategories] = useState(()=>{
-            let cats = [];
-            if(filterQuery.categories.length !== 0){
-                filterQuery.categories.split(",").map(row=>{
-                    cats.push({name: row})
-                });
-            }
-            console.log("Categories", cats);
-        return cats
-    });
-
-
-    const [initialLoad, setInitialLoad]=  useState(true);
+function FilterBlock({classes}) {
+    const {
+        categories, setCategories, selectedCategories, setSelectedCategories,
+        cities, setCities, selectedCities, setSelectedCities,
+        countries, setCountries, selectedCountries, setSelectedCountries,
+        filterOptions, setFilterOptions, setResetFilterOptions,
+        dates, setDates} = useContext(PlacesFilterContext);
 
     const filterOptionsChanged = (name) =>{
-        let fq = [];
-        filterOptions.map(row=>{
+        let generalOptions = Object.assign([], filterOptions);
+        generalOptions.map(row=>{
             if(row.filterName === name){
                 row.filter = !row.filter
             }
-            if(row.filter){
-                fq.push(row.filterName)
-            }
         });
-
-        let generalOptions = Object.assign({}, filterQuery);
-        generalOptions.generalOptions = fq.join(",");
-        setFilterQuery(generalOptions);
+        setFilterOptions(generalOptions)
     };
 
-    useEffect(()=>{
-        if(!initialLoad){
-            let catsFilter = [];
-            selectedCategories.map(row=>{
-                catsFilter.push(row.name)
-            });
-            let cats = Object.assign({}, filterQuery);
-            cats.categories = catsFilter.join(",");
-            setFilterQuery(cats);
-        }
-        setInitialLoad(false)
-    },[selectedCategories]);
-
-
     function filterDateChange(date, id) {
-        let cDate = Object.assign( {},filterQuery);
+        let cDate = Object.assign( {}, dates);
         cDate[id] = moment(date).format('YYYY-MM-DD');
-        setFilterQuery(cDate)
+        setDates(cDate)
     }
 
     function clearFilters() {
-        setFilterOptions(options);
+        setResetFilterOptions(true);
+
+        setSelectedCities([]);
+        setSelectedCountries([]);
         setSelectedCategories([]);
-        console.log(initialFiltering)
-        setFilterQuery(initialFiltering)
+
+        let filters = Object.assign(filterOptions, []);
+        filters.map(row=>{
+            row.filter = false
+        });
+        setFilterOptions(filters);
+
+        setDates({
+            insertionStart: moment(new Date('2020-05-01T21:11:54')).format("YYYY-MM-DD"),
+            insertionEnd: moment(new Date()).format(),
+            modificationStart: moment(new Date('2014-05-01T21:11:54')).format("YYYY-MM-DD"),
+            modificationEnd: moment(new Date()).format()
+        })
     }
+
+
 
     return <div className={classes.filterDiv}>
         <div className={classes.sortingButtons}>
-            {filterOptions && filterOptions.map(row=>{
+            {filterOptions.map(row=>{
                 return <FormControlLabel
-                    control={<Checkbox checked={row.filter} onChange={()=>filterOptionsChanged(row.filterName)} name={row.filterName} />}
+                    control={<Checkbox
+                        checked={row.filter}
+                        onChange={()=>filterOptionsChanged(row.filterName)}
+                        name={row.filterName} />}
                     label={row.filterLabel}
                 />
             })}
@@ -146,7 +115,7 @@ function FilterBlock({classes,
                     margin="normal"
                     id="insertionStart"
                     onChange={(date)=>filterDateChange(date,"insertionStart")}
-                    value={filterQuery.insertionStart}
+                    value={dates.insertionStart}
                     label="Date start"
                     KeyboardButtonProps={{
                         'aria-label': 'change date',
@@ -157,7 +126,7 @@ function FilterBlock({classes,
                     variant="inline"
                     format="MM-dd-yyyy"
                     margin="normal"
-                    value={filterQuery.insertionEnd}
+                    value={dates.insertionEnd}
                     onChange={(date)=>filterDateChange(date,"insertionEnd")}
                     id="insertionEnd"
                     label="Date end"
@@ -178,7 +147,7 @@ function FilterBlock({classes,
                     variant="inline"
                     format="MM-dd-yyyy"
                     margin="normal"
-                    value={filterQuery.modificationStart}
+                    value={dates.modificationStart}
                     onChange={(date)=>filterDateChange(date,"modificationStart")}
                     id="modificationStart"
                     label="Date start"
@@ -191,7 +160,7 @@ function FilterBlock({classes,
                     variant="inline"
                     format="MM-dd-yyyy"
                     margin="normal"
-                    value={filterQuery.modificationEnd}
+                    value={dates.modificationEnd}
                     onChange={(date)=>filterDateChange(date,"modificationEnd")}
                     id="modificationEnd"
                     label="Date end"
@@ -206,13 +175,34 @@ function FilterBlock({classes,
             </Typography>
             <AutocompleteChip label="Select categories"
                               id="categoryId"
-                              options={availableCategories}
-                              setOptions={setAvailableCategories}
+                              options={categories}
+                              setOptions={setCategories}
                               selectedOptions={selectedCategories}
                               setSelectedOptions={setSelectedCategories}/>
 
                               <br/>
                               <br/>
+            <Typography variant="h6">
+                Filter by countries
+            </Typography>
+            <AutocompleteChip label="Select countries"
+                              options={countries}
+                              setOptions={setCountries}
+                              selectedOptions={selectedCountries}
+                              setSelectedOptions={setSelectedCountries}/>
+            <br/>
+            <br/>
+
+            <Typography variant="h6">
+                Filter by cities
+            </Typography>
+            <AutocompleteChip label="Select cities"
+                              options={cities}
+                              setOptions={setCities}
+                              selectedOptions={selectedCities}
+                              setSelectedOptions={setSelectedCities}/>
+            <br/>
+            <br/>
             <Button
                 variant="contained"
                 color="primary"

@@ -6,13 +6,12 @@ import API from "../../Networking/API";
 import PropTypes, {func} from "prop-types";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
-import withStyles from "@material-ui/core/styles/withStyles";
-import MapLock from "./MapLock";
 import CustomControlsManager from "./CustomControlsManager";
 import IconButton from "@material-ui/core/IconButton";
 import ExploreIcon from "@material-ui/icons/Explore";
 import Alert from "@material-ui/lab/Alert";
 import Typography from "@material-ui/core/Typography";
+import UseAlertDialogContext from "../../contexts/UseAlertDialogContext";
 
 
 const MapComponent = withGoogleMap(props =>
@@ -36,7 +35,13 @@ const MapComponent = withGoogleMap(props =>
                         {props.position.address}
                         <Button
                             onClick={()=>{
-                                props.addNewParking(props.position)
+                                let c = nearestParkingCount(props.position, props.parkingData);
+                                if(c>0){
+                                    props.addAlertConfig("Parkings nearby already exist!", c+" parking(-s) within 150 meter already exist(-s)." +
+                                        " Are you sure you don't want to use already existings parking locations?",[{name:"ADD NEW PARKING!", action: ()=>{
+                                            props.addNewParking(props.position)
+                                        }}])
+                                }
                             }}
                             variant="text"
                             color="secondary"
@@ -131,6 +136,34 @@ function parkingIsAttached(parking, selectedParkingData) {
     return false
 }
 
+function calcCrow(lat1, lon1, lat2, lon2)
+{
+    var R = 6371; // km
+    var dLat = toRad(lat2-lat1);
+    var dLon = toRad(lon2-lon1);
+    var lat1 = toRad(lat1);
+    var lat2 = toRad(lat2);
+
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c;
+    return d;
+}
+function toRad(Value) {return Value * Math.PI / 180}
+
+function nearestParkingCount(parking, parkingData){
+    let count = 0;
+    for(let i = 0; i<parkingData.length; i++){
+        let distance = calcCrow(parking.latitude, parking.longitude, parkingData[i].latitude, parkingData[i].longitude);
+        if(distance<=0.15){
+            count++;
+        }
+    }
+    return count
+}
+
+
 function onMarkerDragEnd(event, setLocationMarker) {
     let newLat = event.latLng.lat(),
         newLng = event.latLng.lng();
@@ -153,6 +186,7 @@ function ParkingMap({placeInfo,
     const [isLocked, setIsLocked] = useState(false);
     const refMap = useRef(null);
 
+    const { addAlertConfig } = UseAlertDialogContext();
 
     function getClosestParking(){
         API.Parking.getParkingByLocation("?lat="+locationMarker.latitude+"&lng="+locationMarker.longitude).then(response=>{
@@ -192,6 +226,7 @@ function ParkingMap({placeInfo,
             isLocked={isLocked}
             refInstance={refMap}
             selectedParkingData={selectedParkingData}
+            addAlertConfig={addAlertConfig}
         />
 
     </React.Fragment>

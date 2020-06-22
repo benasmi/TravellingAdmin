@@ -10,7 +10,12 @@ const getPlaceById = (urlParams) => RequestType.getRequest("api/v1/place/getplac
 const searchApiPlaces = (urlParams) => RequestType.getRequest("api/v1/placeApi/search", urlParams);
 const removePlace = (urlParams) => RequestType.getRequest("api/v1/place/delete", urlParams);
 
-const Places = {getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin,searchApiPlaces, removePlace};
+const getAllCities = () =>RequestType.getRequest("api/v1/place/city/all");
+const getAllCounties = () =>RequestType.getRequest("api/v1/place/county/all");
+const getAllCountries = () =>RequestType.getRequest("api/v1/place/country/all");
+const getAllMunicipalities = () =>RequestType.getRequest("api/v1/place/municipality/all");
+
+const Places = {getAllCities,getAllCounties, getAllCountries, getAllMunicipalities, getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin,searchApiPlaces, removePlace};
 
 //Tags
 const getAllTags = () => RequestType.getRequest("api/v1/tags/all");

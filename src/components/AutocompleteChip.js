@@ -81,7 +81,7 @@ function AutoCompleteChip(props){
                 <Box component="ul" className={classes.root}>
                     {
                         selectedOptions.map(option => {
-                            return(
+                            return id !== undefined ?
                                 <li key={option[id]}>
                                     <Chip
                                         variant="outlined"
@@ -90,8 +90,18 @@ function AutoCompleteChip(props){
                                         className={classes.chip}
                                     />
                                 </li>
+                                :
+                                <li key={option}>
+                                        <Chip
+                                            variant="outlined"
+                                            label={option}
+                                            onDelete={() => handleDelete(option)}
+                                            className={classes.chip}
+                                        />
+                                </li>
+                                }
+
                             )
-                        })
                     }
                 </Box>
                 }
@@ -102,7 +112,7 @@ function AutoCompleteChip(props){
                     options={options}
                     onChange={handleInput}
                     disableClearable
-                    getOptionLabel={(option) =>  option.name}
+                    getOptionLabel={(option) =>  id!==undefined ? option.name : option}
                     renderInput={(params) => <TextField {...params} label={label} variant="outlined" />}
                 />
             </Box>

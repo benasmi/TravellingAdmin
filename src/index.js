@@ -12,12 +12,14 @@ import SnackbarFeedback from "./components/feedback/SnackbarFeedback";
 import AlertDialogProvider from "./contexts/AlertDialogContext";
 import AlertDialogFeedback from "./components/feedback/AlertDialogFeedback";
 import {AuthProvider} from "./contexts/AuthContext";
+import {PlacesFilterProvider} from "./contexts/PlacesFilterContext";
 
 require('dotenv').config();
 
 ReactDOM.render(
     <AuthProvider>
         <Router history={history}>
+            <PlacesFilterProvider>
             <SnackbarProvider>
                 <AlertDialogProvider>
                     <SnackbarFeedback/>
@@ -31,6 +33,7 @@ ReactDOM.render(
                     </Switch>
                 </AlertDialogProvider>
             </SnackbarProvider>
+            </PlacesFilterProvider>
         </Router>
     </AuthProvider>
    , document.getElementById('root'));

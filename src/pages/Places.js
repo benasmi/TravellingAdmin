@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {withStyles} from "@material-ui/core/styles";
 import TableComponent from "../components/TableComponent";
@@ -14,16 +14,9 @@ import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import Popover from "@material-ui/core/Popover";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Autocomplete from "react-google-autocomplete";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import {KeyboardDatePicker} from "@material-ui/pickers";
-import AutocompleteChip from "../components/AutocompleteChip";
 import FilterBlock from "../components/add_place_components/FilterBlock";
 import * as moment from "moment";
+import {PlacesFilterContext} from "../contexts/PlacesFilterContext";
 
 const styles = theme => ({
     button: {
@@ -81,40 +74,14 @@ function Places(props) {
     const [isLoading, setIsLoading] = useState(true);
     const { classes } = props;
 
-    const [availableCategories, setAvailableCategories] = useState([]);
 
-
-    const [filterQuery, setFilterQuery] = useState(
-        {
-            generalOptions: "",
-            categories: "",
-            insertionStart: moment(new Date('2020-05-01T21:11:54')).format("YYYY-MM-DD"),
-            insertionEnd: moment(new Date()).format(),
-            modificationStart: moment(new Date('2014-05-01T21:11:54')).format("YYYY-MM-DD"),
-            modificationEnd: moment(new Date()).format()
-        });
-
-    const getCategories = () => {
-        API.Categories.getAllCategories().then(response=>{
-            setAvailableCategories(response);
-            console.log(response);
-        }).catch(error=>{
-            console.log(error)
-        });
-    };
-
-    useEffect(()=>{
-        getCategories()
-    },[]);
-
+    const { filterQuery } = useContext(PlacesFilterContext);
     const { addAlertConfig } = UseAlertDialogContext();
     const { addConfig } = UseSnackbarContext();
 
     useEffect(()=>{
-        if(!isLoading){
-            requestAllPlaces();
-            console.log("Filter query", filterQuery);
-        }
+        setIsLoading(true);
+        requestAllPlaces();
     },[filterQuery]);
 
     function getPlaceNameById(id){
@@ -125,8 +92,8 @@ function Places(props) {
     }
 
     function requestAllPlaces(p=1,keyword=""){
-        console.log(filterQuery);
-        getAllPlaces("?p="+p+"&s="+10+"&keyword="+keyword+"&o="+filterQuery.generalOptions+"&c="+filterQuery.categories+"&di="+filterQuery.insertionStart+","+filterQuery.insertionEnd+ "&dm="+filterQuery.modificationStart+","+filterQuery.modificationEnd);
+        console.log(filterQuery + "&p="+p+"&s="+10+"&keyword="+keyword);
+        getAllPlaces(filterQuery+"&p="+p+"&s="+10+"&keyword="+keyword);
     }
 
     function parseData(data){
@@ -172,9 +139,7 @@ function Places(props) {
     const changePageCallback = (p=0, keyword="") => {
         setIsLoading(true);
         requestAllPlaces(p, keyword)
-        // getAllPlaces("?p="+p+"&s="+10+"&keyword="+keyword+"&o="+filterQuery.generalOptions)
     };
-
 
     //Sorting stuff
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -206,14 +171,7 @@ function Places(props) {
                     horizontal: 'center',
                 }}
             >
-
-                <FilterBlock
-                    filterQuery={filterQuery}
-                    setFilterQuery={setFilterQuery}
-                    availableCategories={availableCategories}
-                    setAvailableCategories={setAvailableCategories}
-                />
-
+                <FilterBlock/>
 
             </Popover>
         </div>
@@ -257,8 +215,10 @@ function Places(props) {
 
     function getAllPlaces(urlParams="") {
         API.Places.getAllPlacesAdmin(urlParams).then(response=>{
+            setIsLoading(false);
             parseData(response)
         }).catch(error=>{
+            setIsLoading(false);
             console.log(error)
         })
     }

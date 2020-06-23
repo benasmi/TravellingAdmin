@@ -8,10 +8,10 @@ var buildUrl = require('build-url');
 
 const initialDates = {
     insertionStart: moment(new Date('2020-05-01T21:11:54')).format("YYYY-MM-DD"),
-    insertionEnd: moment(new Date()).format(),
+    insertionEnd: moment(new Date()).add(1,'day').format(),
     modificationStart: moment(new Date('2014-05-01T21:11:54')).format("YYYY-MM-DD"),
-    modificationEnd: moment(new Date()).format()
-}
+    modificationEnd: moment(new Date()).add(1,'day').format()
+};
 
 export const PlacesFilterProvider = ({children}) => {
     const [categories, setCategories] = useState([]);
@@ -45,7 +45,8 @@ export const PlacesFilterProvider = ({children}) => {
             filterOptions: parseFilterOptions(),
             categories: parseCategories(),
             countries: selectedCountries,
-            cities: selectedCities
+            cities: selectedCities,
+            municipalities: selectedMunicipalities
         }
     }));
 
@@ -113,7 +114,8 @@ export const PlacesFilterProvider = ({children}) => {
                         o: parseFilterOptions(),
                         c: parseCategories(),
                         countries: selectedCountries,
-                        cities: selectedCities
+                        cities: selectedCities,
+                        municipalities: selectedMunicipalities
                     }
                 }))
             }else{
@@ -124,7 +126,7 @@ export const PlacesFilterProvider = ({children}) => {
                 }
             }
         }
-    },[selectedCategories, selectedCities,selectedCountries,dates,filterOptions,resetFilterOptions]);
+    },[selectedCategories, selectedCities,selectedCountries,selectedMunicipalities,dates,filterOptions,resetFilterOptions]);
 
     function areFiltersCleared() {
         let filterOptionsCleared = true;

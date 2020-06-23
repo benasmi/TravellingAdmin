@@ -3,10 +3,10 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Autocomplete from "react-google-autocomplete";
 import IconButton from "@material-ui/core/IconButton";
 import MyLocationIcon from "@material-ui/icons/MyLocation";
-import PropTypes from "prop-types";
+import PropTypes, {func} from "prop-types";
 import {geocodeFromAddress, geocodeFromLatLng, getCity, getCountry, getCounty, getMunicipality} from "./MapGeolocation";
-import {load} from "dotenv";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import UseAlertDialogContext from "../../contexts/UseAlertDialogContext";
 
 const styles = theme => ({
     content: {
@@ -32,26 +32,31 @@ const styles = theme => ({
 function MapToolbar({classes, isLocked, locationCallback}) {
 
     const [loading, setIsLoading] = useState(false);
-
+    const { addAlertConfig } = UseAlertDialogContext();
     /**
      * Handle manual address and coordinates filling with key presses and return location
      * @param event
      * @return {boolean}
      */
+
+    function errorParsingLocation(){
+        addAlertConfig("Error parsing location!", "Make sure that address you provided is correct!",[])
+    }
+
     function handleKeyPress(event){
         const value = event.target.value;
         if (event.which === 13 || event.keyCode === 13) {
             setIsLoading(true);
             if (/[a-zA-Z]+/.test(value)){
                 geocodeFromAddress(value).then(location=>{
-                    locationCallback(location)
+                    location!==null ? locationCallback(location) : errorParsingLocation();
                     setIsLoading(false)
-                });
+                })
             }else{
                 let position = value.split(/[ ,]+/);
                 if(position.length === 2){
                     geocodeFromLatLng(parseFloat(position[0]), parseFloat(position[1])).then(location=>{
-                        locationCallback(location);
+                        location!==null ? locationCallback(location) : errorParsingLocation();
                         setIsLoading(false)
                     })
                 }
@@ -91,8 +96,9 @@ function MapToolbar({classes, isLocked, locationCallback}) {
             let newLat = position.coords.latitude,
                 newLng = position.coords.longitude;
             geocodeFromLatLng(newLat, newLng).then(location=>{
+                location!==null ? locationCallback(location) : errorParsingLocation();
+
                 setIsLoading(false)
-                locationCallback(location)
             });
         }, error=>{
             setIsLoading(false)

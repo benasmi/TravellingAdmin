@@ -82,8 +82,9 @@ export const getMunicipality = ( addressArray ) => {
  * @return location object
  */
 export function geocodeFromAddress(address){
-    return Geocode.fromAddress( address ).then(
+  return Geocode.fromAddress( address ).then(
         response => {
+            console.log("Responsas geocodinime", response);
             const { lat, lng } = response.results[0].geometry.location;
             const address = response.results[0].formatted_address;
             const addressArray =  response.results[0].address_components;
@@ -97,10 +98,10 @@ export function geocodeFromAddress(address){
             }
             return null
         },
-        error => {
-            console.log(error);
-        }
-    );
+      err=>{
+            return null
+      }
+    )
 }
 
 /**
@@ -109,6 +110,8 @@ export function geocodeFromAddress(address){
  * @param newLng
  * @return location object
  */
+
+
 export function geocodeFromLatLng(newLat, newLng){
     return Geocode.fromLatLng( newLat , newLng ).then(
         response => {
@@ -125,7 +128,7 @@ export function geocodeFromLatLng(newLat, newLng){
             return null
         },
         error => {
-            console.error(error);
+            return null
         }
     );
 }

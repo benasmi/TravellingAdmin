@@ -11,6 +11,8 @@ import DateFnsUtils from "@date-io/date-fns";
 import MuiPickersUtilsProvider from "@material-ui/pickers/MuiPickersUtilsProvider";
 import Button from "@material-ui/core/Button";
 import {PlacesFilterContext} from "../../contexts/PlacesFilterContext";
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from "@material-ui/core/IconButton";
 
 const style = theme =>({
     filterDiv: {
@@ -40,11 +42,12 @@ const style = theme =>({
 
 
 
-function FilterBlock({classes}) {
+function FilterBlock({classes, setOpen}) {
     const {
         categories, setCategories, selectedCategories, setSelectedCategories,
         cities, setCities, selectedCities, setSelectedCities,
         countries, setCountries, selectedCountries, setSelectedCountries,
+        municipalities, setMunicipalities, selectedMunicipalities, setSelectedMunicipalities,
         filterOptions, setFilterOptions, setResetFilterOptions,
         dates, setDates} = useContext(PlacesFilterContext);
 
@@ -70,6 +73,7 @@ function FilterBlock({classes}) {
         setSelectedCities([]);
         setSelectedCountries([]);
         setSelectedCategories([]);
+        setSelectedMunicipalities([]);
 
         let filters = Object.assign(filterOptions, []);
         filters.map(row=>{
@@ -79,9 +83,9 @@ function FilterBlock({classes}) {
 
         setDates({
             insertionStart: moment(new Date('2020-05-01T21:11:54')).format("YYYY-MM-DD"),
-            insertionEnd: moment(new Date()).format(),
+            insertionEnd: moment(new Date()).add(1,'day').format(),
             modificationStart: moment(new Date('2014-05-01T21:11:54')).format("YYYY-MM-DD"),
-            modificationEnd: moment(new Date()).format()
+            modificationEnd: moment(new Date()).add(1,'day').format()
         })
     }
 
@@ -100,6 +104,11 @@ function FilterBlock({classes}) {
             })}
         </div>
         <div className={classes.rightLayout}>
+            <div style={{display: "flex", justifyContent: "flex-end"}}>
+                <IconButton aria-label="delete" size="large" onClick={()=>{setOpen(null)}}>
+                    <CloseIcon/>
+                </IconButton>
+            </div>
             <Typography variant="h6">
                 Filter by dates
             </Typography>
@@ -181,7 +190,6 @@ function FilterBlock({classes}) {
                               setSelectedOptions={setSelectedCategories}/>
 
                               <br/>
-                              <br/>
             <Typography variant="h6">
                 Filter by countries
             </Typography>
@@ -190,7 +198,6 @@ function FilterBlock({classes}) {
                               setOptions={setCountries}
                               selectedOptions={selectedCountries}
                               setSelectedOptions={setSelectedCountries}/>
-            <br/>
             <br/>
 
             <Typography variant="h6">
@@ -201,6 +208,16 @@ function FilterBlock({classes}) {
                               setOptions={setCities}
                               selectedOptions={selectedCities}
                               setSelectedOptions={setSelectedCities}/>
+            <br/>
+
+            <Typography variant="h6">
+                Filter by municipalities
+            </Typography>
+            <AutocompleteChip label="Select municipalities"
+                              options={municipalities}
+                              setOptions={setMunicipalities}
+                              selectedOptions={selectedMunicipalities}
+                              setSelectedOptions={setSelectedMunicipalities}/>
             <br/>
             <br/>
             <Button

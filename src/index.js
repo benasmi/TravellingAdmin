@@ -19,26 +19,28 @@ import {TextInputDialog} from "./components/feedback/TextInputDialog";
 require('dotenv').config();
 
 ReactDOM.render(
-    <AuthProvider>
-        <Router history={history}>
-            <PlacesFilterProvider>
-            <SnackbarProvider>
-                <AlertDialogProvider>
-                    <EditDialogProvider>
-                        <SnackbarFeedback/>
-                        <AlertDialogFeedback/>
-                        <TextInputDialog/>
-                        <Switch>
-                            <Redirect exact from="/" to="/app"/>
-                            <AuthenticatedRoute path="/app" component={App}/>
-                            <Route path="/login" component={LoginPage}/>
-                            <Route path="*" component={NotFoundPage}/>
-                            <Redirect from="*" to="/404"/>
-                        </Switch>
-                    </EditDialogProvider>
-                </AlertDialogProvider>
-            </SnackbarProvider>
-            </PlacesFilterProvider>
-        </Router>
-    </AuthProvider>
+    <React.Fragment>
+        <AuthProvider>
+            <Router history={history}>
+                <PlacesFilterProvider>
+                    <SnackbarProvider>
+                        <AlertDialogProvider>
+                            <EditDialogProvider>
+                                <SnackbarFeedback/>
+                                <AlertDialogFeedback/>
+                                <TextInputDialog/>
+                                <Switch>
+                                    <Redirect exact from="/" to="/app"/>
+                                    <AuthenticatedRoute path="/app" component={App}/>
+                                    <Route path="/login" component={LoginPage}/>
+                                    <Route path="*" component={NotFoundPage}/>
+                                    <Redirect from="*" to="/404"/>
+                                </Switch>
+                            </EditDialogProvider>
+                        </AlertDialogProvider>
+                    </SnackbarProvider>
+                </PlacesFilterProvider>
+            </Router>
+        </AuthProvider>
+    </React.Fragment>
     , document.getElementById('root'));

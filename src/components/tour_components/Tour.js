@@ -1,5 +1,5 @@
 import {withStyles} from "@material-ui/core/styles";
-import React, {createRef, useEffect, useMemo, useRef, useState} from "react";
+import React, {createRef, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import useTheme from "@material-ui/core/styles/useTheme";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import TourPlaceComponent from "./TourPlaceComponent";
@@ -112,6 +112,7 @@ function Tour({classes, match}) {
     const [tourInfo, dispatchTourInfo] = React.useReducer(TourDataReducer, sampleTourData)
     const {addConfig} = UseSnackbarContext();
 
+
     const handleAddPlaceClick = (placeInfo, type) => {
         dispatchTourInfo({
             type: 'ADD_ELEMENT',
@@ -121,10 +122,13 @@ function Tour({classes, match}) {
                 data: {
                     type: type,
                     details: {...placeInfo}
-                }
+                },
+            },
+            onError: () => {
+                addConfig(false, "This place already exists in this tour.")
             }
         })
-    };
+    }
 
     useEffect(() => {
         if (tourId !== undefined) {

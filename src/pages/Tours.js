@@ -58,6 +58,7 @@ const styles = theme => ({
 const headCells = [
     { id: 'name', numeric: false, disablePadding: false, label: 'Tour name', isId: true},
     { id: 'description', numeric: false, disablePadding: false, label: 'Tour description',isId: false},
+    { id: 'lastModified', numeric: false, disablePadding: false, label: 'Date modified',isId: false},
     { id: 'actions', numeric: false, disablePadding: false, label: 'Actions', isId: false }
 ];
 

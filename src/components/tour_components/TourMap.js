@@ -48,10 +48,11 @@ const MyMapComponent = withGoogleMap(props =>
         defaultZoom={8}
         defaultCenter={{lat: -34.397, lng: 150.644}}>
 
-        <DirectionsRenderer
-            options={{suppressMarkers: true, draggable: false}}
-            draggable={false}
-            directions={props.directions}/>
+        {props.directions ?
+            <DirectionsRenderer
+                options={{suppressMarkers: true, draggable: false}}
+                draggable={false}
+                directions={props.directions}/>:null}
 
         {props.places.map((marker, index) => {
             const position = { lat: marker.latitude, lng: marker.longitude };
@@ -117,11 +118,11 @@ function TourMap({classes, tourInfo, currentDay}) {
                 stopover: true
             }));
             const origin = waypoints.shift().location;
-            let destination = null
+            let destination = null;
             if(waypoints.length > 0)
                 destination = waypoints.pop().location;
             else
-                destination = origin
+                destination = origin;
 
             const directionsService = new google.maps.DirectionsService();
 
@@ -134,12 +135,15 @@ function TourMap({classes, tourInfo, currentDay}) {
                 },
                 (result, status) => {
                     if (status === google.maps.DirectionsStatus.OK) {
+                        console.log(result);
                         setDirection(result)
                     } else {
                         alert(status);
                     }
                 }
             );
+        }else{
+            setDirection(null)
         }
     },[currentDay, tourInfo.days]);
 

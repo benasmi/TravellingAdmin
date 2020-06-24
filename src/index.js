@@ -15,7 +15,6 @@ import {AuthProvider} from "./contexts/AuthContext";
 import {PlacesFilterProvider} from "./contexts/PlacesFilterContext";
 import EditDialogProvider from "./contexts/EditDialogContext";
 import {TextInputDialog} from "./components/feedback/TextInputDialog";
-import Helmet from "react-helmet";
 
 require('dotenv').config();
 

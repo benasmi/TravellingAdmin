@@ -9,14 +9,12 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Cookies from 'js-cookie'
-import * as firebase from "firebase";
 import history from "../helpers/history";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import app from "../helpers/firebaseInit";
 import {AuthContext} from "../contexts/AuthContext";
 import Redirect from "react-router-dom/es/Redirect";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import {isAuthenticated} from "../helpers/tokens";
 
 function Copyright() {
@@ -71,7 +69,7 @@ export default function LoginPage() {
         setIsLoading(true);
         app.auth().signInWithEmailAndPassword(email , password)
             .then(function(user) {
-                setIsLoading(false)
+                setIsLoading(false);
                 app.auth().currentUser.getIdToken(true).then(function (idToken) {
                     console.log("Getting new access token");
                     Cookies.set("access_token", idToken);

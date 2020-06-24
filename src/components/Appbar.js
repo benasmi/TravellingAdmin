@@ -29,6 +29,7 @@ import Tour from "./tour_components/Tour";
 import { useLocation } from 'react-router-dom'
 import Tours from "../pages/Tours";
 import Resources from "./Resources";
+import {PlacesFilterProvider} from "../contexts/PlacesFilterContext";
 const drawerWidth = 240;
 
 
@@ -116,10 +117,7 @@ export default function Appbar(props) {
         handleDrawerClose();
         setTitle(title);
 
-        // console.log("Current url",location.pathname);
-        // console.log("Requested new url", url);
         let re = new RegExp(url+'([0-9]*)?');
-        // console.log(re);
 
         if(re.test(location.pathname)){
             history.go(0)
@@ -184,10 +182,10 @@ export default function Appbar(props) {
                     <ListItem button component={Link} to="/app/addplace" onClick={()=>handleListItemClick("/app/addplace","Add Place")} >
                         <ListItemText>Add place</ListItemText>
                     </ListItem>
-                    <ListItem button component={Link} to="/app/addtour" onClick={()=>setTitle("Add tour")} >
+                    <ListItem button component={Link} to="/app/addtour" onClick={()=>handleListItemClick("/app/addtour","Add tour")} >
                         <ListItemText>Add tour</ListItemText>
                     </ListItem>
-                    <ListItem button component={Link} to="/app/resources" onClick={()=>setTitle("Manage resources")} >
+                    <ListItem button component={Link} to="/app/resources" onClick={()=>handleListItemClick("/app/resources","Manage resources")} >
                         <ListItemText>Resources</ListItemText>
                     </ListItem>
                 </List>

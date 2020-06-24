@@ -84,6 +84,7 @@ function Places(props) {
         requestAllPlaces();
     },[filterQuery]);
 
+
     function getPlaceNameById(id){
         for(var i = 0; i<data.length; i++){
             if(data[i].placeId === id)
@@ -171,7 +172,8 @@ function Places(props) {
                     horizontal: 'center',
                 }}
             >
-                <FilterBlock/>
+
+                <FilterBlock setOpen={setAnchorEl}/>
 
             </Popover>
         </div>

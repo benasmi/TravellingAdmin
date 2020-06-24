@@ -33,7 +33,7 @@ const styles = theme => ({
         [theme.breakpoints.down("lg")]: {
             overflow: "scroll",
         },
-        [theme.breakpoints.only("lg")]: {
+        [theme.breakpoints.up("lg")]: {
             overflow: "initial",
             display: "flex",
         },
@@ -55,14 +55,14 @@ const styles = theme => ({
         '&::-webkit-scrollbar': {
             display: "none"
         },
-        [theme.breakpoints.only("lg")]: {
+        [theme.breakpoints.up("lg")]: {
             height: "100%",
             overflowY: "scroll",
 
         },
     },
     leftLayout: {
-        [theme.breakpoints.only("lg")]: {
+        [theme.breakpoints.up("lg")]: {
             height: "100%",
         },
         overflowY: "scroll",
@@ -270,7 +270,7 @@ function Tour({classes, match}) {
     ), [tourInfo, currentDay, errorInfo]);
 
     const theme = useTheme();
-    const largeScreen = useMediaQuery(theme.breakpoints.only('lg'));
+    const largeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
     const content = (
         <React.Fragment>

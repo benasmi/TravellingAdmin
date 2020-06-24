@@ -233,14 +233,26 @@ function Tour({classes, match}) {
     ), [localPlacesFound, apiPlacesFound, currentDay])
 
 
+    let dayInfoWithoutDesc = JSON.stringify(tourInfo.days.map(day => {
+        let dayCopy = {...day}
+        delete dayCopy.description
+        return dayCopy
+    }))
+
+    const mapComponent = useMemo(() => (
+        <React.Fragment>
+            <TourPlacesWrapper errorInfo={errorInfo} setErrorInfo={setErrorInfo}
+                               currentDay={currentDay} tourInfoReducer={dispatchTourInfo} tourInfo={tourInfo}/>
+            <TourMap tourInfo={tourInfo} currentDay={currentDay}/>
+        </React.Fragment>
+    ),[dayInfoWithoutDesc, currentDay])
+
     const tourDaysComponents = useMemo(() => (
         <div>
             <DaysWrapper currentDay={currentDay} setCurrentDay={setCurrentDay} tourInfo={tourInfo}
                          tourInfoReducer={dispatchTourInfo}/>
             <Divider variant="middle"/>
-            <TourPlacesWrapper errorInfo={errorInfo} setErrorInfo={setErrorInfo}
-                               currentDay={currentDay} tourInfoReducer={dispatchTourInfo} tourInfo={tourInfo}/>
-            <TourMap tourInfo={tourInfo} currentDay={currentDay}/>
+            {mapComponent}
         </div>
     ), [tourInfo.days, currentDay, errorInfo]);
 

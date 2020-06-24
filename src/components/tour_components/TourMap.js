@@ -112,6 +112,7 @@ function TourMap({classes, tourInfo, currentDay}) {
 
     useEffect(()=>{
         const places = constructPlaceData();
+        console.log("tour info", tourInfo)
         if(places.length>0){
             const waypoints = places.map(p =>({
                 location: {lat: p.latitude, lng:p.longitude},
@@ -125,6 +126,7 @@ function TourMap({classes, tourInfo, currentDay}) {
                 destination = origin;
 
             const directionsService = new google.maps.DirectionsService();
+            console.log("ROUTING")
 
             directionsService.route(
                 {

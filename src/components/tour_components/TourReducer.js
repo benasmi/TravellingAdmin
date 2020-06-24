@@ -8,7 +8,6 @@ export default function TourDataReducer(state, action) {
 
     switch (action.type) {
         case 'ADD_ELEMENT':
-            console.log("INFO", state.days)
             if(state.days !== null && action.data.type === ElementType.place && state.days.some(day => day.tour !== null && day.tour.some(place => place.type === ElementType.place && place.data.details.placeId === action.data.data.details.placeId))){
                 if(action.onError !== null && action.onError !== undefined){
                     action.onError()

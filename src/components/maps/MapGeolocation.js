@@ -76,31 +76,26 @@ export const getMunicipality = ( addressArray ) => {
 };
 
 /**
- * Geocode location from string address
+ * Geocode location from address
  * @param address
  * @type string
  * @return location object
  */
 export function geocodeFromAddress(address){
-  return Geocode.fromAddress( address ).then(
+    return Geocode.fromAddress( address ).then(
         response => {
-            console.log("Responsas geocodinime", response);
             const { lat, lng } = response.results[0].geometry.location;
-            const address = response.results[0].formatted_address;
-            const addressArray =  response.results[0].address_components;
-            if(addressArray!==undefined){
-                const city = getCity( addressArray ),
-                    country = getCountry( addressArray ),
-                    county = getCounty(addressArray),
-                    municipality = getMunicipality(addressArray);
-                let loc = {address: address, city: city, country: country, latitude: lat, longitude: lng, county: county, municipality: municipality};
-                return loc
+            if(lat !== undefined && lng !== undefined){
+                return geocodeFromLatLng(lat, lng).then(loc=>{
+                    return loc
+                })
+            }else{
+                return null
             }
-            return null
         },
-      err=>{
+        err=>{
             return null
-      }
+        }
     )
 }
 

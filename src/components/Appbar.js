@@ -166,7 +166,7 @@ export default function Appbar(props) {
 
                 <Divider />
                 <List>
-                    <ListItem button component={Link} to="/app/" onClick={()=>handleListItemClick("/app/","Home")}>
+                    <ListItem button component={Link} to="/app" onClick={()=>handleListItemClick("/app","Home")}>
                         <ListItemText>Home</ListItemText>
                     </ListItem>
                     <Divider light />

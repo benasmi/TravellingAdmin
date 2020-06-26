@@ -132,6 +132,14 @@ function Tour({classes, match}) {
         })
     }
 
+    const removeElementCallback = (index) => {
+        dispatchTourInfo({
+            type: 'REMOVE_ELEMENT',
+            day: currentDay,
+            index: index
+        })
+    };
+
     useEffect(() => {
         if (tourId !== undefined) { //If user wants to edit a tour, we download all tour data. loadData also downloads tags
             loadData()
@@ -254,7 +262,7 @@ function Tour({classes, match}) {
             })
         }
 
-    }
+    };
 
     const leftLayout = useMemo(() => (
         <div className={classes.leftLayout}>
@@ -273,9 +281,13 @@ function Tour({classes, match}) {
 
     const mapComponent = useMemo(() => (
         <React.Fragment>
+            <TourMap tourInfo={tourInfo}
+                     currentDay={currentDay}
+                     addPlace={handleAddPlaceClick}
+                     removePlace={removeElementCallback}
+            />
             <TourPlacesWrapper errorInfo={errorInfo} setErrorInfo={setErrorInfo}
                                currentDay={currentDay} tourInfoReducer={dispatchTourInfo} tourInfo={tourInfo}/>
-            <TourMap tourInfo={tourInfo} currentDay={currentDay}/>
         </React.Fragment>
     ), [dayInfoWithoutDesc, currentDay])
 
@@ -285,6 +297,7 @@ function Tour({classes, match}) {
                          tourInfoReducer={dispatchTourInfo}/>
             <Divider variant="middle"/>
             {mapComponent}
+
         </div>
     ), [tourInfo.days, currentDay, errorInfo]);
 

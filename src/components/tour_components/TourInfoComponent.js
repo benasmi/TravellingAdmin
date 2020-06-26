@@ -3,6 +3,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import TextField from "@material-ui/core/TextField";
 import CardContent from "@material-ui/core/CardContent";
 import PropTypes from "prop-types";
+import AutoCompleteChip from "../AutocompleteChip";
+import Typography from "@material-ui/core/Typography";
 
 const styles = theme => ({
     root: {
@@ -18,7 +20,7 @@ const styles = theme => ({
     }
 });
 
-function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setErrorInfo}) {
+function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setErrorInfo, availableTags, selectedTags, setSelectedTags, setAvailableTags}) {
 
     const handleDescriptionChange = (e) => {
         tourInfoReducer({
@@ -32,6 +34,10 @@ function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setEr
             data:  {name: e.target.value}
         })
     }
+
+    useEffect(() => {
+        console.log("TAGAI", availableTags)
+    }, [availableTags])
 
     useEffect(()=>{
         if(tourInfo.name === "")
@@ -59,6 +65,17 @@ function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setEr
                 variant="outlined"
                 onChange={handleDescriptionChange}
             />
+            <br/><br/>
+            <Typography component="h6" variant="h6">
+                Tags for this tour
+            </Typography>
+            <AutoCompleteChip
+                options={availableTags}
+                id="tagId"
+                setOptions={setAvailableTags}
+                setSelectedOptions={setSelectedTags}
+                selectedOptions={selectedTags}
+            />
         </div>
     )
 }
@@ -66,6 +83,10 @@ function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setEr
 TourInfoComponent.propTypes = {
     tourInfo: PropTypes.object.isRequired,
     tourInfoReducer: PropTypes.func.isRequired,
+    availableTags: PropTypes.array.isRequired,
+    setAvailableTags: PropTypes.func.isRequired,
+    selectedTags: PropTypes.array.isRequired,
+    setSelectedTags: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(TourInfoComponent)

@@ -17,7 +17,6 @@ import API from "../../Networking/API";
 import UseSnackbarContext from "../../contexts/UseSnackbarContext";
 import shortid from 'shortid';
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Backdrop from "@material-ui/core/Backdrop";
 
 export const ElementType = {
     place: 0,

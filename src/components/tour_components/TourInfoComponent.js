@@ -24,21 +24,7 @@ function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setEr
 
     const handleDescriptionChange = (e) => {
         tourInfoReducer({
-            type: '<CustomControlsManager position={window.google.maps.ControlPosition.TOP_CENTER}>\n' +
-                '            <div>\n' +
-                '                <Button variant="contained"\n' +
-                '                        color="primary"\n' +
-                '                        onClick={() => {\n' +
-                '                            setCenter({\n' +
-                '                                lat: refMap.current.getCenter().lat(),\n' +
-                '                                lng: refMap.current.getCenter().lng()\n' +
-                '                            })\n' +
-                '                        }}\n' +
-                '                >\n' +
-                '                    Search area...\n' +
-                '                </Button>\n' +
-                '            </div>\n' +
-                '        </CustomControlsManager>UPDATE_TOUR',
+            type: 'UPDATE_TOUR',
             data: {description: e.target.value}
         })
     }

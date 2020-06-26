@@ -21,7 +21,7 @@ export default function CustomControlsManager(
     });
 
     return createPortal(
-        <div style={{ marginBottom: 8 }}>{children}</div>,
+        <div style={{ marginBottom: 8, marginTop: 8 }}>{children}</div>,
         controlDiv
     );
 }

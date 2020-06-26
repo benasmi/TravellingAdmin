@@ -41,6 +41,8 @@ const MapComponent = withGoogleMap(props =>
                                         " Are you sure you don't want to use already existings parking locations?",[{name:"ADD NEW PARKING!", action: ()=>{
                                             props.addNewParking(props.position)
                                         }}])
+                                }else{
+                                    props.addNewParking(props.position)
                                 }
                             }}
                             variant="text"

@@ -130,6 +130,14 @@ function Tour({classes, match}) {
         })
     }
 
+    const removeElementCallback = (index) => {
+        dispatchTourInfo({
+            type: 'REMOVE_ELEMENT',
+            day: currentDay,
+            index: index
+        })
+    };
+
     useEffect(() => {
         if (tourId !== undefined) {
             // setIsLoading(true)
@@ -222,7 +230,7 @@ function Tour({classes, match}) {
             })
         }
 
-    }
+    };
 
     const leftLayout = useMemo(() => (
         <div className={classes.leftLayout}>
@@ -240,7 +248,11 @@ function Tour({classes, match}) {
             <Divider variant="middle"/>
             <TourPlacesWrapper errorInfo={errorInfo} setErrorInfo={setErrorInfo}
                                currentDay={currentDay} tourInfoReducer={dispatchTourInfo} tourInfo={tourInfo}/>
-            <TourMap tourInfo={tourInfo} currentDay={currentDay}/>
+            <TourMap tourInfo={tourInfo}
+                     currentDay={currentDay}
+                     addPlace={handleAddPlaceClick}
+                     removePlace={removeElementCallback}
+            />
         </div>
     ), [tourInfo.days, currentDay, errorInfo]);
 

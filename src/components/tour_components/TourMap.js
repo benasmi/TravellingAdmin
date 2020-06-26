@@ -1,18 +1,30 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import PropTypes from "prop-types";
-import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow, DirectionsRenderer } from "react-google-maps"
+import PropTypes, {func} from "prop-types";
+import {withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, DirectionsRenderer} from "react-google-maps"
 import {ElementType} from "./Tour";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
+import DeleteIcon from "@material-ui/icons/Delete";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import Typography from "@material-ui/core/Typography";
+import FilterBlock from "../add_place_components/FilterBlock";
+import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@material-ui/core/IconButton";
+import FilterListIcon from "@material-ui/icons/FilterList";
+import Popover from "@material-ui/core/Popover";
+import CustomControlsManager from "../maps/CustomControlsManager";
+import API from "../../Networking/API";
+import {PlacesFilterContext} from "../../contexts/PlacesFilterContext";
+import Avatar from "@material-ui/core/Avatar";
+
+const google = window.google;
 
 const styles = theme => ({
     root: {
         margin: theme.spacing(4),
-    },cover: {
+    }, cover: {
         [theme.breakpoints.down("lg")]: {
             height: "200px",
         },
@@ -21,105 +33,80 @@ const styles = theme => ({
             height: "auto",
         },
     },
+    largeIcon: {
+        width: theme.spacing(14),
+        height: theme.spacing(14),
+    },
 });
 
 
-
-/*
-Example of getting 0th place and 0th day lat and lng
-let lat = tourInfo.days[0].tour[0].details.latitude
-let lng = tourInfo.days[0].tour[0].details.longitude
-
-Keep in mind, that you want to only look for elements, that are of place (not of transport) type.
-So you'd do something like this to get current day's places:
-let places = tourInfo.days[currentDay].tour.filter(item => item.type === ElementType.place)
-and then something like this
-places.forEach(item => {
-    let lat = item.details.latitude
-    let lng = item.details.longitude
-})
-*/
-
-
-const google = window.google;
-
+/**
+ * Tours map component
+ * @type {React.ComponentClass<WithGoogleMapProps>}
+ */
 const MyMapComponent = withGoogleMap(props =>
     <GoogleMap
+        ref={props.refMap}
         defaultZoom={8}
-        defaultCenter={{lat: -34.397, lng: 150.644}}>
-
-        {props.directions ?
-            <DirectionsRenderer
-                options={{suppressMarkers: true, draggable: false}}
-                draggable={false}
-                directions={props.directions}/>:null}
-
-        {props.places.map((marker, index) => {
-            const position = { lat: marker.latitude, lng: marker.longitude };
-            return <Marker key={index} position={position} label={`${index+1}`} onClick={
-                ()=>{
-                    let info = Object.assign({}, props.infoWindows, {});
-                    info[index] = true;
-                    props.setInfoWindows(info);
-                }
-            }>
-                {props.infoWindows[index] && (
-                <InfoWindow onCloseClick={()=>{
-                    let info = Object.assign({}, props.infoWindows, {});
-                    info[index] = false;
-                    props.setInfoWindows(info);
-                }}>
-                    <div style={{display:"flex", flexDirection: "column"}}>
-                        <Card>
-                            <Typography>
-                                {marker.name}
-                            </Typography>
-                            {marker.photo ? <CardMedia
-                                style={{"height": "150px"}}
-                                image={marker.photo}
-                            />: null}
-                        </Card>
-                    </div>
-                </InfoWindow>
-                )}
-            </Marker>
-        })}
+        defaultCenter={{lat: 55.2983804, lng: 23.9132164}}>
+        {props.children}
     </GoogleMap>
 );
 
-function TourMap({classes, tourInfo, currentDay}) {
+function changeCirclePos(refMap, setCircleCenter){
+    setCircleCenter({
+        lat: refMap.current.getCenter().lat(),
+        lng: refMap.current.getCenter().lng()
+    })
+}
 
-    const [directions, setDirection ] = useState();
+function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
+
+    const [center, setCenter] = useState({lat: 55.2983804, lng: 23.9132164});
+    const [circleCenter, setCircleCenter] = useState({lat: 55.2983804, lng: 23.9132164});
+
+    const [directions, setDirection] = useState();
     const [infoWindows, setInfoWindows] = useState([]);
-    const [places, setPlaces] = useState([]);
+    const [directionPlaces, setDirectionPlaces] = useState([]);
 
-    const constructPlaceData = () =>{
+    const [places, setPlaces] = useState([]);
+    const [placesInfoWindows, setPlacesInfoWindows] = useState([]);
+
+    const refMap = useRef(null);
+
+    const {filterQuery} = useContext(PlacesFilterContext);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const constructPlaceData = () => {
         let p = tourInfo.days[currentDay].tour.filter(item => item.type === ElementType.place);
         let places = [];
-        let markersInfo = [];
         p.forEach(item => {
+            let placeId = item.data.details.placeId;
             let lat = item.data.details.latitude;
             let lng = item.data.details.longitude;
             let name = item.data.details.name;
             let photos = item.data.details.photos;
-            places.push({latitude: lat, longitude: lng,name: name, photo: photos.length > 0 ? photos[0].url : null});
-            markersInfo.push(false);
+            places.push({placeId: placeId, latitude: lat, longitude: lng, name: name, photo: photos.length > 0 ? photos[0].url : null});
         });
-        setInfoWindows(markersInfo);
-        setPlaces(places);
+        setDirectionPlaces(places);
         return places
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         const places = constructPlaceData();
-        if(places.length>0){
-            const waypoints = places.map(p =>({
-                location: {lat: p.latitude, lng:p.longitude},
+        if (places.length > 0) {
+            const waypoints = places.map(p => ({
+                location: {lat: p.latitude, lng: p.longitude},
                 stopover: true
             }));
             const origin = waypoints.shift().location;
             let destination = null;
-            if(waypoints.length > 0)
+            if (waypoints.length > 0)
                 destination = waypoints.pop().location;
             else
                 destination = origin;
@@ -142,23 +129,219 @@ function TourMap({classes, tourInfo, currentDay}) {
                     }
                 }
             );
-        }else{
+        } else {
             setDirection(null)
         }
-    },[currentDay, tourInfo.days]);
+    }, [currentDay, tourInfo.days]);
 
+    useEffect(() => {
+        getAllPlaces(filterQuery + "&p=" + 0 + "&s=" + 100 + "&l=" + center.lat + "," + center.lng + "range=" + 50)
+    }, [filterQuery, center]);
+
+    useEffect(()=>{
+        removeSelectedPlaces(places)
+    },[directionPlaces]);
+
+    function removeSelectedPlaces(places) {
+        let plc = [];
+        for(var i = 0; i<places.length; i++){
+            var found = false;
+            for(var j = 0; j<directionPlaces.length; j++){
+                if(places[i].latitude === directionPlaces[j].latitude && places[i].longitude === directionPlaces[j].longitude){
+                    found = true
+                }
+            }
+            if(!found)
+                plc.push(places[i]);
+        }
+        setPlaces(plc)
+    }
+
+    function getAllPlaces(query) {
+        API.Places.getAllPlacesAdmin(query).then(locations => {
+            removeSelectedPlaces(locations.list);
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
+    function addPlaceToTourDay(place) {
+        console.log("Add place", place);
+        addPlace(place, ElementType.place)
+    }
+
+    function removePlaceFromTourDay(place) {
+        tourInfo.days[currentDay].tour.map((row, index)=>{
+            if(row.type === ElementType.place){
+                if(row.data.details.placeId === place.placeId){
+                    removePlace(index)
+                }
+            }
+        })
+    }
+
+    /**
+     * Renders places markers on the map
+     * @return {*[]}
+     */
+    function PlacesMarkers() {
+        return places.map((location, i) => {
+            const latitude = parseFloat(location.latitude);
+            const longitude = parseFloat(location.longitude);
+            return <Marker
+                key={location.placeId}
+                position={{lat: latitude, lng: longitude}}
+                onClick={() => {
+                    let markers = Object.assign({}, placesInfoWindows);
+                    markers[i] = true;
+                    setPlacesInfoWindows(markers)
+                }}
+            >
+                {placesInfoWindows[i] && (
+                    <InfoWindow onCloseClick={() => {
+                        let markers = Object.assign({}, placesInfoWindows);
+                        markers[i] = false;
+                        setPlacesInfoWindows(markers)
+                    }
+                    }>
+                        <div style={{display: "flex", flexDirection: "column"}}>
+                            <Typography variant="h6">
+                                {location.name}
+                            </Typography>
+
+                            <Button
+                                onClick={()=>{addPlaceToTourDay(location)}}
+                                variant="text"
+                                color="secondary"
+                                size="large"
+                                startIcon={<AddIcon/>}>
+                                Add this place to tour!
+                            </Button>
+                        </div>
+                    </InfoWindow>
+                )}
+            </Marker>
+        })
+    }
+
+
+    const searchAreaComponent = useMemo(() => (
+        <CustomControlsManager position={window.google.maps.ControlPosition.TOP_CENTER}>
+            {console.log("Pajibat")}
+            <div>
+                <Button variant="contained"
+                        color="primary"
+                        onClick={() => {
+                            setCenter({
+                                lat: refMap.current.getCenter().lat(),
+                                lng: refMap.current.getCenter().lng()
+                            })
+                        }}
+                >
+                    Search area...
+                </Button>
+            </div>
+        </CustomControlsManager>
+    ), []);
 
     return (
         <div className={classes.root}>
+
+            <Tooltip aria-describedby={id} title="Filter list">
+                <IconButton aria-label="filter list" onClick={handleClick}>
+                    <FilterListIcon/>
+                </IconButton>
+            </Tooltip>
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={() => {
+                    setAnchorEl(null)
+                }}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <FilterBlock setOpen={setAnchorEl}/>
+            </Popover>
+
             <MyMapComponent
-                    loadingElement={<div style={{ height: `100%` }} />}
-                    containerElement={<div style={{ height: `400px` }} />}
-                    mapElement={<div style={{ height: `100%` }} />}
-                    directions={directions}
-                    places={places}
-                    infoWindows={infoWindows}
-                    setInfoWindows={setInfoWindows}
-                />
+                loadingElement={<div style={{height: `100%`}}/>}
+                containerElement={<div style={{height: `400px`}}/>}
+                mapElement={<div style={{height: `100%`}}/>}
+                directionPlaces={directionPlaces}
+                infoWindows={infoWindows}
+                setInfoWindows={setInfoWindows}
+                refMap={refMap}
+                center={center}
+                circleCenter={circleCenter}
+                setCircleCenter={setCircleCenter}>
+
+
+                {searchAreaComponent}
+                <PlacesMarkers/>
+
+
+                {directions ?
+                    <DirectionsRenderer
+                        options={{suppressMarkers: true, draggable: false}}
+                        draggable={false}
+                        directions={directions}/> : null}
+
+                {directionPlaces.map((marker, index) => {
+                    const position = { lat: marker.latitude, lng: marker.longitude };
+                    return <Marker
+                        icon={{
+                            url: require('../../res/selectedTourIcon.svg'),
+                            scaledSize: new window.google.maps.Size(48, 48),
+                            origin: new window.google.maps.Point(0, 0),
+                            labelOrigin: new window.google.maps.Point(24, 16),
+                        }}
+                        key={index}
+                        position={position}
+                        label={{text: `${index+1}`, color: "white"}}
+                        onClick={
+                        ()=>{
+                            let info = Object.assign({}, infoWindows);
+                            info[index] = true;
+                            setInfoWindows(info);
+                        }
+                    }>
+                        {infoWindows[index] && (
+                        <InfoWindow onCloseClick={()=>{
+                            let info = Object.assign({}, infoWindows);
+                            info[index] = false;
+                            setInfoWindows(info);
+                        }}>
+                                <Card style={{display:"flex", flexDirection: "column",alignItems:"center"}}>
+                                    {marker.photo ?<Avatar alt="Remy Sharp" src={marker.photo} className={classes.largeIcon}/> : null}
+
+                                    <Typography>
+                                        {marker.name}
+                                    </Typography>
+                                    <Button
+                                        onClick={()=>removePlaceFromTourDay(marker)}
+                                        style={{marginTop: 12}}
+                                        variant="contained"
+                                        color="secondary"
+                                        startIcon={<DeleteIcon />}
+                                    >
+                                        Remove from tour
+                                    </Button>
+
+                                </Card>
+                        </InfoWindow>
+                        )}
+                    </Marker>
+                })}
+
+            </MyMapComponent>
 
         </div>
     )
@@ -170,5 +353,3 @@ TourMap.propTypes = {
 };
 
 export default withStyles(styles)(TourMap)
-
-

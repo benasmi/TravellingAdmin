@@ -71,7 +71,7 @@ function TourPlacesWrapper({classes, tourInfo, tourInfoReducer, currentDay, erro
             day: currentDay,
             index: index
         })
-    }
+    };
 
     const onSortEnd = ({oldIndex, newIndex}) => {
         tourInfoReducer({

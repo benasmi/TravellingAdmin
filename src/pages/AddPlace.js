@@ -209,15 +209,18 @@ function AddPlace({classes, match}) {
             overallStarRating: place.overallStarRating,
             totalReviews: place.totalReviews,
             price: place.price,
-            averageTimeSpent: place.averageTimeSpent
+            averageTimeSpent: place.averageTimeSpent,
         });
 
+        console.log(place)
         setLocationData({
             city: place.city,
             address: place.address,
             country: place.country,
             latitude: place.latitude,
-            longitude: place.longitude
+            longitude: place.longitude,
+            county: place.county,
+            municipality: place.municipality,
         });
 
         setParkingMarkerData({
@@ -225,7 +228,9 @@ function AddPlace({classes, match}) {
             address: place.address,
             country: place.country,
             latitude: place.latitude,
-            longitude: place.longitude
+            longitude: place.longitude,
+            county: place.county,
+            municipality: place.municipality,
         });
 
         setSources(place.sources);

@@ -93,15 +93,16 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
             let photos = item.data.details.photos;
             places.push({placeId: placeId, latitude: lat, longitude: lng, name: name, photo: photos.length > 0 ? photos[0].url : null});
         });
+        setInfoWindows(Array(places.length).fill(false))
         setDirectionPlaces(places);
         return places
     };
 
     useEffect(() => {
         const places = constructPlaceData();
-        if (places.length > 0) {
-            const waypoints = places.map(p => ({
-                location: {lat: p.latitude, lng: p.longitude},
+        if(places.length>0){
+            const waypoints = places.map(p =>({
+                location: {lat: p.latitude, lng:p.longitude},
                 stopover: true
             }));
             const origin = waypoints.shift().location;
@@ -112,6 +113,7 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
                 destination = origin;
 
             const directionsService = new google.maps.DirectionsService();
+            console.log("ROUTING")
 
             directionsService.route(
                 {
@@ -151,14 +153,17 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
                     found = true
                 }
             }
-            if(!found)
+            if(!found){
                 plc.push(places[i]);
+
+            }
         }
         setPlaces(plc)
     }
 
     function getAllPlaces(query) {
         API.Places.getAllPlacesAdmin(query).then(locations => {
+            setPlacesInfoWindows(Array(locations.list.length).fill(false));
             removeSelectedPlaces(locations.list);
         }).catch(err => {
             console.log(err);
@@ -166,7 +171,7 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
     }
 
     function addPlaceToTourDay(place) {
-        console.log("Add place", place);
+        setPlacesInfoWindows(Array(places.length).fill(false));
         addPlace(place, ElementType.place)
     }
 

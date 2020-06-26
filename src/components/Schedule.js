@@ -46,7 +46,7 @@ const styles = theme => ({
 function Schedule({classes, data, setData, index}){
 
     const[periods, setPeriods] = useState([...data.periods])
-    const[globalTime, setGlobalTime] = useState({openTime: "07:00", closeTime: "19:00"})
+    const[globalTime, setGlobalTime] = useState({openTime: "08:00", closeTime: "17:00"})
 
     const handleIntervalChange = (newIntervals, openDay) => {
         setPeriods(oldPeriods => {

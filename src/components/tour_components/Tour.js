@@ -33,7 +33,7 @@ const styles = theme => ({
         [theme.breakpoints.down("lg")]: {
             overflow: "scroll",
         },
-        [theme.breakpoints.only("lg")]: {
+        [theme.breakpoints.up("lg")]: {
             overflow: "initial",
             display: "flex",
         },
@@ -55,14 +55,14 @@ const styles = theme => ({
         '&::-webkit-scrollbar': {
             display: "none"
         },
-        [theme.breakpoints.only("lg")]: {
+        [theme.breakpoints.up("lg")]: {
             height: "100%",
             overflowY: "scroll",
 
         },
     },
     leftLayout: {
-        [theme.breakpoints.only("lg")]: {
+        [theme.breakpoints.up("lg")]: {
             height: "100%",
         },
         overflowY: "scroll",
@@ -241,18 +241,31 @@ function Tour({classes, match}) {
     ), [localPlacesFound, apiPlacesFound, currentDay])
 
 
-    const tourDaysComponents = useMemo(() => (
-        <div>
-            <DaysWrapper currentDay={currentDay} setCurrentDay={setCurrentDay} tourInfo={tourInfo}
-                         tourInfoReducer={dispatchTourInfo}/>
-            <Divider variant="middle"/>
-            <TourPlacesWrapper errorInfo={errorInfo} setErrorInfo={setErrorInfo}
-                               currentDay={currentDay} tourInfoReducer={dispatchTourInfo} tourInfo={tourInfo}/>
+    let dayInfoWithoutDesc = JSON.stringify(tourInfo.days.map(day => {
+        let dayCopy = {...day}
+        delete dayCopy.description
+        return dayCopy
+    }))
+
+    const mapComponent = useMemo(() => (
+        <React.Fragment>
             <TourMap tourInfo={tourInfo}
                      currentDay={currentDay}
                      addPlace={handleAddPlaceClick}
                      removePlace={removeElementCallback}
             />
+            <TourPlacesWrapper errorInfo={errorInfo} setErrorInfo={setErrorInfo}
+                               currentDay={currentDay} tourInfoReducer={dispatchTourInfo} tourInfo={tourInfo}/>
+        </React.Fragment>
+    ),[dayInfoWithoutDesc, currentDay])
+
+    const tourDaysComponents = useMemo(() => (
+        <div>
+            <DaysWrapper currentDay={currentDay} setCurrentDay={setCurrentDay} tourInfo={tourInfo}
+                         tourInfoReducer={dispatchTourInfo}/>
+            <Divider variant="middle"/>
+            {mapComponent}
+
         </div>
     ), [tourInfo.days, currentDay, errorInfo]);
 
@@ -270,7 +283,7 @@ function Tour({classes, match}) {
     ), [tourInfo, currentDay, errorInfo]);
 
     const theme = useTheme();
-    const largeScreen = useMediaQuery(theme.breakpoints.only('lg'));
+    const largeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
     const content = (
         <React.Fragment>

@@ -17,7 +17,6 @@ import API from "../../Networking/API";
 import UseSnackbarContext from "../../contexts/UseSnackbarContext";
 import shortid from 'shortid';
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Backdrop from "@material-ui/core/Backdrop";
 
 export const ElementType = {
     place: 0,
@@ -100,6 +99,9 @@ function Tour({classes, match}) {
     const [tourId, setTourId] = useState(match.params.tourId)
     const [isLoading, setIsLoading] = useState(match.params.tourId !== undefined);
 
+    const [selectedTags, setSelectedTags] = useState([])
+    const [availableTags, setAvailableTags] = useState([])
+
     const [errorInfo, setErrorInfo] = useState({
             errors: {
                 titleMissing: false,
@@ -111,7 +113,6 @@ function Tour({classes, match}) {
 
     const [tourInfo, dispatchTourInfo] = React.useReducer(TourDataReducer, sampleTourData)
     const {addConfig} = UseSnackbarContext();
-
 
     const handleAddPlaceClick = (placeInfo, type) => {
         dispatchTourInfo({
@@ -139,40 +140,56 @@ function Tour({classes, match}) {
     };
 
     useEffect(() => {
-        if (tourId !== undefined) {
-            // setIsLoading(true)
+        if (tourId !== undefined) { //If user wants to edit a tour, we download all tour data. loadData also downloads tags
             loadData()
+        }else{ //Otherwise, we just download tags instead.
+            API.Tags.getAllTags().then(response => {
+                setAvailableTags(response)
+            }).catch(() => {
+                addConfig(false, "Tags failed to load")
+            })
         }
     }, [])
 
-    const loadData = () => {
-        API.Tour.getTour("?id=" + tourId).then((response) => {
-            let aggregatedDays = [];
-            response.days.forEach(day => {
-                let aggregatedElements = [];
-                day.data.forEach(place => {
-                    let aggregatedPlace = {
-                        type: ElementType.place,
-                        data: {details: place.place, type: place.place.type}
-                    }
-                    delete aggregatedPlace.data.details.type
-                    aggregatedElements.push(aggregatedPlace)
-                    place.transport.forEach(transport => {
-                        aggregatedElements.push({
-                            type: ElementType.transport,
-                            data: {transport: transport.fk_transportId - 1, elementIdentifier: shortid.generate()}
-                        })
+    const parseTourInfoResponse = (response) => {
+        let aggregatedDays = [];
+        response.days.forEach(day => {
+            let aggregatedElements = [];
+            day.data.forEach(place => {
+                let aggregatedPlace = {
+                    type: ElementType.place,
+                    data: {details: place.place, type: place.place.type}
+                }
+                delete aggregatedPlace.data.details.type
+                aggregatedElements.push(aggregatedPlace)
+                place.transport.forEach(transport => {
+                    aggregatedElements.push({
+                        type: ElementType.transport,
+                        data: {transport: transport.fk_transportId - 1, elementIdentifier: shortid.generate()}
                     })
                 })
-                let aggregatedDay = {...day, tour: aggregatedElements, elementIdentifier: shortid.generate()}
-                delete aggregatedDay.data
-                aggregatedDays.push(aggregatedDay)
             })
-            let aggregatedTour = {...response, days: aggregatedDays}
-            dispatchTourInfo({type: 'SET_ALL', data: aggregatedTour})
-        }).catch((error) => {
+            let aggregatedDay = {...day, tour: aggregatedElements, elementIdentifier: shortid.generate()}
+            delete aggregatedDay.data
+            aggregatedDays.push(aggregatedDay)
+        })
+        let aggregatedTour = {...response, days: aggregatedDays}
+        dispatchTourInfo({type: 'SET_ALL', data: aggregatedTour})
+    }
+
+    const loadData = () => {
+        Promise.all([
+            API.Tour.getTour("?id=" + tourId),
+            API.Tags.getAllTags(),
+            API.Tour.getTourTags("?id=" + tourId),
+            ]
+        ).catch(() => {
             addConfig(false, "Tour has failed to load")
             setTourId(undefined)
+        }).then((response) => {
+            parseTourInfoResponse(response[0])
+            setAvailableTags(response[1])
+            setSelectedTags(response[2])
         }).finally(() => {
             setIsLoading(false)
         })
@@ -180,14 +197,18 @@ function Tour({classes, match}) {
 
     const handleSave = () => {
         let containsErrors = false;
-        Object.keys(errorInfo.errors).map(function(keyName, keyIndex) {
-            if(errorInfo.errors[keyName]){
-                setErrorInfo(state => {return {...state, showErrors: true}})
+        Object.keys(errorInfo.errors).map(function (keyName, keyIndex) {
+            if (errorInfo.errors[keyName]) {
+                setErrorInfo(state => {
+                    return {...state, showErrors: true}
+                })
                 containsErrors = true;
             }
         })
-        if(containsErrors) return
-        setErrorInfo(state => {return {...state, showErrors: false}})
+        if (containsErrors) return
+        setErrorInfo(state => {
+            return {...state, showErrors: false}
+        })
 
         const aggregatedDays = []
         tourInfo.days.forEach(day => {
@@ -217,13 +238,23 @@ function Tour({classes, match}) {
 
         if (tourId === undefined) {
             API.Tour.insertTour(aggregatedTour).then((response) => {
-                addConfig(true, "Tour has been inserted successfully!")
                 setTourId(response)
-            }).catch((error) => {
+                return response
+            }).then((response) => Promise.all(
+                [
+                    API.Tour.updateTourTags(selectedTags, "?p=" + response)
+                ]
+            )).then((() => {
+                addConfig(true, "Tour has been inserted successfully!")
+            })).catch((error) => {
                 addConfig(false, "Something went wrong while saving this tour.")
             })
         } else {
-            API.Tour.updateTour(aggregatedTour, "?id=" + tourId).then((response) => {
+            Promise.all([
+                API.Tour.updateTour(aggregatedTour, "?id=" + tourId),
+                API.Tour.updateTourTags(selectedTags, "?p=" + tourId)
+            ])
+            .then(() => {
                 addConfig(true, "Tour has been updated successfully!")
             }).catch((error) => {
                 addConfig(false, "Something went wrong while saving this tour.")
@@ -257,7 +288,7 @@ function Tour({classes, match}) {
             <TourPlacesWrapper errorInfo={errorInfo} setErrorInfo={setErrorInfo}
                                currentDay={currentDay} tourInfoReducer={dispatchTourInfo} tourInfo={tourInfo}/>
         </React.Fragment>
-    ),[dayInfoWithoutDesc, currentDay])
+    ), [dayInfoWithoutDesc, currentDay])
 
     const tourDaysComponents = useMemo(() => (
         <div>
@@ -270,8 +301,10 @@ function Tour({classes, match}) {
     ), [tourInfo.days, currentDay, errorInfo]);
 
     const rightLayout = useMemo(() => (
-        <Paper className={classes.rightLayout} >
-            <TourInfoComponent tourInfo={tourInfo} tourInfoReducer={dispatchTourInfo} errorInfo={errorInfo} setErrorInfo={setErrorInfo}/>
+        <Paper className={classes.rightLayout}>
+            <TourInfoComponent tourInfo={tourInfo} tourInfoReducer={dispatchTourInfo} errorInfo={errorInfo}
+                               setErrorInfo={setErrorInfo}
+                               setSelectedTags={setSelectedTags} selectedTags={selectedTags} availableTags={availableTags} setAvailableTags={setAvailableTags}/>
             <Divider variant="middle"/>
             {tourDaysComponents}
             <div className={classes.actionsArea}>
@@ -280,7 +313,7 @@ function Tour({classes, match}) {
                 </Button>
             </div>
         </Paper>
-    ), [tourInfo, currentDay, errorInfo]);
+    ), [tourInfo, currentDay, errorInfo, availableTags, selectedTags]);
 
     const theme = useTheme();
     const largeScreen = useMediaQuery(theme.breakpoints.up('lg'));

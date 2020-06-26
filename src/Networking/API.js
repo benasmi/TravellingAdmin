@@ -79,10 +79,12 @@ const SourcePlace = {updateSourcesForPlace};
 //Tours
 const insertTour = (data) => RequestType.postRequest("api/v1/tour/insert",data)
 const updateTour = (data, urlParams) => RequestType.postRequest("api/v1/tour/update",data, urlParams)
+const updateTourTags = (data, urlParams) => RequestType.postRequest("api/v1/tour/tags/update",data, urlParams)
 const getTour = (urlParams) => RequestType.getRequest("api/v1/tour",urlParams)
+const getTourTags = (urlParams) => RequestType.getRequest("api/v1/tour/tags",urlParams)
 const removeTour = (urlParams) => RequestType.getRequest("api/v1/tour/delete", urlParams);
 const getAllToursAdmin = (urlParams) => RequestType.getRequest("api/v1/tour/searchadmin", urlParams);
-const Tour = {insertTour, getTour, updateTour, getAllToursAdmin, removeTour}
+const Tour = {insertTour, getTour, updateTour, getAllToursAdmin, removeTour, getTourTags, updateTourTags}
 
 const API = {Tour, SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
 

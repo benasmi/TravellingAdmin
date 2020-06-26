@@ -18,6 +18,7 @@ import CustomControlsManager from "../maps/CustomControlsManager";
 import API from "../../Networking/API";
 import {PlacesFilterContext} from "../../contexts/PlacesFilterContext";
 import Avatar from "@material-ui/core/Avatar";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const google = window.google;
 
@@ -72,6 +73,8 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
     const [places, setPlaces] = useState([]);
     const [placesInfoWindows, setPlacesInfoWindows] = useState([]);
 
+    const [loadingArea, setLoadingArea] = useState(false);
+
     const refMap = useRef(null);
 
     const {filterQuery} = useContext(PlacesFilterContext);
@@ -107,13 +110,13 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
             }));
             const origin = waypoints.shift().location;
             let destination = null;
+
             if (waypoints.length > 0)
                 destination = waypoints.pop().location;
             else
                 destination = origin;
 
             const directionsService = new google.maps.DirectionsService();
-            console.log("ROUTING")
 
             directionsService.route(
                 {
@@ -124,7 +127,6 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
                 },
                 (result, status) => {
                     if (status === google.maps.DirectionsStatus.OK) {
-                        console.log(result);
                         setDirection(result)
                     } else {
                         alert(status);
@@ -137,7 +139,10 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
     }, [currentDay, tourInfo.days]);
 
     useEffect(() => {
-        getAllPlaces(filterQuery + "&p=" + 0 + "&s=" + 100 + "&l=" + center.lat + "," + center.lng + "range=" + 50)
+        console.log("Loading area",loadingArea)
+        if(!loadingArea){
+            getAllPlaces(filterQuery + "&p=" + 0 + "&s=" + 100 + "&l=" + center.lat + "," + center.lng + "range=" + 50)
+        }
     }, [filterQuery, center]);
 
     useEffect(()=>{
@@ -162,11 +167,14 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
     }
 
     function getAllPlaces(query) {
+        setLoadingArea(true);
         API.Places.getAllPlacesAdmin(query).then(locations => {
             setPlacesInfoWindows(Array(locations.list.length).fill(false));
             removeSelectedPlaces(locations.list);
+            setLoadingArea(false)
         }).catch(err => {
             console.log(err);
+            setLoadingArea(false)
         })
     }
 
@@ -232,8 +240,8 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
 
     const searchAreaComponent = useMemo(() => (
         <CustomControlsManager position={window.google.maps.ControlPosition.TOP_CENTER}>
-            {console.log("Pajibat")}
             <div>
+
                 <Button variant="contained"
                         color="primary"
                         onClick={() => {
@@ -275,7 +283,7 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
             >
                 <FilterBlock setOpen={setAnchorEl}/>
             </Popover>
-
+            {loadingArea ? <LinearProgress /> : null}
             <MyMapComponent
                 loadingElement={<div style={{height: `100%`}}/>}
                 containerElement={<div style={{height: `400px`}}/>}

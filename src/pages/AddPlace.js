@@ -212,7 +212,6 @@ function AddPlace({classes, match}) {
             averageTimeSpent: place.averageTimeSpent,
         });
 
-        console.log(place)
         setLocationData({
             city: place.city,
             address: place.address,

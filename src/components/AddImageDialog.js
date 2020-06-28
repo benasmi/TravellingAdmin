@@ -4,7 +4,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {DropzoneArea} from "material-ui-dropzone";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import PropTypes from "prop-types";
@@ -41,6 +41,20 @@ function AddImageDialog(props) {
         })
     }
 
+    const handleDrop = (files )=> {
+        setSelectedFiles(existingFiles => [...existingFiles, ...files])
+    }
+
+    useEffect(() => {
+        console.log(selectedFiles)
+
+    }, [selectedFiles])
+
+    const handleDelete = (file) => {
+        console.log(file.name)
+        setSelectedFiles(files => {return files.filter(existingFile => existingFile !== file)})
+    }
+
     return (
         <div>
             <Dialog aria-labelledby="customized-dialog-title" open={open} fullWidth={true}>
@@ -53,7 +67,8 @@ function AddImageDialog(props) {
                         className={classes.dropzoneArea}
                         acceptedFiles={acceptedFileFormats}
                         maxFileSize={25000000}
-                        dropzoneProps={{disabled: loading}} filesLimit={5} onDrop={setSelectedFiles}/>
+                        dropzoneProps={{disabled: loading}} filesLimit={5} onDrop={handleDrop}
+                    onDelete={handleDelete}/>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onCloseCallback} color="primary">

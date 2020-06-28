@@ -5,6 +5,10 @@ import CardContent from "@material-ui/core/CardContent";
 import PropTypes from "prop-types";
 import AutoCompleteChip from "../AutocompleteChip";
 import Typography from "@material-ui/core/Typography";
+import green from "@material-ui/core/colors/green";
+import Button from "@material-ui/core/Button";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 
 const styles = theme => ({
     root: {
@@ -17,10 +21,18 @@ const styles = theme => ({
         marginTop: theme.spacing(2),
         width: "100%",
         height: "auto"
-    }
+    },
+    publicityDiv: {
+        width: "100%",
+
+    },
+    button: {
+        margin: theme.spacing(2),
+        color: "#ffffff"
+    },
 });
 
-function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setErrorInfo, availableTags, selectedTags, setSelectedTags, setAvailableTags}) {
+function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setErrorInfo, availableTags, selectedTags, setSelectedTags, setAvailableTags, tourId}) {
 
     const handleDescriptionChange = (e) => {
         tourInfoReducer({
@@ -35,10 +47,6 @@ function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setEr
         })
     }
 
-    useEffect(() => {
-        console.log("TAGAI", availableTags)
-    }, [availableTags])
-
     useEffect(()=>{
         if(tourInfo.name === "")
             setErrorInfo(state => {return {...state, errors: {...state.errors, titleMissing: true}}})
@@ -47,6 +55,32 @@ function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setEr
     }, [tourInfo.name])
 
     let shouldDisplayTitleMissingError = errorInfo.showErrors && errorInfo.errors.titleMissing
+
+    const verifyTour = () => {
+        tourInfoReducer({
+            type: 'UPDATE_TOUR',
+            data:  {isVerified: true}
+        })
+    }
+
+    const publishTour = () => {
+        tourInfoReducer({
+            type: 'UPDATE_TOUR',
+            data:  {isPublished: !tourInfo.isPublished}
+        })
+
+    }
+
+    const ColorButton = withStyles((theme) => ({
+        root: {
+            color: "white",
+            backgroundColor: green[500],
+            '&:hover': {
+                backgroundColor: green[700],
+            },
+        },
+    }))(Button);
+
 
     return (
         <div className={classes.root}>
@@ -76,6 +110,31 @@ function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setEr
                 setSelectedOptions={setSelectedTags}
                 selectedOptions={selectedTags}
             />
+
+            {tourId !== undefined &&
+                <div className={classes.publicityDiv}>
+                    {tourInfo.isVerified ?
+                        <div>
+                            <FormControlLabel
+                                control={<Switch checked={tourInfo.isPublished} onChange={publishTour} name="isPublic"/>}
+                                label="Make this tour public?"
+                            />
+                        </div>
+                        :
+                    <ColorButton
+                        variant="contained"
+                        color="primary"
+                        onClick={verifyTour}
+                        className={classes.button}
+                    >
+                        Verify tour
+                    </ColorButton>
+                    }
+
+
+                </div>
+            }
+
         </div>
     )
 }

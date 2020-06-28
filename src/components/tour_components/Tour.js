@@ -82,6 +82,8 @@ const styles = theme => ({
 const sampleTourData = {
     name: "",
     description: "",
+    isVerified: true,
+    isPublished: false,
     days: [
         {
             description: "",
@@ -304,6 +306,7 @@ function Tour({classes, match}) {
         <Paper className={classes.rightLayout}>
             <TourInfoComponent tourInfo={tourInfo} tourInfoReducer={dispatchTourInfo} errorInfo={errorInfo}
                                setErrorInfo={setErrorInfo}
+                               tourId={tourId}
                                setSelectedTags={setSelectedTags} selectedTags={selectedTags} availableTags={availableTags} setAvailableTags={setAvailableTags}/>
             <Divider variant="middle"/>
             {tourDaysComponents}

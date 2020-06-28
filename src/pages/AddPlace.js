@@ -139,7 +139,7 @@ function AddPlace({classes, match}) {
 
     const ColorButton = withStyles((theme) => ({
         root: {
-            color: theme.palette.getContrastText(green[500]),
+            color: "white",
             backgroundColor: green[500],
             '&:hover': {
                 backgroundColor: green[700],

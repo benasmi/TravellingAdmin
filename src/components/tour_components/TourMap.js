@@ -19,6 +19,7 @@ import API from "../../Networking/API";
 import {PlacesFilterContext} from "../../contexts/PlacesFilterContext";
 import Avatar from "@material-ui/core/Avatar";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const google = window.google;
 
@@ -241,21 +242,25 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
     const searchAreaComponent = useMemo(() => (
         <CustomControlsManager position={window.google.maps.ControlPosition.TOP_CENTER}>
             <div>
+                {loadingArea ?
+                    <CircularProgress />
+                    :
+                    <Button variant="contained"
+                            color="primary"
+                            onClick={() => {
+                                setCenter({
+                                    lat: refMap.current.getCenter().lat(),
+                                    lng: refMap.current.getCenter().lng()
+                                })
+                            }}
+                    >
+                        Search area...
+                    </Button>
+                }
 
-                <Button variant="contained"
-                        color="primary"
-                        onClick={() => {
-                            setCenter({
-                                lat: refMap.current.getCenter().lat(),
-                                lng: refMap.current.getCenter().lng()
-                            })
-                        }}
-                >
-                    Search area...
-                </Button>
             </div>
         </CustomControlsManager>
-    ), []);
+    ), [loadingArea]);
 
     return (
         <div className={classes.root}>
@@ -283,7 +288,6 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
             >
                 <FilterBlock setOpen={setAnchorEl}/>
             </Popover>
-            {loadingArea ? <LinearProgress /> : null}
             <MyMapComponent
                 loadingElement={<div style={{height: `100%`}}/>}
                 containerElement={<div style={{height: `400px`}}/>}

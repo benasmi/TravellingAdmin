@@ -104,7 +104,7 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
 
     useEffect(() => {
         const places = constructPlaceData();
-        if(places.length>0){
+        if(places.length>1){
             const waypoints = places.map(p =>({
                 location: {lat: p.latitude, lng:p.longitude},
                 stopover: true

@@ -97,6 +97,16 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const PlacesWithContext = () =>  (
+    <PlacesFilterProvider>
+        <Places/>
+    </PlacesFilterProvider>
+)
+const TourWithContext = (props) =>  (
+    <PlacesFilterProvider>
+        <Tour {...props}/>
+    </PlacesFilterProvider>
+)
 
 export default function Appbar(props) {
     const classes = useStyles();
@@ -123,6 +133,7 @@ export default function Appbar(props) {
             history.go(0)
         }
     };
+
 
     return (
         <div className={classes.root1}>
@@ -198,11 +209,11 @@ export default function Appbar(props) {
                 <div className={classes.drawerHeader} />
                 <Switch>
                     <Route exact path="/app" component={Home} />
-                    <Route path="/app/places" component={Places} />
+                    <Route path="/app/places" component={PlacesWithContext} />
                     <Route path="/app/tours" component={Tours} />
                     <Route path="/app/addplace/:placeId?" component={AddPlace} />
                     <Route path="/app/apiplaces" component={ApiPlaces} />
-                    <Route path="/app/addtour/:tourId?" component={Tour} />
+                    <Route path="/app/addtour/:tourId?" component={TourWithContext} />
                     <Route path="/app/resources" component={Resources} />
                     <Redirect from="*" to="/404"/>
                 </Switch>

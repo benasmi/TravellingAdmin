@@ -13,6 +13,7 @@ import Button from "@material-ui/core/Button";
 import {PlacesFilterContext} from "../../contexts/PlacesFilterContext";
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from "@material-ui/core/IconButton";
+import Paper from "@material-ui/core/Paper";
 
 const style = theme =>({
     filterDiv: {
@@ -37,6 +38,20 @@ const style = theme =>({
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between"
+    },
+    root: {
+        flexGrow: 1,
+        width: "100%",
+        marginBottom: "8px",
+        boxShadow: "0 0 1px 0 #666",
+        padding: theme.spacing(1)
+    },
+    paper: {
+        display: "flex",
+        flexDirection: "column",
+        padding: theme.spacing(2),
+        textAlign: 'center'
+
     }
 });
 
@@ -89,145 +104,144 @@ function FilterBlock({classes, setOpen}) {
         })
     }
 
-
-
-    return <div className={classes.filterDiv}>
-        <div className={classes.sortingButtons}>
-            {filterOptions.map(row=>{
-                return <FormControlLabel
-                    control={<Checkbox
-                        checked={row.filter}
-                        onChange={()=>filterOptionsChanged(row.filterName)}
-                        name={row.filterName} />}
-                    label={row.filterLabel}
-                />
-            })}
-        </div>
-        <div className={classes.rightLayout}>
-            <div style={{display: "flex", justifyContent: "flex-end"}}>
-                <div style={{width: "100%"}}>
+    return <Paper className={classes.root}>
+        <Grid container direction="row" spacing={3}>
+            <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
                     <Typography variant="h6">
-                        Filter by dates
+                        General options
                     </Typography>
+                    <div className={classes.sortingButtons}>
+                        {filterOptions.map(row=>{
+                            return <FormControlLabel
+                                control={<Checkbox
+                                    checked={row.filter}
+                                    onChange={()=>filterOptionsChanged(row.filterName)}
+                                    name={row.filterName} />}
+                                label={row.filterLabel}
+                            />
+                        })}
+                    </div>
+                    <Typography variant="h6">
+                        Filter by categories
+                    </Typography>
+                    <AutocompleteChip label="Select categories"
+                                      id="categoryId"
+                                      options={categories}
+                                      setOptions={setCategories}
+                                      selectedOptions={selectedCategories}
+                                      setSelectedOptions={setSelectedCategories}/>
+
+                </Paper>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                            <Typography variant="h6">
+                                Filter by dates
+                            </Typography>
+                            <Typography variant="subtitle1">
+                                Insertion dates
+                            </Typography>
+                    <Grid container justify="space-around">
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                            disableToolbar
+                            variant="inline"
+                            format="MM-dd-yyyy"
+                            margin="normal"
+                            id="insertionStart"
+                            onChange={(date)=>filterDateChange(date,"insertionStart")}
+                            value={dates.insertionStart}
+                            label="Date start"
+                            KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                            }}
+                        />
+                        <KeyboardDatePicker
+                            disableToolbar
+                            variant="inline"
+                            format="MM-dd-yyyy"
+                            margin="normal"
+                            value={dates.insertionEnd}
+                            onChange={(date)=>filterDateChange(date,"insertionEnd")}
+                            id="insertionEnd"
+                            label="Date end"
+                            KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                            }}
+                        />
+                        </MuiPickersUtilsProvider>
+                    </Grid>
                     <Typography variant="subtitle1">
-                        Insertion dates between
+                        Modification dates
                     </Typography>
-                </div>
-                <IconButton aria-label="delete" size="large" onClick={()=>{setOpen(null)}}>
-                    <CloseIcon/>
-                </IconButton>
-            </div>
-
-            <Grid container justify="space-around">
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
-                    disableToolbar
-                    variant="inline"
-                    format="MM-dd-yyyy"
-                    margin="normal"
-                    id="insertionStart"
-                    onChange={(date)=>filterDateChange(date,"insertionStart")}
-                    value={dates.insertionStart}
-                    label="Date start"
-                    KeyboardButtonProps={{
-                        'aria-label': 'change date',
-                    }}
-                />
-                <KeyboardDatePicker
-                    disableToolbar
-                    variant="inline"
-                    format="MM-dd-yyyy"
-                    margin="normal"
-                    value={dates.insertionEnd}
-                    onChange={(date)=>filterDateChange(date,"insertionEnd")}
-                    id="insertionEnd"
-                    label="Date end"
-                    KeyboardButtonProps={{
-                        'aria-label': 'change date',
-                    }}
-                />
-                </MuiPickersUtilsProvider>
+                    <Grid container justify="space-around">
+                        <KeyboardDatePicker
+                            disableToolbar
+                            variant="inline"
+                            format="MM-dd-yyyy"
+                            margin="normal"
+                            value={dates.modificationStart}
+                            onChange={(date)=>filterDateChange(date,"modificationStart")}
+                            id="modificationStart"
+                            label="Date start"
+                            KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                            }}
+                        />
+                        <KeyboardDatePicker
+                            disableToolbar
+                            variant="inline"
+                            format="MM-dd-yyyy"
+                            margin="normal"
+                            value={dates.modificationEnd}
+                            onChange={(date)=>filterDateChange(date,"modificationEnd")}
+                            id="modificationEnd"
+                            label="Date end"
+                            KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                            }}
+                        />
+                    </Grid>
+                </Paper>
             </Grid>
-            <Typography variant="subtitle1">
-                Modification dates between
-            </Typography>
-            <Grid container justify="space-around">
-                <KeyboardDatePicker
-                    disableToolbar
-                    variant="inline"
-                    format="MM-dd-yyyy"
-                    margin="normal"
-                    value={dates.modificationStart}
-                    onChange={(date)=>filterDateChange(date,"modificationStart")}
-                    id="modificationStart"
-                    label="Date start"
-                    KeyboardButtonProps={{
-                        'aria-label': 'change date',
-                    }}
-                />
-                <KeyboardDatePicker
-                    disableToolbar
-                    variant="inline"
-                    format="MM-dd-yyyy"
-                    margin="normal"
-                    value={dates.modificationEnd}
-                    onChange={(date)=>filterDateChange(date,"modificationEnd")}
-                    id="modificationEnd"
-                    label="Date end"
-                    KeyboardButtonProps={{
-                        'aria-label': 'change date',
-                    }}
-                />
+            <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                    <Typography variant="h6">
+                        Filter by countries
+                    </Typography>
+                    <AutocompleteChip label="Select countries"
+                                      options={countries}
+                                      setOptions={setCountries}
+                                      selectedOptions={selectedCountries}
+                                      setSelectedOptions={setSelectedCountries}/>
+                            <Typography variant="h6">
+                                Filter by municipalities
+                            </Typography>
+                            <AutocompleteChip label="Select municipalities"
+                                              options={municipalities}
+                                              setOptions={setMunicipalities}
+                                              selectedOptions={selectedMunicipalities}
+                                              setSelectedOptions={setSelectedMunicipalities}/>
+                            <Typography variant="h6">
+                                Filter by cities
+                            </Typography>
+                            <AutocompleteChip label="Select cities"
+                                              options={cities}
+                                              setOptions={setCities}
+                                              selectedOptions={selectedCities}
+                                              setSelectedOptions={setSelectedCities}/>
+                </Paper>
             </Grid>
-            <Typography variant="h6">
-                Filter by categories
-            </Typography>
-            <AutocompleteChip label="Select categories"
-                              id="categoryId"
-                              options={categories}
-                              setOptions={setCategories}
-                              selectedOptions={selectedCategories}
-                              setSelectedOptions={setSelectedCategories}/>
-
-            <Typography variant="h6">
-                Filter by countries
-            </Typography>
-            <AutocompleteChip label="Select countries"
-                              options={countries}
-                              setOptions={setCountries}
-                              selectedOptions={selectedCountries}
-                              setSelectedOptions={setSelectedCountries}/>
-
-            <Typography variant="h6">
-                Filter by municipalities
-            </Typography>
-            <AutocompleteChip label="Select municipalities"
-                              options={municipalities}
-                              setOptions={setMunicipalities}
-                              selectedOptions={selectedMunicipalities}
-                              setSelectedOptions={setSelectedMunicipalities}/>
-
-            <Typography variant="h6">
-                Filter by cities
-            </Typography>
-            <AutocompleteChip label="Select cities"
-                              options={cities}
-                              setOptions={setCities}
-                              selectedOptions={selectedCities}
-                              setSelectedOptions={setSelectedCities}/>
-
-
-
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={() => clearFilters()}>
-                Clear filters
-            </Button>
-        </div>
-
-    </div>
-
+        </Grid>
+        <Button
+            style={{marginTop: 8}}
+            variant="contained"
+            color="primary"
+            onClick={() => clearFilters()}>
+            Clear filters
+        </Button>
+    </Paper>
 }
 
 export default withStyles(style)(FilterBlock)

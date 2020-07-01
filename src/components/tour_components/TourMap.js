@@ -273,30 +273,7 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
 
     return (
         <div className={classes.root}>
-
-            <Tooltip aria-describedby={id} title="Filter list">
-                <IconButton aria-label="filter list" onClick={handleClick}>
-                    <FilterListIcon/>
-                </IconButton>
-            </Tooltip>
-            <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={() => {
-                    setAnchorEl(null)
-                }}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                }}
-            >
-                <FilterBlock setOpen={setAnchorEl}/>
-            </Popover>
+            <FilterBlock setOpen={setAnchorEl}/>
             <MyMapComponent
                 loadingElement={<div style={{height: `100%`}}/>}
                 containerElement={<div style={{height: `400px`}}/>}

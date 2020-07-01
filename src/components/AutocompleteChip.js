@@ -31,6 +31,7 @@ const styles = theme => ({
 function AutoCompleteChip(props){
 
     const {options, setOptions, selectedOptions, setSelectedOptions, classes, label, id} = props;
+    const [initialData, setInitialData] = useState([]);
     const [getCurrentVal, setCurrentVal] = useState({"name": ""});
     const [firstLoad, setFirstLoad] = useState(true);
 
@@ -43,6 +44,15 @@ function AutoCompleteChip(props){
             ]
         )
     }
+
+    useEffect(()=>{
+        if(selectedOptions.length===0){
+
+            setOptions(
+                initialData
+            )
+        }
+    },[selectedOptions]);
 
     useEffect(()=>{
         if(firstLoad && options.length>0){
@@ -59,6 +69,7 @@ function AutoCompleteChip(props){
                 }
             });
             setOptions(data);
+            setInitialData(data);
             setFirstLoad(false)
         }
     },[options]);

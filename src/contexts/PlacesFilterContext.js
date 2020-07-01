@@ -50,7 +50,6 @@ export const PlacesFilterProvider = ({children}) => {
         }
     }));
 
-
     const getCategories = (params="") => {
         API.Categories.getAllCategories().then(response=>{
             setCategories(response);
@@ -162,9 +161,7 @@ export const PlacesFilterProvider = ({children}) => {
                     }
                 }))
             }else{
-                console.log("Clearing filters");
                 if(areFiltersCleared()){
-                    console.log("All filters cleared");
                     setResetFilterOptions(false)
                 }
             }

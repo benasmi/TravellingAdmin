@@ -156,31 +156,31 @@ function Places(props) {
 
     const customToolbarElements = () => {
         return <div>
-            <Tooltip aria-describedby={id} title="Filter list">
-                <IconButton aria-label="filter list" onClick={handleClick}>
-                    <FilterListIcon/>
-                </IconButton>
-            </Tooltip>
-            <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={() => {
-                    setAnchorEl(null)
-                }}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                }}
-            >
 
-                <FilterBlock setOpen={setAnchorEl}/>
+            {/*<Tooltip aria-describedby={id} title="Filter list">*/}
+            {/*    <IconButton aria-label="filter list" onClick={handleClick}>*/}
+            {/*        <FilterListIcon/>*/}
+            {/*    </IconButton>*/}
+            {/*</Tooltip>*/}
+            {/*<Popover*/}
+            {/*    id={id}*/}
+            {/*    open={open}*/}
+            {/*    anchorEl={anchorEl}*/}
+            {/*    onClose={() => {*/}
+            {/*        setAnchorEl(null)*/}
+            {/*    }}*/}
+            {/*    anchorOrigin={{*/}
+            {/*        vertical: 'bottom',*/}
+            {/*        horizontal: 'center',*/}
+            {/*    }}*/}
+            {/*    transformOrigin={{*/}
+            {/*        vertical: 'top',*/}
+            {/*        horizontal: 'center',*/}
+            {/*    }}*/}
+            {/*>*/}
 
-            </Popover>
+
+            {/*</Popover>*/}
         </div>
     };
     /*------------------------------------------------------------------------------------------------------*/
@@ -188,6 +188,8 @@ function Places(props) {
     return (
         <div className={classes.root}>
             <div className={classes.content}>
+                <FilterBlock setOpen={setAnchorEl}/>
+
                 <TableComponent
                     title={"Places"}
                     headCells={headCells}

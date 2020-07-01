@@ -3,6 +3,7 @@ import RequestType from '../Networking/NetworkLayerCentral'
 //Places
 const getAllPlaces = (urlParams) => RequestType.getRequest("api/v1/place/search", urlParams);
 const getAllPlacesAdmin = (urlParams) => RequestType.getRequest("api/v1/place/searchadmin", urlParams);
+const getClosesPlacesAdmin = (urlParams) => RequestType.getRequest("api/v1/place/searchadmin/closest", urlParams);
 
 const insertPlace = (data) => RequestType.postRequest("api/v1/place/insert",data);
 const updatePlace = (data) => RequestType.postRequest("api/v1/place/update", data);
@@ -15,7 +16,7 @@ const getAllCounties = (urlParams) =>RequestType.getRequest("api/v1/place/county
 const getAllCountries = (urlParams) =>RequestType.getRequest("api/v1/place/country/all",urlParams);
 const getAllMunicipalities = (urlParams) =>RequestType.getRequest("api/v1/place/municipality/all",urlParams);
 
-const Places = {getAllCities,getAllCounties, getAllCountries, getAllMunicipalities, getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin,searchApiPlaces, removePlace};
+const Places = {getClosesPlacesAdmin,getAllCities,getAllCounties, getAllCountries, getAllMunicipalities, getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin,searchApiPlaces, removePlace};
 
 //Tags
 const getAllTags = () => RequestType.getRequest("api/v1/tags/all");

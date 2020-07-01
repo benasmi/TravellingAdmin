@@ -285,8 +285,10 @@ export default function TableComponent({title, searchFunction, headCells, paging
 
     };
 
-    const handleClick = (event, name) => {
-
+    const handleClick = (event, rowId) => {
+        if(updateCallback !== undefined){
+            updateCallback(rowId)
+        }
     };
 
 
@@ -353,7 +355,7 @@ export default function TableComponent({title, searchFunction, headCells, paging
                                         <TableRow
                                             className={rowStyle}
                                             hover
-                                            onClick={(event) => handleClick(event, row.name)}
+                                            onClick={(event) => handleClick(event, row[id])}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}

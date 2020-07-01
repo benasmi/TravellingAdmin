@@ -22,7 +22,7 @@ const style = theme =>({
     sortingButtons: {
         display: "flex",
         flexDirection: "column",
-        padding: theme.spacing(2),
+        padding: theme.spacing(1),
         height: "100%"
 
     },
@@ -30,10 +30,10 @@ const style = theme =>({
         boxShadow: "0 0 1px 0 #666",
         display: "flex",
         flexDirection: "column",
-        padding: theme.spacing(2)
+        padding: theme.spacing(1)
     },
     datesLayout:{
-        padding: theme.spacing(2),
+        padding: theme.spacing(1),
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between"
@@ -105,16 +105,19 @@ function FilterBlock({classes, setOpen}) {
         </div>
         <div className={classes.rightLayout}>
             <div style={{display: "flex", justifyContent: "flex-end"}}>
+                <div style={{width: "100%"}}>
+                    <Typography variant="h6">
+                        Filter by dates
+                    </Typography>
+                    <Typography variant="subtitle1">
+                        Insertion dates between
+                    </Typography>
+                </div>
                 <IconButton aria-label="delete" size="large" onClick={()=>{setOpen(null)}}>
                     <CloseIcon/>
                 </IconButton>
             </div>
-            <Typography variant="h6">
-                Filter by dates
-            </Typography>
-            <Typography variant="subtitle1">
-                Insertion dates between
-            </Typography>
+
             <Grid container justify="space-around">
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
@@ -145,8 +148,6 @@ function FilterBlock({classes, setOpen}) {
                 />
                 </MuiPickersUtilsProvider>
             </Grid>
-            <br/>
-            <br/>
             <Typography variant="subtitle1">
                 Modification dates between
             </Typography>
@@ -178,7 +179,6 @@ function FilterBlock({classes, setOpen}) {
                     }}
                 />
             </Grid>
-            <br/>
             <Typography variant="h6">
                 Filter by categories
             </Typography>
@@ -189,7 +189,6 @@ function FilterBlock({classes, setOpen}) {
                               selectedOptions={selectedCategories}
                               setSelectedOptions={setSelectedCategories}/>
 
-                              <br/>
             <Typography variant="h6">
                 Filter by countries
             </Typography>
@@ -198,9 +197,6 @@ function FilterBlock({classes, setOpen}) {
                               setOptions={setCountries}
                               selectedOptions={selectedCountries}
                               setSelectedOptions={setSelectedCountries}/>
-            <br/>
-
-
 
             <Typography variant="h6">
                 Filter by municipalities
@@ -210,7 +206,6 @@ function FilterBlock({classes, setOpen}) {
                               setOptions={setMunicipalities}
                               selectedOptions={selectedMunicipalities}
                               setSelectedOptions={setSelectedMunicipalities}/>
-            <br/>
 
             <Typography variant="h6">
                 Filter by cities
@@ -220,8 +215,9 @@ function FilterBlock({classes, setOpen}) {
                               setOptions={setCities}
                               selectedOptions={selectedCities}
                               setSelectedOptions={setSelectedCities}/>
-            <br/>
-            <br/>
+
+
+
             <Button
                 variant="contained"
                 color="primary"

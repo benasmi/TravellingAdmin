@@ -198,7 +198,6 @@ function ParkingMap({placeInfo,
     }
 
     useEffect(()=>{
-        console.log("Downloading new markers");
         getClosestParking()
     },[locationMarker]);
 

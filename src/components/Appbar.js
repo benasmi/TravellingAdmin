@@ -128,9 +128,11 @@ export default function Appbar(props) {
         setTitle(title);
 
         let re = new RegExp(url+'([0-9]*)?');
-
         if(re.test(location.pathname)){
-            history.go(0)
+            history.push(url);
+            history.go(0);
+        console.log("Ar atitinka kriterijus",re.test(location.pathname))
+
         }
     };
 

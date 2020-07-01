@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import {withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow, DirectionsRenderer} from "react-google-maps"
 import {geocodeFromLatLng} from "./MapGeolocation";
@@ -8,8 +8,19 @@ import MapLock from "./MapLock";
 import CustomControlsManager from "./CustomControlsManager";
 import ExploreIcon from '@material-ui/icons/Explore';
 import IconButton from "@material-ui/core/IconButton";
-
-const styles = theme => ({});
+import Typography from "@material-ui/core/Typography";
+import Alert from "@material-ui/lab/Alert";
+import Button from "@material-ui/core/Button";
+import AddIcon from "@material-ui/icons/Add";
+import API from "../../Networking/API";
+import Avatar from "@material-ui/core/Avatar";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Card from "@material-ui/core/Card";
+var buildUrl = require('build-url');
+const styles = theme => ({ largeIcon: {
+        width: theme.spacing(14),
+        height: theme.spacing(14),
+    }});
 
 const MapComponent = withGoogleMap(props =>
     <GoogleMap
@@ -26,7 +37,10 @@ const MapComponent = withGoogleMap(props =>
 
 
 
-function PlaceMap({placeInfo,locationMarker, setLocationMarker,setParkingLocationMarker}) {
+function PlaceMap({classes, placeInfo,locationMarker,setLocationMarker,setParkingLocationMarker}) {
+
+    const [otherPlacesData, setOtherPlacesData] = useState([]);
+    const [infoWindows, setInfoWindows] = useState([]);
 
     const [isLocked, setIsLocked] = useState(placeInfo.placeId !== "");
     const refMap = useRef(null);
@@ -34,6 +48,26 @@ function PlaceMap({placeInfo,locationMarker, setLocationMarker,setParkingLocatio
     function mapToolbarCallback(location) {
         setParkingLocationMarker(location);
         setLocationMarker(location)
+    }
+
+    useEffect(()=>{
+        getClosestPlaces()
+    },[locationMarker]);
+
+    function getClosestPlaces(){
+        API.Places.getAllPlacesAdmin(buildUrl(null, {
+            queryParams: {
+                p: "0",
+                s: "10",
+                range: 1,
+                l: [locationMarker.latitude, locationMarker.longitude]
+            }
+        })).then(response=>{
+            console.log("Vaje vaje", response.list)
+            setOtherPlacesData(response.list);
+        }).catch(error=>{
+
+        })
     }
 
     function onMarkerDragEnd(event) {
@@ -57,6 +91,47 @@ function PlaceMap({placeInfo,locationMarker, setLocationMarker,setParkingLocatio
             refInstance={refMap}
             position={locationMarker}
         >
+            {
+                otherPlacesData.map((location, i) =>{
+                    const latitude = parseFloat(location.latitude);
+                    const longitude = parseFloat(location.longitude);
+                    console.log(location)
+                    return <Marker
+                        key={location.placeId}
+                        position={{ lat: latitude, lng: longitude}}
+                        icon={{
+                            url: require('../../res/selectedTourIcon.svg'),
+                            scaledSize: new window.google.maps.Size(32, 32),
+                            origin: new window.google.maps.Point(0, 0)
+                        }}
+                        onClick={()=>{
+                            if(!isLocked){
+                                let markers = Object.assign([],infoWindows);
+                                markers[i] = true;
+                                setInfoWindows(markers)
+                            }
+                        }}
+                    >
+                        {infoWindows[i] && (
+                            <InfoWindow onCloseClick={()=>{
+                                let markers = Object.assign([], infoWindows);
+                                markers[i] = false;
+                                setInfoWindows(markers)
+                            }
+                            }>
+
+                                <Card style={{display:"flex", flexDirection: "column",alignItems:"center"}}>
+                                    {location.photos[0].url ?<Avatar alt="Remy Sharp" src={location.photos[0].url} className={classes.largeIcon}/> : null}
+                                    <Typography variant="h6">
+                                        {location.name}
+                                    </Typography>
+
+                                </Card>
+                            </InfoWindow>
+                        )}
+                    </Marker>
+                })
+            }
 
             <Marker
                 name={'Dolores park'}
@@ -82,6 +157,7 @@ function PlaceMap({placeInfo,locationMarker, setLocationMarker,setParkingLocatio
                 </div>
             </CustomControlsManager>
         </MapComponent>
+
 
 
         <MapLock

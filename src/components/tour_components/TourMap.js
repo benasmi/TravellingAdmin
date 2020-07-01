@@ -109,6 +109,10 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
                 location: {lat: p.latitude, lng:p.longitude},
                 stopover: true
             }));
+
+            waypoints.map(row=>{
+                console.log(row);
+            })
             const origin = waypoints.shift().location;
             let destination = null;
 
@@ -118,6 +122,11 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
                 destination = origin;
 
             const directionsService = new google.maps.DirectionsService();
+
+
+            console.log("Origin", origin);
+            console.log("Waypoints",waypoints);
+            console.log("Destination", destination);
 
             directionsService.route(
                 {

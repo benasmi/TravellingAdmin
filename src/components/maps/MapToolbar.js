@@ -65,6 +65,7 @@ function MapToolbar({classes, isLocked, locationCallback}) {
         }
         return true;
     }
+
     /**
      * Handle place selection from google maps autocomplete
      * @param place
@@ -72,17 +73,14 @@ function MapToolbar({classes, isLocked, locationCallback}) {
      */
     const onPlaceSelected = (place) => {
         setIsLoading(true);
-        const address = place.formatted_address;
-        const addressArray =  place.address_components;
-        if(addressArray !== undefined){
-            const city = getCity( addressArray ),
-                country = getCountry(addressArray),
-                county = getCounty(addressArray),
-                municipality = getMunicipality(addressArray),
-                lat = place.geometry.location.lat(),
+        const addressArray = place.address_components;
+        if (addressArray !== undefined) {
+            const lat = place.geometry.location.lat(),
                 lng = place.geometry.location.lng();
+            geocodeFromLatLng(lat, lng).then(location => {
+                location !== null ? locationCallback(location) : errorParsingLocation();
                 setIsLoading(false)
-                locationCallback({address: address, city: city, country: country, latitude: lat, longitude: lng, county: county, municipality: municipality})
+            });
         }
         return null
     };

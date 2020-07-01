@@ -200,15 +200,7 @@ function FilterBlock({classes, setOpen}) {
                               setSelectedOptions={setSelectedCountries}/>
             <br/>
 
-            <Typography variant="h6">
-                Filter by cities
-            </Typography>
-            <AutocompleteChip label="Select cities"
-                              options={cities}
-                              setOptions={setCities}
-                              selectedOptions={selectedCities}
-                              setSelectedOptions={setSelectedCities}/>
-            <br/>
+
 
             <Typography variant="h6">
                 Filter by municipalities
@@ -218,6 +210,16 @@ function FilterBlock({classes, setOpen}) {
                               setOptions={setMunicipalities}
                               selectedOptions={selectedMunicipalities}
                               setSelectedOptions={setSelectedMunicipalities}/>
+            <br/>
+
+            <Typography variant="h6">
+                Filter by cities
+            </Typography>
+            <AutocompleteChip label="Select cities"
+                              options={cities}
+                              setOptions={setCities}
+                              selectedOptions={selectedCities}
+                              setSelectedOptions={setSelectedCities}/>
             <br/>
             <br/>
             <Button

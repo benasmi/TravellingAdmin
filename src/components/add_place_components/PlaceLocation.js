@@ -16,13 +16,14 @@ const styles = theme => ({
     }
 });
 
-function PlaceLocation({locationData, setLocationData, placeInfo}) {
+function PlaceLocation({locationData, setLocationData, setParkingLocation, placeInfo}) {
 
     function changeLocationData(event){
         const {name, value} = event.target;
         let data = Object.assign({}, locationData, {});
         data[name] = value;
 
+        setParkingLocation(data);
         setLocationData(data)
     }
 
@@ -38,6 +39,7 @@ function PlaceLocation({locationData, setLocationData, placeInfo}) {
         <PlaceMap
             placeInfo={placeInfo}
             locationMarker={locationData}
+            setParkingLocationMarker={setParkingLocation}
             setLocationMarker={setLocationData}
         />
         <br/>

@@ -10,10 +10,10 @@ const getPlaceById = (urlParams) => RequestType.getRequest("api/v1/place/getplac
 const searchApiPlaces = (urlParams) => RequestType.getRequest("api/v1/placeApi/search", urlParams);
 const removePlace = (urlParams) => RequestType.getRequest("api/v1/place/delete", urlParams);
 
-const getAllCities = () =>RequestType.getRequest("api/v1/place/city/all");
-const getAllCounties = () =>RequestType.getRequest("api/v1/place/county/all");
-const getAllCountries = () =>RequestType.getRequest("api/v1/place/country/all");
-const getAllMunicipalities = () =>RequestType.getRequest("api/v1/place/municipality/all");
+const getAllCities = (urlParams) =>RequestType.getRequest("api/v1/place/city/all",urlParams);
+const getAllCounties = (urlParams) =>RequestType.getRequest("api/v1/place/county/all",urlParams);
+const getAllCountries = (urlParams) =>RequestType.getRequest("api/v1/place/country/all",urlParams);
+const getAllMunicipalities = (urlParams) =>RequestType.getRequest("api/v1/place/municipality/all",urlParams);
 
 const Places = {getAllCities,getAllCounties, getAllCountries, getAllMunicipalities, getAllPlaces, insertPlace, updatePlace, getPlaceById,getAllPlacesAdmin,searchApiPlaces, removePlace};
 
@@ -28,7 +28,7 @@ const Tags = {getAllTags, addTag, removeTags, updateTags};
 const addCategory = (params) => RequestType.postRequest("api/v1/categories/insert", params);
 const removeCategory = (params) => RequestType.postRequest("api/v1/categories/delete", params);
 const updateCategory = (params) => RequestType.postRequest("api/v1/categories/update", params);
-const getAllCategories = () => RequestType.getRequest("api/v1/categories/all");
+const getAllCategories = (params) => RequestType.getRequest("api/v1/categories/all", params);
 const Categories = {addCategory, getAllCategories, removeCategory, updateCategory};
 
 //Photo

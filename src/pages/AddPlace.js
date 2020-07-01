@@ -425,6 +425,7 @@ function AddPlace({classes, match}) {
                     <PlaceLocation
                         placeInfo={placeInfo}
                         locationData={locationData}
+                        setParkingLocation={setParkingMarkerData}
                         setLocationData={setLocationData}/>
                 </Paper>
             <Paper elevation = {4} className={classes.paperContent}>

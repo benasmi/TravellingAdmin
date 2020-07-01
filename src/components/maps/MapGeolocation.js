@@ -28,7 +28,6 @@ export const getCountry = (addressArray) =>{
  */
 export const getCity = ( addressArray ) => {
     if(addressArray !== undefined){
-        console.log("Address array", addressArray);
         let city = '';
         for( let i = 0; i < addressArray.length; i++ ) {
             if ( addressArray[ i ].types[0] && 'locality' === addressArray[ i ].types[0] ) {

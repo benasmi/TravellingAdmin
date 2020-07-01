@@ -101,12 +101,12 @@ const PlacesWithContext = () =>  (
     <PlacesFilterProvider>
         <Places/>
     </PlacesFilterProvider>
-)
+);
 const TourWithContext = (props) =>  (
     <PlacesFilterProvider>
         <Tour {...props}/>
     </PlacesFilterProvider>
-)
+);
 
 export default function Appbar(props) {
     const classes = useStyles();

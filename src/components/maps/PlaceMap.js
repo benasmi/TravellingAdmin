@@ -18,47 +18,31 @@ const MapComponent = withGoogleMap(props =>
         center={{lat: props.position.latitude, lng: props.position.longitude }}
         defaultCenter={{lat: props.position.latitude, lng: props.position.longitude}}>
 
-        <Marker
-            name={'Dolores park'}
-            visible={true}
-            draggable={!props.isLocked}
-            onDragEnd={e => onMarkerDragEnd(e, props.setPosition)}
-            position={{lat: props.position.latitude, lng: props.position.longitude}}>
-        </Marker>
+        {props.children}
 
-        <CustomControlsManager position={window.google.maps.ControlPosition.BOTTOM_CENTER}>
-            <div>
-                <IconButton aria-label="delete" onClick={()=>{
-                    if(!props.isLocked){
-                        const mapCenter = props.refInstance.current.getCenter();
-                        geocodeFromLatLng(mapCenter.lat(), mapCenter.lng()).then(location=>{
-                            props.setPosition(location)
-                        });
-                    }
-                }}>
-                    <ExploreIcon fontSize={"large"}/>
-                </IconButton>
-            </div>
-        </CustomControlsManager>
     </GoogleMap>
 
 );
 
-function onMarkerDragEnd(event, setLocationMarker) {
-    let newLat = event.latLng.lat(),
-        newLng = event.latLng.lng();
-    geocodeFromLatLng(newLat, newLng).then(location => {
-        setLocationMarker(location)
-    })
-}
 
-function PlaceMap({placeInfo,locationMarker, setLocationMarker}) {
+
+function PlaceMap({placeInfo,locationMarker, setLocationMarker,setParkingLocationMarker}) {
 
     const [isLocked, setIsLocked] = useState(placeInfo.placeId !== "");
     const refMap = useRef(null);
 
     function mapToolbarCallback(location) {
+        setParkingLocationMarker(location);
         setLocationMarker(location)
+    }
+
+    function onMarkerDragEnd(event) {
+        let newLat = event.latLng.lat(),
+            newLng = event.latLng.lng();
+        geocodeFromLatLng(newLat, newLng).then(location => {
+            setLocationMarker(location);
+            setParkingLocationMarker(location)
+        })
     }
     
     return <React.Fragment>
@@ -71,9 +55,34 @@ function PlaceMap({placeInfo,locationMarker, setLocationMarker}) {
             containerElement={<div style={{ height: `400px` }} />}
             mapElement={<div style={{ height: `100%` }} />}
             refInstance={refMap}
-            isLocked={isLocked}
             position={locationMarker}
-            setPosition={setLocationMarker}/>
+        >
+
+            <Marker
+                name={'Dolores park'}
+                visible={true}
+                draggable={!isLocked}
+                onDragEnd={e => onMarkerDragEnd(e)}
+                position={{lat: locationMarker.latitude, lng: locationMarker.longitude}}>
+            </Marker>
+
+            <CustomControlsManager position={window.google.maps.ControlPosition.BOTTOM_CENTER}>
+                <div>
+                    <IconButton aria-label="delete" onClick={()=>{
+                        if(!isLocked){
+                            const mapCenter = refMap.current.getCenter();
+                            geocodeFromLatLng(mapCenter.lat(), mapCenter.lng()).then(location=>{
+                                setLocationMarker(location)
+                                setParkingLocationMarker(location)
+                            });
+                        }
+                    }}>
+                        <ExploreIcon fontSize={"large"}/>
+                    </IconButton>
+                </div>
+            </CustomControlsManager>
+        </MapComponent>
+
 
         <MapLock
             isLocked={isLocked}

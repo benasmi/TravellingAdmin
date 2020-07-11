@@ -87,7 +87,13 @@ const removeTour = (urlParams) => RequestType.getRequest("api/v1/tour/delete", u
 const getAllToursAdmin = (urlParams) => RequestType.getRequest("api/v1/tour/searchadmin", urlParams);
 const Tour = {insertTour, getTour, updateTour, getAllToursAdmin, removeTour, getTourTags, updateTourTags}
 
-const API = {Tour, SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
+//Auth
+const login = (data) => RequestType.postRequest("api/v1/auth/login", data,);
+const getUserProfile = (data) => RequestType.postRequest("api/v1/auth/user/profile",data);
+const refreshToken = (data) => RequestType.postRequest("api/v1/auth/refresh",data);
+const Auth = {login, getUserProfile, refreshToken};
+
+const API = {Auth, Tour, SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
 
 export default API
 

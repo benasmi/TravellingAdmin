@@ -1,45 +1,73 @@
 import React from "react";
 import axios from "axios"
 import history from "../helpers/history";
-import {getAccessToken} from "../helpers/tokens";
+import {getAccessToken, getRefreshToken} from "../helpers/tokens";
 import Cookies from "js-cookie";
 import app from "../helpers/firebaseInit";
+import API from "./API";
 
 const request = async function (options, contentType) {
 
     const client = axios.create({
-        baseURL: false ? "http://localhost:8080/" : "https://www.traveldirection.ax.lt:8080/",
+        baseURL: true ? "http://localhost:8080/" : "https://www.traveldirection.ax.lt:8080/",
         headers: {
             'Content-Type': (contentType == null) ? 'application/json' : contentType,
             'Accept': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            "Authorization": getAccessToken()
-        },
+            'Authorization': "Bearer " + getAccessToken()
+            }
     });
+
 
 
     // Add a response interceptor
     client.interceptors.response.use(function (response) {
         return response;
-    }, function (error) {
+    },  function (error) {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
         const originalRequest = error.config;
+        const url = originalRequest.url;
         const status = error.response.status;
-        if (!!app.auth().currentUser  &&
-            (status === 401 || status === 403) &&
-            originalRequest._retry === undefined
-        ) {
-            //console.log("Users token has expired!");
-            return app.auth().currentUser.getIdToken(true).then(token => {
-                //console.log("Retrieving new token and making the same request!");
-                originalRequest._retry = true;
-                originalRequest.headers.Authorization = token;
-                Cookies.set("access_token", token);
-                return axios(originalRequest)
-            });
+
+        //Do not request for new JWT if response code is not Authorized
+        if (status !== 403) {
+            Promise.reject(error)
+            return
         }
-        return Promise.reject(error);
+
+
+        // Logout user if token refresh didn't work or user is disabled
+        if (url === 'api/v1/auth/refresh') {
+            console.log("Unable to issue new JWT token. Redirecting to login page!");
+            Cookies.remove("access_token");
+            Cookies.remove("refresh_token");
+            history.push("/login");
+            Promise.reject(error);
+            return
+        }else if(url.startsWith("api/v1/auth")){
+            Promise.reject(error);
+            return
+        }
+
+        if (status === 403 && originalRequest._retry === undefined) {
+            console.log("Users token has expired!");
+
+            originalRequest._retry = true;
+
+            return API.Auth.refreshToken(getRefreshToken()).then(response=>{
+                    console.log("Retrieving new token and making the same request!");
+                    let token = response.access_token;
+                    originalRequest.headers.Authorization = "Bearer " + token;
+                    Cookies.set("access_token", token);
+                    return axios(originalRequest)
+            }).catch(error=>{
+                console.log("Err");
+                return Promise.reject()
+            })
+        }
+
+        Promise.reject(error)
     });
 
     const onSuccess = function (response) {
@@ -75,6 +103,7 @@ const getRequest = function (path, urlData = "") {
 };
 
 const postRequest = function (path, data, urlData = "") {
+    console.log(data)
     return request({
         url: path + urlData,
         method: 'POST',

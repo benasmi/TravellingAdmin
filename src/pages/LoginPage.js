@@ -16,6 +16,7 @@ import app from "../helpers/firebaseInit";
 import {AuthContext} from "../contexts/AuthContext";
 import Redirect from "react-router-dom/es/Redirect";
 import {isAuthenticated} from "../helpers/tokens";
+import API from "../Networking/API";
 
 function Copyright() {
     return (
@@ -62,26 +63,33 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [loading, setIsLoading] = useState(false);
     const { addConfig } = UseSnackbarContext();
-    const { currentUser, isLoading } = useContext(AuthContext);
+    const { currentUser, setCurrentUser, isLoading } = useContext(AuthContext);
 
 
     const handleLogin = () =>{
         setIsLoading(true);
-        app.auth().signInWithEmailAndPassword(email , password)
-            .then(function(user) {
+        console.log("handleLogin", {identifier: email, password: password});
+        API.Auth.login({identifier: email, password: password}).then(response=>{
+            console.log("Auth data:", response);
+            setIsLoading(false);
+            let access_token = response.access_token;
+            let refresh_token = response.refresh_token;
+            API.Auth.getUserProfile(access_token).then(response=>{
+                console.log("User profile:", response);
+                setCurrentUser(response);
+                Cookies.set("access_token", access_token);
+                Cookies.set("refresh_token", refresh_token);
+                history.push("/app");
+            }).catch(error=>{
+                console.log("K")
                 setIsLoading(false);
-                app.auth().currentUser.getIdToken(true).then(function (idToken) {
-                    console.log("Getting new access token");
-                    Cookies.set("access_token", idToken);
-                    history.push("/app");
-                }).catch(function (error) {
-                    addConfig(false, "Error receiving access token")
-                });
-            })
-            .catch(function(error) {
-                setIsLoading(false);
-                addConfig(false, error.message)
+                addConfig(false, "Error retrieving user profile")
             });
+        }).catch(error=>{
+            console.log("K")
+            setIsLoading(false);
+            addConfig(false, error.message)
+        });
     };
 
 

@@ -9,12 +9,8 @@ import CustomControlsManager from "./CustomControlsManager";
 import ExploreIcon from '@material-ui/icons/Explore';
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import Alert from "@material-ui/lab/Alert";
-import Button from "@material-ui/core/Button";
-import AddIcon from "@material-ui/icons/Add";
 import API from "../../Networking/API";
 import Avatar from "@material-ui/core/Avatar";
-import DeleteIcon from "@material-ui/icons/Delete";
 import Card from "@material-ui/core/Card";
 var buildUrl = require('build-url');
 const styles = theme => ({ largeIcon: {
@@ -59,11 +55,10 @@ function PlaceMap({classes, placeInfo,locationMarker,setLocationMarker,setParkin
             queryParams: {
                 p: "0",
                 s: "10",
-                range: 1,
+                range: 3,
                 l: [locationMarker.latitude, locationMarker.longitude]
             }
         })).then(response=>{
-            console.log("Vaje vaje", response.list)
             setOtherPlacesData(response.list);
         }).catch(error=>{
 
@@ -93,14 +88,9 @@ function PlaceMap({classes, placeInfo,locationMarker,setLocationMarker,setParkin
         >
             {
                 otherPlacesData.map((location, i) =>{
-                    console.log(location)
-                    console.log(locationMarker)
-                    const latitude = parseFloat(location.latitude)
-                    const longitude = parseFloat(location.longitude)
-
-
-                        return locationMarker.latitude.toFixed(3) !== latitude.toFixed(3) &&
-                        locationMarker.longitude.toFixed(3)!==longitude.toFixed(3) ? <Marker
+                    const latitude = parseFloat(location.latitude);
+                    const longitude = parseFloat(location.longitude);
+                        return placeInfo.placeId === "" ? <Marker
                             key={location.placeId}
                             position={{lat: latitude, lng: longitude}}
                             icon={{
@@ -125,7 +115,7 @@ function PlaceMap({classes, placeInfo,locationMarker,setLocationMarker,setParkin
                                 }>
 
                                     <Card style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-                                        {location.photos[0].url ? <Avatar alt="Remy Sharp" src={location.photos[0].url}
+                                        {location.photos.length > 0 ? <Avatar alt="Remy Sharp" src={location.photos[0].url}
                                                                           className={classes.largeIcon}/> : null}
                                         <Typography variant="h6">
                                             {location.name}

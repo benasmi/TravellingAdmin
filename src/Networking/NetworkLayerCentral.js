@@ -39,9 +39,12 @@ const request = async function (options, contentType) {
 
         // Logout user if token refresh didn't work or user is disabled
         if (url === 'api/v1/auth/refresh') {
+            console.log("Asking for refresh token");
             console.log("Unable to issue new JWT token. Redirecting to login page!");
-            Cookies.remove("access_token");
-            Cookies.remove("refresh_token");
+            // Cookies.remove("access_token");
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            // Cookies.remove("refresh_token");
             history.push("/login");
             Promise.reject(error);
             return

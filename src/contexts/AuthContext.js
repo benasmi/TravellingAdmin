@@ -11,36 +11,27 @@ export const AuthProvider = ({children}) => {
 
     useEffect(()=>{
         let refreshToken = getRefreshToken();
+        console.log("Refresh token", refreshToken);
         if(refreshToken !== "" && refreshToken !== undefined){
             console.log("Refresh token is not empty. Retrieving user on load", refreshToken);
             API.Auth.refreshToken({refreshToken: refreshToken, provider: "local"}).then(response=>{
                 let accessToken = response.access_token;
+                localStorage.set("access_token", accessToken);
                 API.Auth.getUserProfile(accessToken).then(user=>{
-                    console.log("Fetched user", user)
+                    console.log("Fetched user", user);
                     setCurrentUser(user);
                     setIsLoading(false)
                 }).catch(error=>{
-                    console.log("pize");
+                    console.log(error);
                     setIsLoading(false)
                 })
             }).then().catch(error=>{
+                console.log(error);
                 setIsLoading(false)
             });
         }else{
             console.log("Refresh token is empty. No actions taken.")
         }
-
-        // app.auth().onAuthStateChanged(function (user) {
-        //     if (user) {
-        //         setCurrentUser(user);
-        //         app.auth().currentUser.getIdToken(true).then(function (idToken) {
-        //             Cookies.set("access_token", idToken);
-        //         }).catch(function (error) {
-        //
-        //         });
-        //     }
-        //     setIsLoading(false)
-        // });
     },[]);
 
 

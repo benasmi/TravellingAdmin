@@ -16,7 +16,7 @@ export const AuthProvider = ({children}) => {
             console.log("Refresh token is not empty. Retrieving user on load", refreshToken);
             API.Auth.refreshToken({refreshToken: refreshToken, provider: "local"}).then(response=>{
                 let accessToken = response.access_token;
-                localStorage.set("access_token", accessToken);
+                localStorage.setItem("access_token", accessToken);
                 API.Auth.getUserProfile(accessToken).then(user=>{
                     console.log("Fetched user", user);
                     setCurrentUser(user);

@@ -89,11 +89,14 @@ const Tour = {insertTour, getTour, updateTour, getAllToursAdmin, removeTour, get
 
 //Auth
 const login = (data) => RequestType.postRequest("api/v1/auth/login", data,);
-const getUserProfile = (data) => RequestType.postRequest("api/v1/auth/user/profile",data);
 const refreshToken = (data) => RequestType.postRequest("api/v1/auth/refresh",data);
-const Auth = {login, getUserProfile, refreshToken};
+const Auth = {login, refreshToken};
 
-const API = {Auth, Tour, SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
+//User
+const getUserProfile = () => RequestType.getRequest("api/v1/user/profile");
+const User = {getUserProfile};
+
+const API = {User, Auth, Tour, SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
 
 export default API
 

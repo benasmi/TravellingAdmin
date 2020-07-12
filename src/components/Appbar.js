@@ -30,6 +30,7 @@ import { useLocation } from 'react-router-dom'
 import Tours from "../pages/Tours";
 import Resources from "./Resources";
 import {PlacesFilterProvider} from "../contexts/PlacesFilterContext";
+import ManageUsers from "../pages/ManageUsers";
 const drawerWidth = 240;
 
 
@@ -201,6 +202,9 @@ export default function Appbar(props) {
                     <ListItem button component={Link} to="/app/resources" onClick={()=>handleListItemClick("/app/resources","Manage resources")} >
                         <ListItemText>Resources</ListItemText>
                     </ListItem>
+                    <ListItem button component={Link} to="/app/users" onClick={()=>handleListItemClick("/app/users","Manage users")} >
+                        <ListItemText>Manage users</ListItemText>
+                    </ListItem>
                 </List>
             </Drawer>
             <main
@@ -217,6 +221,7 @@ export default function Appbar(props) {
                     <Route path="/app/apiplaces" component={ApiPlaces} />
                     <Route path="/app/addtour/:tourId?" component={TourWithContext} />
                     <Route path="/app/resources" component={Resources} />
+                    <Route path="/app/users" component={ManageUsers} />
                     <Redirect from="*" to="/404"/>
                 </Switch>
 

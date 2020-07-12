@@ -74,7 +74,7 @@ const request = async function (options, contentType) {
     });
 
     const onSuccess = function (response) {
-        console.log('Request Successful!', response);
+        // console.log('Request Successful!', response);
         return response.data;
     };
 

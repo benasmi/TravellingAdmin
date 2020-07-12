@@ -8,11 +8,9 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import Cookies from 'js-cookie'
 import history from "../helpers/history";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import app from "../helpers/firebaseInit";
 import {AuthContext} from "../contexts/AuthContext";
 import Redirect from "react-router-dom/es/Redirect";
 import {isAuthenticated} from "../helpers/tokens";
@@ -65,7 +63,6 @@ export default function LoginPage() {
     const { addConfig } = UseSnackbarContext();
     const { currentUser, setCurrentUser, isLoading } = useContext(AuthContext);
 
-
     const handleLogin = () =>{
         setIsLoading(true);
         console.log("handleLogin", {identifier: email, password: password});
@@ -74,14 +71,11 @@ export default function LoginPage() {
             setIsLoading(false);
             let access_token = response.access_token;
             let refresh_token = response.refresh_token;
-            console.log("Login refresh token", refresh_token);
-            API.Auth.getUserProfile(access_token).then(response=>{
+            API.User.getUserProfile().then(response=>{
                 console.log("User profile:", response);
                 setCurrentUser(response);
                 localStorage.setItem("access_token", access_token);
                 localStorage.setItem("refresh_token", refresh_token);
-                // Cookies.set("access_token", access_token);
-                // Cookies.set("refresh_token", refresh_token);
                 history.push("/app");
             }).catch(error=>{
                 setIsLoading(false);

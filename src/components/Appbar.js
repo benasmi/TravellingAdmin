@@ -31,6 +31,9 @@ import Tours from "../pages/Tours";
 import Resources from "./Resources";
 import {PlacesFilterProvider} from "../contexts/PlacesFilterContext";
 import ManageUsers from "../pages/ManageUsers";
+import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
+import Strings from "../helpers/stringResources";
+import API from "../Networking/API";
 const drawerWidth = 240;
 
 
@@ -114,7 +117,9 @@ export default function Appbar(props) {
     const theme = useTheme();
     const [open, setOpen] = useState(false);
     const { title, setTitle } = UseAppBarTitleContext();
+    const {addAlertConfig} = UseAlertDialogContext();
     let location = useLocation();
+
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -137,6 +142,16 @@ export default function Appbar(props) {
         }
     };
 
+    function handleLogout() {
+        addAlertConfig("Logout", "Are you sure you want to logout", [{
+            name: "Yes",
+            action: () => {
+                localStorage.removeItem("access_token");
+                localStorage.removeItem("refresh_token")
+                history.push("/login")
+            }
+        }])
+    }
 
     return (
         <div className={classes.root1}>
@@ -204,6 +219,10 @@ export default function Appbar(props) {
                     </ListItem>
                     <ListItem button component={Link} to="/app/users" onClick={()=>handleListItemClick("/app/users","Manage users")} >
                         <ListItemText>Manage users</ListItemText>
+                    </ListItem>
+                    <Divider light />
+                    <ListItem button onClick={()=>handleLogout()} >
+                        <ListItemText>Logout</ListItemText>
                     </ListItem>
                 </List>
             </Drawer>

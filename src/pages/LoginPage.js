@@ -55,14 +55,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-
 export default function LoginPage() {
     const classes = useStyles();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setIsLoading] = useState(false);
     const { addConfig } = UseSnackbarContext();
-    const { currentUser, setCurrentUser, isLoading } = useContext(AuthContext);
+    const { setCurrentUser } = useContext(AuthContext);
 
     const handleLogin = () =>{
         setIsLoading(true);

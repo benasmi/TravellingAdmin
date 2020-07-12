@@ -15,6 +15,7 @@ import {AuthContext} from "../contexts/AuthContext";
 import Redirect from "react-router-dom/es/Redirect";
 import {isAuthenticated} from "../helpers/tokens";
 import API from "../Networking/API";
+import {func} from "prop-types";
 
 function Copyright() {
     return (
@@ -68,14 +69,18 @@ export default function LoginPage() {
         console.log("handleLogin", {identifier: email, password: password});
         API.Auth.login({identifier: email, password: password}).then(response=>{
             console.log("Auth data:", response);
+            if(!checkAccess(response.authorities)){
+                addConfig(false, "Only admins and editors can access admin panel!")
+                setIsLoading(false);
+                return
+            }
+
             setIsLoading(false);
-            let access_token = response.access_token;
-            let refresh_token = response.refresh_token;
+            localStorage.setItem("access_token", response.access_token);
+            localStorage.setItem("refresh_token", response.refresh_token);
             API.User.getUserProfile().then(response=>{
                 console.log("User profile:", response);
                 setCurrentUser(response);
-                localStorage.setItem("access_token", access_token);
-                localStorage.setItem("refresh_token", refresh_token);
                 history.push("/app");
             }).catch(error=>{
                 setIsLoading(false);
@@ -88,6 +93,17 @@ export default function LoginPage() {
         });
     };
 
+    function checkAccess(roles){
+        var hasAccess = false
+        roles.map(row=>{
+            console.log(row)
+            if(row.authority === "ROLE_ADMIN"){
+                console.log(row.authority)
+                hasAccess = true
+            }
+        });
+        return hasAccess
+    }
 
     if (isAuthenticated()) {
         return <Redirect to="/app" />;

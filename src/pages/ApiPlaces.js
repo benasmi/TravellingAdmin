@@ -3,10 +3,8 @@ import React, {useState} from "react"
 import ApiPlaceCard from "../components/ApiPlaceCard";
 import API from "../Networking/API";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import debounce from 'lodash/debounce'
 import Masonry from "react-masonry-component";
 import SearchInputComponent from "../components/SearchInputComponent";
-import Strings from "../helpers/stringResources";
 import Typography from "@material-ui/core/Typography";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
 

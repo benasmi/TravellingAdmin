@@ -90,11 +90,17 @@ const Tour = {insertTour, getTour, updateTour, getAllToursAdmin, removeTour, get
 //Auth
 const login = (data) => RequestType.postRequest("api/v1/auth/login", data,);
 const refreshToken = (data) => RequestType.postRequest("api/v1/auth/refresh",data);
+
 const Auth = {login, refreshToken};
 
 //User
 const getUserProfile = () => RequestType.getRequest("api/v1/user/profile");
-const User = {getUserProfile};
+const getAllUsers = (urlParams) => RequestType.getRequest("api/v1/user/search", urlParams);
+const getAllRoles = () => RequestType.getRequest("api/v1/user/roles/all");
+const setRoles = (data) => RequestType.postRequest("api/v1/user/setRoles", data);
+
+
+const User = {setRoles, getAllRoles, getAllUsers, getUserProfile};
 
 const API = {User, Auth, Tour, SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
 

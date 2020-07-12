@@ -30,7 +30,7 @@ const styles = theme => ({
 
 function AutoCompleteChip(props){
 
-    const {options, setOptions, selectedOptions, setSelectedOptions, classes, label, id} = props;
+    const {options, setOptions, selectedOptions, setSelectedOptions, classes, label, id, name} = props;
     const [initialData, setInitialData] = useState([]);
     const [getCurrentVal, setCurrentVal] = useState({"name": ""});
     const [firstLoad, setFirstLoad] = useState(true);
@@ -96,7 +96,7 @@ function AutoCompleteChip(props){
                                 <li key={option[id]}>
                                     <Chip
                                         variant="outlined"
-                                        label={option.name}
+                                        label={name!== undefined ? option[name] : option.name}
                                         onDelete={() => handleDelete(option)}
                                         className={classes.chip}
                                     />
@@ -123,7 +123,7 @@ function AutoCompleteChip(props){
                     options={options}
                     onChange={handleInput}
                     disableClearable
-                    getOptionLabel={(option) =>  id!==undefined ? option.name : option}
+                    getOptionLabel={(option) =>  id!==undefined ? name!== undefined ? option[name] : option.name : option}
                     renderInput={(params) => <TextField {...params} label={label} variant="outlined" />}
                 />
             </Box>

@@ -3,7 +3,6 @@ import axios from "axios"
 import history from "../helpers/history";
 import {getAccessToken, getRefreshToken} from "../helpers/tokens";
 import Cookies from "js-cookie";
-import app from "../helpers/firebaseInit";
 import API from "./API";
 
 const request = async function (options, contentType) {
@@ -32,7 +31,7 @@ const request = async function (options, contentType) {
 
         //Do not request for new JWT if response code is not Authorized
         if (status !== 403) {
-            Promise.reject(error)
+            Promise.reject(error);
             return
         }
 
@@ -41,10 +40,8 @@ const request = async function (options, contentType) {
         if (url === 'api/v1/auth/refresh') {
             console.log("Asking for refresh token");
             console.log("Unable to issue new JWT token. Redirecting to login page!");
-            // Cookies.remove("access_token");
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
-            // Cookies.remove("refresh_token");
             history.push("/login");
             Promise.reject(error);
             return
@@ -62,7 +59,7 @@ const request = async function (options, contentType) {
                     console.log("Retrieving new token and making the same request!");
                     let token = response.access_token;
                     originalRequest.headers.Authorization = "Bearer " + token;
-                    Cookies.set("access_token", token);
+                    localStorage.setItem("access_token", token);
                     return axios(originalRequest)
             }).catch(error=>{
                 console.log("Err");

@@ -80,6 +80,7 @@ function Places(props) {
     const {addConfig} = UseSnackbarContext();
 
     useEffect(() => {
+        console.log("Filter query has changed!")
         setIsLoading(true);
         requestAllPlaces();
     }, [filterQuery]);
@@ -141,8 +142,10 @@ function Places(props) {
     }
 
     const changePageCallback = (p = 0, keyword = "") => {
-        setIsLoading(true);
-        requestAllPlaces(p, keyword)
+        if(!isLoading){
+            setIsLoading(true);
+            requestAllPlaces(p, keyword)
+        }
     };
 
     //Sorting stuff

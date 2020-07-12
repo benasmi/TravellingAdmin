@@ -82,24 +82,6 @@ export const PlacesFilterProvider = ({children}) => {
 
     const getAllMunicipalities = (restrictions="") =>{
         API.Places.getAllMunicipalities(restrictions).then(res=>{
-
-            // console.log("Fetched municipalities", res);
-            // console.log("Selected municipalities", selectedMunicipalities);
-            // let correctMunicipalities = [];
-            // for(var i = 0; i<selectedMunicipalities.length; i++){
-            //     var found = false;
-            //     for(var j = 0; j<res; j++){
-            //         if(selectedMunicipalities[i] === res[j]){
-            //             found = true;
-            //             break;
-            //         }
-            //     }
-            //     if(found){
-            //         console.log("Found correctly selected municipality");
-            //         correctMunicipalities.push(selectedMunicipalities[i])
-            //     }
-            // }
-            // setSelectedMunicipalities(correctMunicipalities)
             setMunicipalities(res)
         }).catch(err=>{
         })
@@ -108,27 +90,33 @@ export const PlacesFilterProvider = ({children}) => {
 
 
     useEffect(()=>{
-        getAllMunicipalities(buildUrl(null, {
-            queryParams: {
-                countryRestrictions: selectedCountries
-            }
-        }));
-        getAllCities(buildUrl(null, {
-            queryParams: {
-                munRestrictions: selectedMunicipalities,
-                countryRestrictions: selectedCountries
-            }
-        }))
+        if(!initialLoading){
+            console.log("Selected countries changed")
+            getAllMunicipalities(buildUrl(null, {
+                queryParams: {
+                    countryRestrictions: selectedCountries
+                }
+            }));
+            getAllCities(buildUrl(null, {
+                queryParams: {
+                    munRestrictions: selectedMunicipalities,
+                    countryRestrictions: selectedCountries
+                }
+            }))
+        }
     },[selectedCountries]);
 
 
     useEffect(()=>{
-        getAllCities(buildUrl(null, {
-            queryParams: {
-                munRestrictions: selectedMunicipalities,
-                countryRestrictions: selectedCountries
-            }
-        }))
+        if(!initialLoading){
+            console.log("Selected munis changed")
+            getAllCities(buildUrl(null, {
+                queryParams: {
+                    munRestrictions: selectedMunicipalities,
+                    countryRestrictions: selectedCountries
+                }
+            }))
+        }
     }, [selectedMunicipalities]);
 
     useEffect(()=>{

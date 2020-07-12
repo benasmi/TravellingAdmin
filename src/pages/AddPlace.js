@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {withStyles} from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import PropTypes, {func} from "prop-types";
+import PropTypes from "prop-types";
 import {Paper} from '@material-ui/core';
 import BasicPlaceInfo from "../components/add_place_components/BasicPlaceInfo";
 import PhotosInfo from "../components/add_place_components/PhotosInfo";
@@ -21,8 +21,6 @@ import green from "@material-ui/core/colors/green";
 import Reviews from "../components/add_place_components/Reviews";
 import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 import SchedulesWrapper from "../components/add_place_components/SchedulesWrapper";
-import MapToolbar from "../components/maps/MapToolbar";
-import PlaceMap from "../components/maps/PlaceMap";
 
 const styles = theme => ({
     button: {

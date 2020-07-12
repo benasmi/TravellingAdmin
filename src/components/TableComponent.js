@@ -378,13 +378,15 @@ export default function TableComponent({title, searchFunction, headCells, paging
                                                 }else if(header.id === 'actions' ){
                                                         return <TableCell >
                                                             <div>
-                                                                <IconButton onClick={()=>updateCallback(row[id])} size="small" aria-label="edit" >
+                                                                {updateCallback !== undefined ? <IconButton onClick={()=>updateCallback(row[id])} size="small" aria-label="edit" >
                                                                     <EditIcon fontSize="small" />
-                                                                </IconButton>
+                                                                </IconButton> : null}
 
-                                                                <IconButton size="small" aria-label="delete" >
+
+                                                                {removeCallback !== undefined ? <IconButton size="small" aria-label="delete" >
                                                                     <DeleteIcon onClick={()=>removeCallback(row[id])} fontSize="small" />
-                                                                </IconButton>
+                                                                </IconButton> : null}
+
                                                             </div>
                                                             </TableCell>
                                                 }else{

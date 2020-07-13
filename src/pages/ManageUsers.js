@@ -17,6 +17,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import UpdateUserDialog from "../components/UpdateUserDialog";
+import AddUserDialog from "../components/AddUserDialog";
 
 const styles = theme => ({
     button: {
@@ -76,7 +77,9 @@ function Places(props) {
     const [isLoading, setIsLoading] = useState(true);
     const {classes} = props;
 
-    const [openUpdateDialog, setOpenUpdateDialog] = useState(false)
+    const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+    const [openAddDialog, setOpenAddDialog] = useState(false);
+
 
     // const {filterQuery} = useContext(PlacesFilterContext)
     const {addAlertConfig} = UseAlertDialogContext();
@@ -145,6 +148,10 @@ function Places(props) {
                     null
                 }
 
+                {openAddDialog ? <AddUserDialog open={openAddDialog}
+                                                availableRoles={allRoles}
+                                                setOpen={setOpenAddDialog}/> : null}
+
                 <TableComponent
                     title={"Users"}
                     headCells={headCells}
@@ -159,9 +166,9 @@ function Places(props) {
 
                 <Box display="flex" justifyContent="flex-end">
                     <Button
-                        // onClick={() => {
-                        //     history.push("/app/addplace")
-                        // }}
+                        onClick={() => {
+                                setOpenAddDialog(true)
+                        }}
                         variant="text"
                         color="secondary"
                         size="large"

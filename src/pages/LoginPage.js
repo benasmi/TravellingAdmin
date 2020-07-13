@@ -61,7 +61,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [loading, setIsLoading] = useState(false);
     const { addConfig } = UseSnackbarContext();
-    const { setCurrentUser } = useContext(AuthContext);
+    const { currentUser, setCurrentUser } = useContext(AuthContext);
 
     const handleLogin = () =>{
         setIsLoading(true);

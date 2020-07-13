@@ -154,6 +154,10 @@ export default function Appbar(props) {
         }])
     }
 
+    const hasPermission = (permission) => {
+        return currentUser != null && currentUser.permissions.some(permission => permission.permission === permission)
+    }
+
     return (
         <div className={classes.root1}>
             <CssBaseline />
@@ -212,18 +216,25 @@ export default function Appbar(props) {
                     <ListItem button component={Link} to="/app/apiplaces" onClick={()=>handleListItemClick("/app/apiplaces","Api places")} >
                         <ListItemText>Explore API places</ListItemText>
                     </ListItem>
-                    <ListItem button component={Link} to="/app/addplace" onClick={()=>handleListItemClick("/app/addplace","Add Place")} >
-                        <ListItemText>Add place</ListItemText>
-                    </ListItem>
-                    <ListItem button component={Link} to="/app/addtour" onClick={()=>handleListItemClick("/app/addtour","Add tour")} >
-                        <ListItemText>Add tour</ListItemText>
-                    </ListItem>
+                    { hasPermission("place:insert") &&
+                        <ListItem button component={Link} to="/app/addplace" onClick={()=>handleListItemClick("/app/addplace","Add Place")} >
+                            <ListItemText>Add place</ListItemText>
+                        </ListItem>
+                    }
+                    { hasPermission("tour:modify") &&
+                        <ListItem button component={Link} to="/app/addtour"
+                                  onClick={() => handleListItemClick("/app/addtour", "Add tour")}>
+                            <ListItemText>Add tour</ListItemText>
+                        </ListItem>
+                    }
                     <ListItem button component={Link} to="/app/resources" onClick={()=>handleListItemClick("/app/resources","Manage resources")} >
                         <ListItemText>Resources</ListItemText>
                     </ListItem>
-                    <ListItem button component={Link} to="/app/users" onClick={()=>handleListItemClick("/app/users","Manage users")} >
-                        <ListItemText>Manage users</ListItemText>
-                    </ListItem>
+                    { hasPermission("role:manage") &&
+                        <ListItem button component={Link} to="/app/users" onClick={()=>handleListItemClick("/app/users","Manage users")} >
+                            <ListItemText>Manage users</ListItemText>
+                        </ListItem>
+                    }
                     <Divider light />
                     <ListItem button onClick={()=>handleLogout()} >
                         <ListItemText>Logout</ListItemText>

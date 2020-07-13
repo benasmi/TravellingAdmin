@@ -7,6 +7,10 @@ export const AuthProvider = ({children}) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    useEffect(() => {
+        console.log("user data", currentUser)
+    }, [currentUser])
+
     useEffect(()=>{
         let refreshToken = getRefreshToken();
         if(refreshToken !== "" && refreshToken !== undefined){

@@ -61,7 +61,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [loading, setIsLoading] = useState(false);
     const { addConfig } = UseSnackbarContext();
-    const { setCurrentUser } = useContext(AuthContext);
+    const { currentUser, setCurrentUser } = useContext(AuthContext);
 
     const handleLogin = () =>{
         setIsLoading(true);
@@ -80,8 +80,9 @@ export default function LoginPage() {
             API.User.getUserProfile().then(response=>{
                 console.log("User profile:", response);
                 setCurrentUser(response);
-                history.push("/app");
+                history.push("/app/home");
             }).catch(error=>{
+                console.log("Failed to get profile: " + error)
                 setIsLoading(false);
                 addConfig(false, error.message)
             });

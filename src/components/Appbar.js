@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {Fragment, useContext, useEffect, useState} from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -34,6 +34,7 @@ import ManageUsers from "../pages/ManageUsers";
 import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
 import Strings from "../helpers/stringResources";
 import API from "../Networking/API";
+import {AuthContext} from "../contexts/AuthContext";
 const drawerWidth = 240;
 
 
@@ -120,6 +121,8 @@ export default function Appbar(props) {
     const {addAlertConfig} = UseAlertDialogContext();
     let location = useLocation();
 
+    const { currentUser } = useContext(AuthContext);
+
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -137,8 +140,6 @@ export default function Appbar(props) {
         if(re.test(location.pathname)){
             history.push(url);
             history.go(0);
-        console.log("Ar atitinka kriterijus",re.test(location.pathname))
-
         }
     };
 
@@ -188,6 +189,9 @@ export default function Appbar(props) {
                 }}
             >
                 <div className={classes.drawerHeader}>
+                    <Typography variant="h6" style={{width: "100%"}}>
+                        {currentUser != null ? currentUser.name : "Loading user profile"}
+                    </Typography>
                     <IconButton onClick={handleDrawerClose}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
@@ -195,7 +199,7 @@ export default function Appbar(props) {
 
                 <Divider />
                 <List>
-                    <ListItem button component={Link} to="/app" onClick={()=>handleListItemClick("/app","Home")}>
+                    <ListItem button component={Link} to="/app/home" onClick={()=>handleListItemClick("/app/home","Home")}>
                         <ListItemText>Home</ListItemText>
                     </ListItem>
                     <Divider light />
@@ -233,7 +237,7 @@ export default function Appbar(props) {
             >
                 <div className={classes.drawerHeader} />
                 <Switch>
-                    <Route exact path="/app" component={Home} />
+                    <Route exact path="/app/home" component={Home} />
                     <Route path="/app/places" component={PlacesWithContext} />
                     <Route path="/app/tours" component={Tours} />
                     <Route path="/app/addplace/:placeId?" component={AddPlace} />

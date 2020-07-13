@@ -29,7 +29,8 @@ ReactDOM.render(
                             <AlertDialogFeedback/>
                             <TextInputDialog/>
                             <Switch>
-                                <Redirect exact from="/" to="/app"/>
+                                <Redirect exact from="/" to="/login"/>
+                                <Redirect exact from="/app" to="/app/home"/>
                                 <AuthenticatedRoute path="/app" component={App}/>
                                 <Route path="/login" component={LoginPage}/>
                                 <Route path="*" component={NotFoundPage}/>

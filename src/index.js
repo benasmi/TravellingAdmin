@@ -15,12 +15,14 @@ import {AuthProvider} from "./contexts/AuthContext";
 import {PlacesFilterProvider} from "./contexts/PlacesFilterContext";
 import EditDialogProvider from "./contexts/EditDialogContext";
 import {TextInputDialog} from "./components/feedback/TextInputDialog";
+import LoadingScreen from "./components/LoadingScreen";
 
 require('dotenv').config();
 
 ReactDOM.render(
     <React.Fragment>
         <AuthProvider>
+            {/*<LoadingScreen />*/}
             <Router history={history}>
                 <SnackbarProvider>
                     <AlertDialogProvider>

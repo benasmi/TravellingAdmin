@@ -5,17 +5,24 @@ import {getAccessToken, getRefreshToken} from "../helpers/tokens";
 import Cookies from "js-cookie";
 import API from "./API";
 
-const request = async function (options, contentType) {
+const request = async function (options, contentType, authorize= true) {
+
+    const header = {
+        'Content-Type': (contentType == null) ? 'application/json' : contentType,
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Authorization': "Bearer " + getAccessToken()
+    };
+
+    if(!authorize){
+        delete header['Authorization']
+    }
 
     const client = axios.create({
         baseURL: true ? "http://localhost:8080/" : "https://www.traveldirection.ax.lt:8080/",
-        headers: {
-            'Content-Type': (contentType == null) ? 'application/json' : contentType,
-            'Accept': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Authorization': "Bearer " + getAccessToken()
-            }
+        headers: header
     });
+
 
 
 
@@ -23,18 +30,13 @@ const request = async function (options, contentType) {
     client.interceptors.response.use(function (response) {
         return response;
     },  function (error) {
+
+        // console.log("Interceptor error", error);
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
         const originalRequest = error.config;
         const url = originalRequest.url;
         const status = error.response.status;
-
-        //Do not request for new JWT if response code is not Authorized
-        if (status !== 403) {
-            Promise.reject(error);
-            return
-        }
-
 
         // Logout user if token refresh didn't work or user is disabled
         if (url === 'api/v1/auth/refresh') {
@@ -43,11 +45,14 @@ const request = async function (options, contentType) {
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
             history.push("/login");
-            Promise.reject(error);
-            return
+            return Promise.reject(error);
         }else if(url.startsWith("api/v1/auth")){
-            Promise.reject(error);
-            return
+            return Promise.reject(error);
+        }
+
+        //Do not request for new JWT if response code is not Authorized
+        if (status !== 403) {
+            return Promise.reject(error);
         }
 
         if (status === 403 && originalRequest._retry === undefined) {
@@ -61,13 +66,12 @@ const request = async function (options, contentType) {
                     originalRequest.headers.Authorization = "Bearer " + token;
                     localStorage.setItem("access_token", token);
                     return axios(originalRequest)
-            }).catch(error=>{
-                console.log("Err");
-                return Promise.reject()
+            }).catch(err=>{
+                return Promise.reject(error)
             })
         }
 
-        Promise.reject(error)
+        return Promise.reject(error)
     });
 
     const onSuccess = function (response) {
@@ -76,7 +80,6 @@ const request = async function (options, contentType) {
     };
 
     const onError = function (error) {
-        console.debug('Request Failed:', error.config);
         if (error.response) {
             console.debug('Status:', error.response.status);
             if (error.response.status === 403) {
@@ -87,7 +90,8 @@ const request = async function (options, contentType) {
         } else {
             console.debug('Error Message:', error.message);
         }
-        return Promise.reject(error.response || error.message);
+
+        return Promise.reject(error.response.data);
     };
 
     return client(options)
@@ -102,13 +106,13 @@ const getRequest = function (path, urlData = "") {
     });
 };
 
-const postRequest = function (path, data, urlData = "") {
-    console.log(data)
+const postRequest = function (path, data, urlData = "", authorize=true) {
+    console.log("Authorize",authorize);
     return request({
         url: path + urlData,
         method: 'POST',
         data: data
-    });
+    }, null, authorize);
 };
 
 const postMultipartRequest = function (path, formData) {

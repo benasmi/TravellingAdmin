@@ -88,9 +88,9 @@ const getAllToursAdmin = (urlParams) => RequestType.getRequest("api/v1/tour/sear
 const Tour = {insertTour, getTour, updateTour, getAllToursAdmin, removeTour, getTourTags, updateTourTags}
 
 //Auth
-const login = (data) => RequestType.postRequest("api/v1/auth/login", data,);
-const register = (data) => RequestType.postRequest("api/v1/auth/registration",data);
-const refreshToken = (data) => RequestType.postRequest("api/v1/auth/refresh", data);
+const login = (data) => RequestType.postRequest("api/v1/auth/login", data, "", false);
+const register = (data) => RequestType.postRequest("api/v1/auth/registration",data, "", false);
+const refreshToken = (data) => RequestType.postRequest("api/v1/auth/refresh", data, "", false);
 
 const Auth = {register, login, refreshToken};
 

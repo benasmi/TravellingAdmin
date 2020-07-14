@@ -73,7 +73,6 @@ export default function LoginPage() {
                 setIsLoading(false);
                 return
             }
-
             setIsLoading(false);
             localStorage.setItem("access_token", response.access_token);
             localStorage.setItem("refresh_token", response.refresh_token);
@@ -82,12 +81,10 @@ export default function LoginPage() {
                 setCurrentUser(response);
                 history.push("/app/home");
             }).catch(error=>{
-                console.log("Failed to get profile: " + error)
                 setIsLoading(false);
                 addConfig(false, error.message)
             });
         }).catch(error=>{
-            console.log(error.message)
             setIsLoading(false);
             addConfig(false, error.message)
         });

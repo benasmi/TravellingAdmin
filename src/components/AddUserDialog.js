@@ -87,21 +87,21 @@ function AddUserDialog({classes, open, setOpen, availableRoles}){
         addAlertConfig("Add new editor", "Are you sure you want to add new editor?. This user has role: " + parseRoleFromId(user.role), [{
             name: "Yes",
             action: () => {
-                // setLoading(true)
-                // API.Auth.register(user).then(userId=>{
-                //     API.User.setRoles({userId: userId, roles: [user.role]}).then(response=>{
-                //         addConfig(true, "User was added successfully!")
-                //         setOpen(false);
-                //         setLoading(false)
-                //     }).catch(error=>{
-                //         setOpen(false);
-                //         addConfig(false, "Could not map user permissions!");
-                //         setLoading(false)
-                //     })
-                // }).catch(error=>{
-                //     addConfig(false, "Could not register user!");
-                //     setLoading(false)
-                // })
+                setLoading(true);
+                API.Auth.register(user).then(userId=>{
+                    API.User.setRoles({userId: userId, roles: [user.role]}).then(response=>{
+                        addConfig(true, "User was added successfully!")
+                        setOpen(false);
+                        setLoading(false)
+                    }).catch(error=>{
+                        setOpen(false);
+                        addConfig(false, "Could not map user permissions!");
+                        setLoading(false)
+                    })
+                }).catch(error=>{
+                    addConfig(false, error.message);
+                    setLoading(false)
+                })
             }
         }])
     }

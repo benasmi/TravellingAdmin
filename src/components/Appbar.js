@@ -85,19 +85,19 @@ const useStyles = makeStyles((theme) => ({
         width: "100vw",
         height: "100%",
         //padding: theme.spacing(3),
-        transition: theme.transitions.create('margin', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
+        // transition: theme.transitions.create('margin', {
+        //     easing: theme.transitions.easing.sharp,
+        //     duration: theme.transitions.duration.leavingScreen,
+        // }),
         marginLeft: -drawerWidth,
     },
     contentShift: {
         width: "100vw",
         height: "100%",
-        transition: theme.transitions.create('margin', {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
+        // transition: theme.transitions.create('margin', {
+        //     easing: theme.transitions.easing.easeOut,
+        //     duration: theme.transitions.duration.enteringScreen,
+        // }),
         marginLeft: 0
     },
 }));

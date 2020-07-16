@@ -377,14 +377,16 @@ export default function TableComponent({title, searchFunction, headCells, paging
                                                         </TableCell>
                                                 }else if(header.id === 'actions' ){
                                                         return <TableCell >
-                                                            <div>
-                                                                {updateCallback !== undefined ? <IconButton onClick={()=>updateCallback(row[id])} size="small" aria-label="edit" >
+                                                            <div onClick={e => {e.stopPropagation(); e.preventDefault()}}>
+                                                                {updateCallback !== undefined ? <IconButton onClick={(event)=>{
+                                                                    updateCallback(row[id])
+                                                                    return 0
+                                                                }} size="small" aria-label="edit" >
                                                                     <EditIcon fontSize="small" />
                                                                 </IconButton> : null}
 
-
-                                                                {removeCallback !== undefined ? <IconButton size="small" aria-label="delete" >
-                                                                    <DeleteIcon onClick={()=>removeCallback(row[id])} fontSize="small" />
+                                                                {removeCallback !== undefined ? <IconButton size="small" aria-label="delete" onClick={()=>removeCallback(row[id])}>
+                                                                    <DeleteIcon  fontSize="small" />
                                                                 </IconButton> : null}
 
                                                             </div>

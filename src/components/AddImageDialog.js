@@ -67,6 +67,7 @@ function AddImageDialog(props) {
                         className={classes.dropzoneArea}
                         acceptedFiles={acceptedFileFormats}
                         maxFileSize={25000000}
+                        showAlerts={false}
                         dropzoneProps={{disabled: loading}} filesLimit={5} onDrop={handleDrop}
                     onDelete={handleDelete}/>
                 </DialogContent>

@@ -4,7 +4,6 @@ import Typography from "@material-ui/core/Typography";
 import AutocompleteChip from "../AutocompleteChip";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
-import AddDialog from "../AddDialog";
 import API from "../../Networking/API";
 import UseEditDialogContext from "../../contexts/UseEditDialogContext";
 import UseSnackbarContext from "../../contexts/UseSnackbarContext";

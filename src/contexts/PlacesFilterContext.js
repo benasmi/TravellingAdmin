@@ -53,7 +53,7 @@ export const PlacesFilterProvider = ({children}) => {
     const getCategories = (params="") => {
         API.Categories.getAllCategories().then(response=>{
             setCategories(response);
-            console.log(response);
+            // console.log(response);
         }).catch(error=>{
             console.log(error)
         });
@@ -91,7 +91,7 @@ export const PlacesFilterProvider = ({children}) => {
 
     useEffect(()=>{
         if(!initialLoading){
-            console.log("Selected countries changed")
+            // console.log("Selected countries changed")
             getAllMunicipalities(buildUrl(null, {
                 queryParams: {
                     countryRestrictions: selectedCountries
@@ -109,7 +109,7 @@ export const PlacesFilterProvider = ({children}) => {
 
     useEffect(()=>{
         if(!initialLoading){
-            console.log("Selected munis changed")
+            // console.log("Selected munis changed")
             getAllCities(buildUrl(null, {
                 queryParams: {
                     munRestrictions: selectedMunicipalities,
@@ -129,7 +129,7 @@ export const PlacesFilterProvider = ({children}) => {
             getAllMunicipalities()
         ]).then(response => {
             setInitialLoading(false);
-            console.log("All data received!")
+            // console.log("All data received!")
         }).catch(err => {
         })
     },[]);

@@ -1,5 +1,4 @@
 import {arrayMove} from "react-sortable-hoc";
-import {array} from "prop-types";
 import {ElementType} from "./Tour";
 
 export default function TourDataReducer(state, action) {

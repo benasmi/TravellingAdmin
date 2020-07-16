@@ -1,7 +1,6 @@
 import React, {useEffect} from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import TextField from "@material-ui/core/TextField";
-import CardContent from "@material-ui/core/CardContent";
 import PropTypes from "prop-types";
 import AutoCompleteChip from "../AutocompleteChip";
 import Typography from "@material-ui/core/Typography";

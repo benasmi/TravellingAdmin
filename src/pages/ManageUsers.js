@@ -6,16 +6,8 @@ import API from "../Networking/API";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add"
 import Box from "@material-ui/core/Box";
-import history from "../helpers/history";
 import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
-import Strings from "../helpers/stringResources";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
-import {PlacesFilterContext, PlacesFilterProvider} from "../contexts/PlacesFilterContext";
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogActions from "@material-ui/core/DialogActions";
 import UpdateUserDialog from "../components/UpdateUserDialog";
 import AddUserDialog from "../components/AddUserDialog";
 

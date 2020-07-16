@@ -2,7 +2,6 @@ import React from "react";
 import Geocode from "react-geocode";
 
 Geocode.setApiKey("AIzaSyDGFjZHSoRrZ2AEO0ONXvjuN4RiCmknXf8");
-Geocode.enableDebug();
 
 /**
  * Get country from google maps address array

@@ -7,9 +7,6 @@ import Button from "@material-ui/core/Button";
 import Schedule from "../Schedule";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import TextField from "@material-ui/core/TextField";
-import {TimePicker} from "@material-ui/pickers";
-import moment from "moment";
 
 const styles = theme => ({
     header: {

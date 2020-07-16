@@ -10,8 +10,9 @@ export const AuthProvider = ({children}) => {
     useEffect(()=>{
         let refreshToken = getRefreshToken();
         if(refreshToken !== "" && refreshToken !== undefined){
+            // console.log("Refresh token", refreshToken)
                 API.User.getUserProfile().then(user=>{
-                    console.log("Fetched user", user);
+                    // console.log("Fetched user", user);
                     setCurrentUser(user);
                     setIsLoading(false)
                 }).catch(error=>{

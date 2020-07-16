@@ -1,13 +1,11 @@
 import {withStyles} from "@material-ui/core/styles";
-import React, {createRef, useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import useTheme from "@material-ui/core/styles/useTheme";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import TourPlaceComponent from "./TourPlaceComponent";
 import Paper from "@material-ui/core/Paper";
 import TourPlacesWrapper from "./TourPlacesWrapper";
 import PlaceSearch from "./PlaceSearch";
 import DaysWrapper from "./DaysWrapper";
-import TourReducer from "./TourReducer";
 import TourDataReducer from "./TourReducer";
 import TourInfoComponent from "./TourInfoComponent";
 import Divider from "@material-ui/core/Divider";

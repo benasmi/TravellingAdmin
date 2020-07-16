@@ -1,6 +1,6 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import {withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow, DirectionsRenderer} from "react-google-maps"
+import {withGoogleMap, GoogleMap, Marker, InfoWindow} from "react-google-maps"
 import {geocodeFromLatLng} from "./MapGeolocation";
 import MapToolbar from "./MapToolbar";
 import PropTypes from "prop-types";
@@ -20,7 +20,7 @@ const styles = theme => ({ largeIcon: {
 
 const MapComponent = withGoogleMap(props =>
     <GoogleMap
-        defaultZoom={12}
+        defaultZoom={15}
         ref={props.refInstance}
         center={{lat: props.position.latitude, lng: props.position.longitude }}
         defaultCenter={{lat: props.position.latitude, lng: props.position.longitude}}>
@@ -92,10 +92,11 @@ function PlaceMap({classes, placeInfo,locationMarker,setLocationMarker,setParkin
                     const longitude = parseFloat(location.longitude);
                         return placeInfo.placeId === "" ? <Marker
                             key={location.placeId}
+                            zIndex={1}
                             position={{lat: latitude, lng: longitude}}
                             icon={{
                                 url: require('../../res/selectedTourIcon.svg'),
-                                scaledSize: new window.google.maps.Size(32, 32),
+                                scaledSize: new window.google.maps.Size(48, 48),
                                 origin: new window.google.maps.Point(0, 0)
                             }}
                             onClick={() => {
@@ -133,6 +134,7 @@ function PlaceMap({classes, placeInfo,locationMarker,setLocationMarker,setParkin
                 name={'Dolores park'}
                 visible={true}
                 draggable={!isLocked}
+                zIndex={2}
                 onDragEnd={e => onMarkerDragEnd(e)}
                 position={{lat: locationMarker.latitude, lng: locationMarker.longitude}}>
             </Marker>

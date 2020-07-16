@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios"
 import history from "../helpers/history";
 import {getAccessToken, getRefreshToken} from "../helpers/tokens";
-import Cookies from "js-cookie";
 import API from "./API";
 
 const request = async function (options, contentType, authorize= true) {

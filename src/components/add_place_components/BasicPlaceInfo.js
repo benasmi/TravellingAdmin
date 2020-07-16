@@ -5,8 +5,6 @@ import {withStyles} from "@material-ui/core";
 import Slider from "@material-ui/core/Slider";
 import {priceRange} from "../../helpers/priceRange";
 import {averageTimeSpent} from "../../helpers/averageTimeSpent"
-import Switch from "@material-ui/core/Switch";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
@@ -106,7 +104,7 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
             value={placeInfo['description']}
             onChange={e => updatePlaceInfo(e)}
             variant="outlined"
-            rows={4}
+            rows={15}
             margin="normal"
             InputLabelProps={{
                 shrink: true,

@@ -1,12 +1,11 @@
 import {withStyles} from "@material-ui/core/styles";
 import TourPlaceComponent from "./TourPlaceComponent";
-import React, {useEffect, useMemo} from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {ElementType} from "./Tour";
-import {arrayMove, SortableContainer, SortableElement} from "react-sortable-hoc";
+import { SortableContainer, SortableElement} from "react-sortable-hoc";
 import TransportItem from "./TransportItem";
 import shortid from 'shortid';
-import Typography from "@material-ui/core/Typography";
 import Alert from "@material-ui/lab/Alert";
 
 const styles = theme => ({
@@ -100,9 +99,6 @@ function TourPlacesWrapper({classes, tourInfo, tourInfoReducer, currentDay, erro
         })
     }
 
-    useEffect(() => {
-        console.log(tourInfo.days[currentDay].tour)
-    }, [tourInfo])
 
 
     return (

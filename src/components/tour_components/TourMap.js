@@ -1,24 +1,18 @@
 import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import PropTypes, {func} from "prop-types";
-import {withGoogleMap, GoogleMap, Marker, Circle, InfoWindow, DirectionsRenderer} from "react-google-maps"
+import PropTypes from "prop-types";
+import {withGoogleMap, GoogleMap, Marker, InfoWindow, DirectionsRenderer} from "react-google-maps"
 import {ElementType} from "./Tour";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
-import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import Typography from "@material-ui/core/Typography";
 import FilterBlock from "../add_place_components/FilterBlock";
-import Tooltip from "@material-ui/core/Tooltip";
-import IconButton from "@material-ui/core/IconButton";
-import FilterListIcon from "@material-ui/icons/FilterList";
-import Popover from "@material-ui/core/Popover";
 import CustomControlsManager from "../maps/CustomControlsManager";
 import API from "../../Networking/API";
 import {PlacesFilterContext} from "../../contexts/PlacesFilterContext";
 import Avatar from "@material-ui/core/Avatar";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 const google = window.google;
@@ -51,40 +45,28 @@ const MyMapComponent = withGoogleMap(props =>
         ref={props.refMap}
         defaultZoom={8}
         defaultCenter={{lat: 55.2983804, lng: 23.9132164}}>
+
         {props.children}
+
     </GoogleMap>
 );
 
-function changeCirclePos(refMap, setCircleCenter){
-    setCircleCenter({
-        lat: refMap.current.getCenter().lat(),
-        lng: refMap.current.getCenter().lng()
-    })
-}
 
 function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
 
-    const [center, setCenter] = useState({lat: 55.2983804, lng: 23.9132164});
-    const [circleCenter, setCircleCenter] = useState({lat: 55.2983804, lng: 23.9132164});
-
     const [directions, setDirection] = useState();
+
     const [infoWindows, setInfoWindows] = useState([]);
-    const [directionPlaces, setDirectionPlaces] = useState([]);
+    const [directionPlaces, setDirectionPlaces] = useState([])
+
 
     const [places, setPlaces] = useState([]);
     const [placesInfoWindows, setPlacesInfoWindows] = useState([]);
 
     const [loadingArea, setLoadingArea] = useState(false);
-
     const refMap = useRef(null);
 
     const {filterQuery} = useContext(PlacesFilterContext);
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-    const id = open ? 'simple-popover' : undefined;
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
 
     const constructPlaceData = () => {
         let p = tourInfo.days[currentDay].tour.filter(item => item.type === ElementType.place);
@@ -110,9 +92,6 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
                 stopover: true
             }));
 
-            waypoints.map(row=>{
-                console.log(row);
-            })
             const origin = waypoints.shift().location;
             let destination = null;
 
@@ -122,11 +101,6 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
                 destination = origin;
 
             const directionsService = new google.maps.DirectionsService();
-
-
-            console.log("Origin", origin);
-            console.log("Waypoints",waypoints);
-            console.log("Destination", destination);
 
             directionsService.route(
                 {
@@ -148,39 +122,25 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
         }
     }, [currentDay, tourInfo.days]);
 
-    useEffect(() => {
-        console.log("Loading area",loadingArea)
-        if(!loadingArea){
-            getAllPlaces(filterQuery + "&p=" + 0 + "&s=" + 100 + "&l=" + center.lat + "," + center.lng + "range=" + 50)
-        }
-    }, [filterQuery, center]);
 
-    useEffect(()=>{
-        removeSelectedPlaces(places)
-    },[directionPlaces]);
-
-    function removeSelectedPlaces(places) {
-        let plc = [];
-        for(var i = 0; i<places.length; i++){
-            var found = false;
-            for(var j = 0; j<directionPlaces.length; j++){
-                if(places[i].latitude === directionPlaces[j].latitude && places[i].longitude === directionPlaces[j].longitude){
-                    found = true
-                }
-            }
-            if(!found){
-                plc.push(places[i]);
-
-            }
-        }
-        setPlaces(plc)
+    function fetchPlaces(){
+        console.log("Getting all places...", refMap.current.getCenter().lat())
+        getAllPlaces(filterQuery + "&p=" + 0 + "&s=" + 100 + "&l=" + refMap.current.getCenter().lat() + "," + refMap.current.getCenter().lng() + "range=" + 50)
     }
+
+    useEffect(() => {
+        if(!loadingArea){
+            if(refMap.current != null){
+                fetchPlaces()
+            }
+        }
+    }, [filterQuery]);
 
     function getAllPlaces(query) {
         setLoadingArea(true);
         API.Places.getAllPlacesAdmin(query).then(locations => {
             setPlacesInfoWindows(Array(locations.list.length).fill(false));
-            removeSelectedPlaces(locations.list);
+            setPlaces(locations.list)
             setLoadingArea(false)
         }).catch(err => {
             console.log(err);
@@ -212,6 +172,7 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
             const latitude = parseFloat(location.latitude);
             const longitude = parseFloat(location.longitude);
             return <Marker
+                zIndex={1}
                 key={location.placeId}
                 position={{lat: latitude, lng: longitude}}
                 onClick={() => {
@@ -257,10 +218,7 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
                     <Button variant="contained"
                             color="primary"
                             onClick={() => {
-                                setCenter({
-                                    lat: refMap.current.getCenter().lat(),
-                                    lng: refMap.current.getCenter().lng()
-                                })
+                               fetchPlaces()
                             }}
                     >
                         Search area...
@@ -273,33 +231,28 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
 
     return (
         <div className={classes.root}>
-            <FilterBlock setOpen={setAnchorEl}/>
+            <FilterBlock/>
             <MyMapComponent
                 loadingElement={<div style={{height: `100%`}}/>}
                 containerElement={<div style={{height: `400px`}}/>}
                 mapElement={<div style={{height: `100%`}}/>}
-                directionPlaces={directionPlaces}
-                infoWindows={infoWindows}
-                setInfoWindows={setInfoWindows}
-                refMap={refMap}
-                center={center}
-                circleCenter={circleCenter}
-                setCircleCenter={setCircleCenter}>
-
+                refMap={refMap}>
 
                 {searchAreaComponent}
                 <PlacesMarkers/>
 
-
+                {/* Rendering direction path*/}
                 {directions ?
                     <DirectionsRenderer
                         options={{suppressMarkers: true, draggable: false}}
                         draggable={false}
                         directions={directions}/> : null}
 
+                {/* Rendering direction places markers*/}
                 {directionPlaces.map((marker, index) => {
                     const position = { lat: marker.latitude, lng: marker.longitude };
                     return <Marker
+                        zIndex={2}
                         icon={{
                             url: require('../../res/selectedTourIcon.svg'),
                             scaledSize: new window.google.maps.Size(48, 48),

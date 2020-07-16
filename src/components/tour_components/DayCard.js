@@ -1,5 +1,5 @@
 import {withStyles} from "@material-ui/core/styles";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import Radio from "@material-ui/core/Radio";
 import Card from "@material-ui/core/Card";
@@ -7,7 +7,6 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import CardHeader from "@material-ui/core/CardHeader";
-import IconButton from "@material-ui/core/IconButton";
 import RemoveIcon from '@material-ui/icons/Remove';
 import Button from "@material-ui/core/Button";
 

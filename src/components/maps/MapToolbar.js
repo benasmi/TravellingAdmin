@@ -3,8 +3,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Autocomplete from "react-google-autocomplete";
 import IconButton from "@material-ui/core/IconButton";
 import MyLocationIcon from "@material-ui/icons/MyLocation";
-import PropTypes, {func} from "prop-types";
-import {geocodeFromAddress, geocodeFromLatLng, getCity, getCountry, getCounty, getMunicipality} from "./MapGeolocation";
+import PropTypes from "prop-types";
+import {geocodeFromAddress, geocodeFromLatLng} from "./MapGeolocation";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import UseAlertDialogContext from "../../contexts/UseAlertDialogContext";
 

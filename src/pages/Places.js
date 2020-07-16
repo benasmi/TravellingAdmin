@@ -10,13 +10,8 @@ import history from "../helpers/history";
 import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
 import Strings from "../helpers/stringResources";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
-import Tooltip from "@material-ui/core/Tooltip";
-import IconButton from "@material-ui/core/IconButton";
-import FilterListIcon from "@material-ui/icons/FilterList";
-import Popover from "@material-ui/core/Popover";
 import FilterBlock from "../components/add_place_components/FilterBlock";
-import * as moment from "moment";
-import {PlacesFilterContext, PlacesFilterProvider} from "../contexts/PlacesFilterContext";
+import {PlacesFilterContext} from "../contexts/PlacesFilterContext";
 
 const styles = theme => ({
     button: {

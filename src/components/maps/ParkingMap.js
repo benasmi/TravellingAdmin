@@ -3,7 +3,7 @@ import {GoogleMap, InfoWindow, Marker, withGoogleMap} from "react-google-maps";
 import {geocodeFromLatLng} from "./MapGeolocation";
 import MapToolbar from "./MapToolbar";
 import API from "../../Networking/API";
-import PropTypes, {func} from "prop-types";
+import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import CustomControlsManager from "./CustomControlsManager";

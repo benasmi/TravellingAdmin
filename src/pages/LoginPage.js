@@ -67,7 +67,6 @@ export default function LoginPage() {
         setIsLoading(true);
         console.log("handleLogin", {identifier: email, password: password});
         API.Auth.login({identifier: email, password: password}).then(response=>{
-            console.log("Auth data:", response);
             if(!checkAccess(response.authorities)){
                 addConfig(false, "Only admins and editors can access admin panel!")
                 setIsLoading(false);
@@ -95,7 +94,6 @@ export default function LoginPage() {
         roles.map(row=>{
             console.log(row)
             if(row.authority === "ROLE_ADMIN"){
-                console.log(row.authority)
                 hasAccess = true
             }
         });

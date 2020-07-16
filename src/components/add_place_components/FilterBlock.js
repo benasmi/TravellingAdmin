@@ -11,8 +11,6 @@ import DateFnsUtils from "@date-io/date-fns";
 import MuiPickersUtilsProvider from "@material-ui/pickers/MuiPickersUtilsProvider";
 import Button from "@material-ui/core/Button";
 import {PlacesFilterContext} from "../../contexts/PlacesFilterContext";
-import CloseIcon from '@material-ui/icons/Close';
-import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 
 const style = theme =>({

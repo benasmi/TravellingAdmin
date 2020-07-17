@@ -37,6 +37,12 @@ const request = async function (options, contentType, authorize= true) {
         const url = originalRequest.url;
         const status = error.response.status;
 
+
+        if (error.response.status === 408 || error.code === 'ECONNABORTED' || error.code === "ERR_INTERNET_DISCONNECTED") {
+            console.log(`A timeout happend on url ${error.config.url}`)
+            return Promise.reject(error)
+        }
+
         // Logout user if token refresh didn't work or user is disabled
         if (url === 'api/v1/auth/refresh') {
             console.log("Asking for refresh token");

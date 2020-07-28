@@ -143,50 +143,10 @@ function Places(props) {
         }
     };
 
-    //Sorting stuff
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-    const id = open ? 'simple-popover' : undefined;
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-
-    const customToolbarElements = () => {
-        return <div>
-
-            {/*<Tooltip aria-describedby={id} title="Filter list">*/}
-            {/*    <IconButton aria-label="filter list" onClick={handleClick}>*/}
-            {/*        <FilterListIcon/>*/}
-            {/*    </IconButton>*/}
-            {/*</Tooltip>*/}
-            {/*<Popover*/}
-            {/*    id={id}*/}
-            {/*    open={open}*/}
-            {/*    anchorEl={anchorEl}*/}
-            {/*    onClose={() => {*/}
-            {/*        setAnchorEl(null)*/}
-            {/*    }}*/}
-            {/*    anchorOrigin={{*/}
-            {/*        vertical: 'bottom',*/}
-            {/*        horizontal: 'center',*/}
-            {/*    }}*/}
-            {/*    transformOrigin={{*/}
-            {/*        vertical: 'top',*/}
-            {/*        horizontal: 'center',*/}
-            {/*    }}*/}
-            {/*>*/}
-
-
-            {/*</Popover>*/}
-        </div>
-    };
-    /*------------------------------------------------------------------------------------------------------*/
-
     return (
         <div className={classes.root}>
             <div className={classes.content}>
-                <FilterBlock setOpen={setAnchorEl}/>
+                <FilterBlock setOpen={true}/>
 
                 <TableComponent
                     title={"Places"}
@@ -199,7 +159,6 @@ function Places(props) {
                     removeCallback={removePlaceCallback}
                     id={"placeId"}
                     isLoading={isLoading}
-                    customToolbarElements={customToolbarElements()}
                 />
 
                 <Box display="flex" justifyContent="flex-end">

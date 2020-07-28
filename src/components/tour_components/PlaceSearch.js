@@ -22,7 +22,7 @@ const styles = theme => ({
 
 function PlaceSearch({classes, addPlaceCallback, apiPlacesFound, setApiPlacesFound, localPlacesFound, setLocalPlacesFound}) {
 
-    const [apiPlacesLoading, setApiPlacesLoading] = useState(false)
+    // const [apiPlacesLoading, setApiPlacesLoading] = useState(false)
     const [localPlacesLoading, setLocalPlacesLoading] = useState(false)
 
     const placeType = {
@@ -55,9 +55,9 @@ function PlaceSearch({classes, addPlaceCallback, apiPlacesFound, setApiPlacesFou
         localPlacesFound.forEach(item => {
             mappedPlaces.push(<ApiPlaceCard {...genProps(item, placeType.local)}/>)
         })
-        apiPlacesFound.forEach(item => {
-            mappedPlaces.push( <ApiPlaceCard {...genProps(item, placeType.api)}/>)
-        })
+        // apiPlacesFound.forEach(item => {
+        //     mappedPlaces.push( <ApiPlaceCard {...genProps(item, placeType.api)}/>)
+        // })
         return mappedPlaces
     }
 
@@ -66,7 +66,7 @@ function PlaceSearch({classes, addPlaceCallback, apiPlacesFound, setApiPlacesFou
             return;
         setLocalPlacesFound([])
         setApiPlacesFound([])
-        setApiPlacesLoading(true)
+        // setApiPlacesLoading(true)
         setLocalPlacesLoading(true)
         API.Places.getAllPlacesAdmin("?keyword=" + keyword).then(response=>{
             setLocalPlacesFound(response.list)
@@ -75,18 +75,18 @@ function PlaceSearch({classes, addPlaceCallback, apiPlacesFound, setApiPlacesFou
             console.log(error)
         })
 
-        API.Places.searchApiPlaces("?keyword=" + keyword).then(response => {
-            setApiPlacesFound(response)
-            setApiPlacesLoading(false)
-        }).catch(error => {
-            console.log(error)
-        })
+        // API.Places.searchApiPlaces("?keyword=" + keyword).then(response => {
+        //     setApiPlacesFound(response)
+        //     setApiPlacesLoading(false)
+        // }).catch(error => {
+        //     console.log(error)
+        // })
     }
 
     return(
         <React.Fragment>
             <SearchInputComponent hint="Search for a place" searchCallback={searchCallback} className={classes.searchInputComponent}/>
-            {(localPlacesLoading || apiPlacesLoading) ?
+            {(localPlacesLoading) ?
                 <CircularProgress  /> :
                 <React.Fragment>
                     {generatePlaceCards()}

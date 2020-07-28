@@ -100,10 +100,26 @@ const getAllUsers = (urlParams) => RequestType.getRequest("api/v1/user/search", 
 const getAllRoles = () => RequestType.getRequest("api/v1/user/roles/all");
 const setRoles = (data) => RequestType.postRequest("api/v1/user/setRoles", data);
 
-
 const User = {setRoles, getAllRoles, getAllUsers, getUserProfile};
 
-const API = {User, Auth, Tour, SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
+//Recommendation
+const createRecommendation = (data) => RequestType.postRequest("api/v1/recommendation/create", data);
+const getAllRecommendations = (urlParams) => RequestType.getRequest("api/v1/recommendation/search", urlParams);
+const addPlaceToRecommendation = (data) => RequestType.postRequest("api/v1/recommendation/addObject", data);
+const removePlaceFromRecommendation = (data) => RequestType.postRequest("api/v1/recommendation/removeObject", data);
+const updateRecommendation = (data) => RequestType.postRequest("api/v1/recommendation/update", data)
+const removeRecommendation = (data) => RequestType.postRequest("api/v1/recommendation/remove", data)
+
+const Recommendation = { removeRecommendation, updateRecommendation, removePlaceFromRecommendation, addPlaceToRecommendation, getAllRecommendations, createRecommendation }
+
+//Explore
+
+const updateExplorePage = (data) => RequestType.postRequest("api/v1/explore/update", data)
+const getExplorePage = () => RequestType.getRequest("api/v1/explore/")
+
+const Explore = { getExplorePage, updateExplorePage }
+
+const API = {Explore, Recommendation, User, Auth, Tour, SourcePlace, Source,Places, Tags, Categories, Photos, Parking, TagsPlace, CategoriesPlace, ParkingPlace, PhotoPlace, Schedule, Reviews};
 
 export default API
 

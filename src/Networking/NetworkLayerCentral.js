@@ -18,10 +18,9 @@ const request = async function (options, contentType, authorize= true) {
     }
 
     const client = axios.create({
-        baseURL: true ? "http://localhost:8080/" : "https://www.traveldirection.ax.lt:8080/",
+        baseURL: false ? "http://localhost:8080/" : "https://www.traveldirection.ax.lt:8080/",
         headers: header
     });
-
 
 
 
@@ -125,7 +124,7 @@ const postMultipartRequest = function (path, formData) {
         url: path,
         method: 'POST',
         data: formData
-    }, 'multipart/form-data' /*'application/x-www-form-urlencoded'*/);
+    }, 'multipart/form-data');
 };
 
 const RequestType = {

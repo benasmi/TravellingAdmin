@@ -21,6 +21,9 @@ import green from "@material-ui/core/colors/green";
 import Reviews from "../components/add_place_components/Reviews";
 import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 import SchedulesWrapper from "../components/add_place_components/SchedulesWrapper";
+import AddRecommendationDialog from "../components/recomendation/AddRecommendationDialog";
+import RecommendationListDialog from "../components/recomendation/RecommendationListDialog";
+import Recommendation, {RecommendationType} from "../components/recomendation/Recommendation";
 
 const styles = theme => ({
     button: {
@@ -129,6 +132,7 @@ function AddPlace({classes, match}) {
     const [error, setError] = useState({name: false});
     const [checkErrors, setCheckErrors] = useState(false);
 
+    const [showRecommendationDialog, setShowRecommendationDialog] = useState(false)
 
     const {addConfig} = UseSnackbarContext();
     const {addAlertConfig} = UseAlertDialogContext();
@@ -184,6 +188,11 @@ function AddPlace({classes, match}) {
             updateAll()
         }
     }, [placeInfo['isPublic']]);
+
+    function addToRecommendation() {
+        setShowRecommendationDialog(true)
+    }
+
 
     function getPlaceInfo() {
         API.Places.getPlaceById("?full=true&p=" + placeId).then(response => {
@@ -480,6 +489,20 @@ function AddPlace({classes, match}) {
                     Save
                 </Button>
 
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => addToRecommendation()}
+                    className={classes.button}>
+                    Add to recommendation
+                </Button>
+
+                <RecommendationListDialog
+                    open={showRecommendationDialog}
+                    setOpen={setShowRecommendationDialog}
+                    placeInfo={placeInfo}
+                    type={RecommendationType.place}
+                />
 
             </Paper>
         </div>)

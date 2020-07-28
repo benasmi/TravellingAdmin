@@ -35,6 +35,8 @@ import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
 import Strings from "../helpers/stringResources";
 import API from "../Networking/API";
 import {AuthContext} from "../contexts/AuthContext";
+import RecommendationsPage from "../pages/RecommendationsPage";
+import EditRecommendationProvider, {EditRecommendationContext} from "../contexts/EditRecommendationContext";
 const drawerWidth = 240;
 
 
@@ -112,6 +114,13 @@ const TourWithContext = (props) =>  (
         <Tour {...props}/>
     </PlacesFilterProvider>
 );
+
+const RecommendationsWithContext = (props) =>  (
+    <EditRecommendationProvider>
+        <RecommendationsPage {...props}/>
+    </EditRecommendationProvider>
+);
+
 
 export default function Appbar(props) {
     const classes = useStyles();
@@ -213,9 +222,12 @@ export default function Appbar(props) {
                     <ListItem button component={Link} to="/app/tours" onClick={()=>handleListItemClick("/app/tours","Tours")} >
                         <ListItemText>Tours</ListItemText>
                     </ListItem>
-                    <ListItem button component={Link} to="/app/apiplaces" onClick={()=>handleListItemClick("/app/apiplaces","Api places")} >
-                        <ListItemText>Explore API places</ListItemText>
+                    <ListItem button component={Link} to="/app/recommendations" onClick={()=>handleListItemClick("/app/recommendations","Recommendations")} >
+                        <ListItemText>Recommendations</ListItemText>
                     </ListItem>
+                    {/*<ListItem button component={Link} to="/app/apiplaces" onClick={()=>handleListItemClick("/app/apiplaces","Api places")} >*/}
+                    {/*    <ListItemText>Explore API places</ListItemText>*/}
+                    {/*</ListItem>*/}
                     { hasPermission("place:insert") &&
                         <ListItem button component={Link} to="/app/addplace" onClick={()=>handleListItemClick("/app/addplace","Add Place")} >
                             <ListItemText>Add place</ListItemText>
@@ -252,7 +264,7 @@ export default function Appbar(props) {
                     <Route path="/app/places" component={PlacesWithContext} />
                     <Route path="/app/tours" component={Tours} />
                     <Route path="/app/addplace/:placeId?" component={AddPlace} />
-                    <Route path="/app/apiplaces" component={ApiPlaces} />
+                    <Route path="/app/recommendations" component={RecommendationsWithContext} />
                     <Route path="/app/addtour/:tourId?" component={TourWithContext} />
                     <Route path="/app/resources" component={Resources} />
                     <Route path="/app/users" component={ManageUsers} />

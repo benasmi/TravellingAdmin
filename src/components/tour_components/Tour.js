@@ -15,6 +15,8 @@ import API from "../../Networking/API";
 import UseSnackbarContext from "../../contexts/UseSnackbarContext";
 import shortid from 'shortid';
 import CircularProgress from "@material-ui/core/CircularProgress";
+import RecommendationListDialog from "../recomendation/RecommendationListDialog";
+import {RecommendationType} from "../recomendation/Recommendation";
 
 export const ElementType = {
     place: 0,
@@ -98,6 +100,7 @@ function Tour({classes, match}) {
     const [currentDay, setCurrentDay] = useState(0)
     const [tourId, setTourId] = useState(match.params.tourId)
     const [isLoading, setIsLoading] = useState(match.params.tourId !== undefined);
+    const [recommendationsDialogOpen, setRecommendationsDialogOpen] = useState(false)
 
     const [selectedTags, setSelectedTags] = useState([])
     const [availableTags, setAvailableTags] = useState([])
@@ -309,6 +312,9 @@ function Tour({classes, match}) {
             <Divider variant="middle"/>
             {tourDaysComponents}
             <div className={classes.actionsArea}>
+                <Button variant="contained" color="primary" onClick={() => setRecommendationsDialogOpen(true)} disabled={tourId === null}>
+                    Add tour to recommendation
+                </Button>
                 <Button variant="contained" color="primary" onClick={handleSave}>
                     Save this tour
                 </Button>
@@ -336,6 +342,11 @@ function Tour({classes, match}) {
 
     return (
         <div className={classes.root}>
+            <RecommendationListDialog
+                setOpen={setRecommendationsDialogOpen}
+                open={recommendationsDialogOpen}
+                objectId={tourId}
+                type={RecommendationType.tour}/>
             {isLoading ? <div className={classes.loader}><CircularProgress/></div> : content}
         </div>
     )

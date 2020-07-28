@@ -500,7 +500,7 @@ function AddPlace({classes, match}) {
                 <RecommendationListDialog
                     open={showRecommendationDialog}
                     setOpen={setShowRecommendationDialog}
-                    placeInfo={placeInfo}
+                    objectId={placeInfo.placeId}
                     type={RecommendationType.place}
                 />
 

@@ -33,7 +33,7 @@ const styles = theme => ({
     }
 });
 
-function RecommendationListDialog({classes, open, setOpen, placeInfo, type}){
+function RecommendationListDialog({classes, open, setOpen, objectId, type}){
 
     const {addConfig} = UseSnackbarContext();
     const {addAlertConfig} = UseAlertDialogContext();
@@ -83,8 +83,8 @@ function RecommendationListDialog({classes, open, setOpen, placeInfo, type}){
 
 
     function addPlaceToRecommendation(rec) {
-      API.Recommendation.addPlaceToRecommendation({id: placeInfo.placeId, recommendationId: rec.id}).then(()=>{
-              addConfig(true, "Added place to recommendation successfully!")
+      API.Recommendation.addObjectToRecommendation({id: objectId, recommendationId: rec.id}).then(()=>{
+              addConfig(true, "Added object to recommendation successfully!")
       }).catch(()=>{
               addConfig(true, "Failed to add!")
           }

@@ -110,7 +110,7 @@ const removePlaceFromRecommendation = (data) => RequestType.postRequest("api/v1/
 const updateRecommendation = (data) => RequestType.postRequest("api/v1/recommendation/update", data)
 const removeRecommendation = (data) => RequestType.postRequest("api/v1/recommendation/remove", data)
 
-const Recommendation = { removeRecommendation, updateRecommendation, removePlaceFromRecommendation, addPlaceToRecommendation, getAllRecommendations, createRecommendation }
+const Recommendation = { removeRecommendation, updateRecommendation, removePlaceFromRecommendation, addObjectToRecommendation: addPlaceToRecommendation, getAllRecommendations, createRecommendation }
 
 //Explore
 

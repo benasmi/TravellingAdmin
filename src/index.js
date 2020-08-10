@@ -30,6 +30,7 @@ ReactDOM.render(
                             <SnackbarFeedback/>
                             <AlertDialogFeedback/>
                             <TextInputDialog/>
+                            <PlacesFilterProvider>
                             <Switch>
                                 <Redirect exact from="/" to="/login"/>
                                 <Redirect exact from="/app" to="/app/home"/>
@@ -38,7 +39,10 @@ ReactDOM.render(
                                 <Route path="*" component={NotFoundPage}/>
                                 <Redirect from="*" to="/404"/>
                             </Switch>
+                            </PlacesFilterProvider>
+
                         </EditDialogProvider>
+
                     </AlertDialogProvider>
                 </SnackbarProvider>
             </Router>

@@ -104,11 +104,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const PlacesWithContext = () =>  (
-    <PlacesFilterProvider>
-        <Places/>
-    </PlacesFilterProvider>
-);
+// const PlacesWithContext = () =>  (
+//     <PlacesFilterProvider>
+//         <Places/>
+//     </PlacesFilterProvider>
+// );
 const TourWithContext = (props) =>  (
     <PlacesFilterProvider>
         <Tour {...props}/>
@@ -261,7 +261,7 @@ export default function Appbar(props) {
                 <div className={classes.drawerHeader} />
                 <Switch>
                     <Route exact path="/app/home" component={Home} />
-                    <Route path="/app/places" component={PlacesWithContext} />
+                    <Route path="/app/places" component={Places} />
                     <Route path="/app/tours" component={Tours} />
                     <Route path="/app/addplace/:placeId?" component={AddPlace} />
                     <Route path="/app/recommendations" component={RecommendationsWithContext} />

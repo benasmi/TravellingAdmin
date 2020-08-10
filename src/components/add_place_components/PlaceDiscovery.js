@@ -85,7 +85,7 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
                 2: "A tag with identical name already exists. You should choose the existing tag instead"
             },
             validateInput: (input) => {
-                if(input.length < 4){
+                if(input.length < 0){
                     return 1 //Input too short
                 }else if(availableTags.filter(item => item.name === input).length !== 0){
                     return 2 //Identical tag already exists
@@ -122,7 +122,7 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
                 2: "A category with identical name already exists. You should choose the existing category instead"
             },
             validateInput: (input) => {
-                if(input.length < 4){
+                if(input.length < 0){
                     return 1 //Input too short
                 }else if(availableCategories.filter(item => item.name === input).length !== 0){
                     return 2 //Identical category already exists

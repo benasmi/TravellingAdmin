@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {withStyles} from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import PropTypes from "prop-types";
@@ -393,25 +393,93 @@ function AddPlace({classes, match}) {
         }])
     }
 
+    const basicPlaceInfo = useMemo(()=>{
+        return <Paper elevation={4} className={classes.paperContent}>
+            <BasicPlaceInfo
+                error={error}
+                setError={setError}
+                checkErrors={checkErrors}
+                placeInfo={placeInfo}
+                setPlaceInfo={setPlaceInfo}
+                selectedSources={sources}
+                setSelectedSources={setSources}
+            />
+        </Paper>
+    },[placeInfo.name,
+        placeInfo.description,
+        placeInfo.averageTimeSpent,
+        placeInfo.phoneNumber,
+        placeInfo.price,
+        placeInfo.website,
+        sources
+    ])
+
+    const placePhotos = useMemo(()=>{
+        return(
+            <Paper elevation = {4} className={classes.paperContent}>
+                <PhotosInfo
+                    photos={photos}
+                    setPhotos={setPhotos}
+                />
+            </Paper>
+        )
+    }, [photos])
+
+    const placeLocation = useMemo(()=>{
+        return (
+            <Paper elevation = {4} className={classes.paperContent}>
+                <PlaceLocation
+                    placeInfo={placeInfo}
+                    locationData={locationData}
+                    setParkingLocation={setParkingMarkerData}
+                    setLocationData={setLocationData}/>
+            </Paper>
+        )
+    }, [locationData])
+
+    const parkingLocation = useMemo(()=>{
+       return (
+           <Paper elevation = {4} className={classes.paperContent}>
+               <ParkingLocation
+                   placeInfo={placeInfo}
+                   allSelectedParkingData={allSelectedParkingData}
+                   setAllSelectedParkingData={setAllSelectedParkingData}
+                   locationData={parkingMarkerData}
+                   setLocationData={setParkingMarkerData}/>
+           </Paper>
+       )
+    },[allSelectedParkingData, parkingMarkerData])
+
+    const placeDiscovery = useMemo(()=>{
+        return(
+            <Paper elevation = {4} className={classes.paperContent}>
+                <PlaceDiscovery
+                    selectedTags={selectedTags}
+                    setSelectedTags={setSelectedTags}
+                    selectedCategories={selectedCategories}
+                    setSelectedCategories={setSelectedCategories}/>
+            </Paper>
+        )
+    }, [selectedCategories, selectedTags])
+
+    const scheduleDatesWrapper = useMemo(()=>{
+        return(
+            <Paper elevation = {4} className={classes.paperContent}>
+                <SchedulesWrapper isScheduleEnabled={isScheduleEnabled}
+                                  setIsScheduleEnabled={setIsScheduleEnabled}
+                                  setScheduleData={setScheduleData}
+                                  scheduleData={scheduleData}/>
+            </Paper>
+        )
+    }, [isScheduleEnabled, scheduleData])
+
     return (
         <div className={classes.root}>
 
             {firstTimeLoading ? <div className={classes.loader}><CircularProgress/></div> :
                 <div className={classes.content}>
 
-
-                    <Paper elevation={4} className={classes.paperContent}>
-                        <BasicPlaceInfo
-                            error={error}
-                            setError={setError}
-                            checkErrors={checkErrors}
-                            placeInfo={placeInfo}
-                            setPlaceInfo={setPlaceInfo}
-                            selectedSources={sources}
-                            setSelectedSources={setSources}
-                        />
-
-                    </Paper>
+                    {basicPlaceInfo}
 
                     {placeId !== undefined ?
                         <Paper elevation={4} className={classes.paperContent}>
@@ -421,39 +489,11 @@ function AddPlace({classes, match}) {
                         </Paper>
                         : null}
 
-
-                <Paper elevation = {4} className={classes.paperContent}>
-                    <PhotosInfo
-                        photos={photos}
-                        setPhotos={setPhotos}
-                    />
-                </Paper>
-                <Paper elevation = {4} className={classes.paperContent}>
-                    <PlaceLocation
-                        placeInfo={placeInfo}
-                        locationData={locationData}
-                        setParkingLocation={setParkingMarkerData}
-                        setLocationData={setLocationData}/>
-                </Paper>
-            <Paper elevation = {4} className={classes.paperContent}>
-                <ParkingLocation
-                    placeInfo={placeInfo}
-                    allSelectedParkingData={allSelectedParkingData}
-                    setAllSelectedParkingData={setAllSelectedParkingData}
-                    locationData={parkingMarkerData}
-                    setLocationData={setParkingMarkerData}/>
-            </Paper>
-                <Paper elevation = {4} className={classes.paperContent}>
-                    <PlaceDiscovery
-                        selectedTags={selectedTags}
-                        setSelectedTags={setSelectedTags}
-                        selectedCategories={selectedCategories}
-                        setSelectedCategories={setSelectedCategories}/>
-                </Paper>
-
-                <Paper elevation = {4} className={classes.paperContent}>
-                    <SchedulesWrapper isScheduleEnabled={isScheduleEnabled} setIsScheduleEnabled={setIsScheduleEnabled} setScheduleData={setScheduleData} scheduleData={scheduleData}/>
-                </Paper>
+                    {placePhotos}
+                    {placeLocation}
+                    {parkingLocation}
+                    {placeDiscovery}
+                    {scheduleDatesWrapper}
             </div> }
 
 

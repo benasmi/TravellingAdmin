@@ -89,7 +89,7 @@ function Resources({classes}) {
                    addConfig(false, "Failed to add category.")
                })
             },
-            validateInput: (input) => {return input.length >= 4 ? 0 : 1},
+            validateInput: (input) => {return input.length > 0 ? 0 : 1},
             textFieldLabel: "Restaurants, hiking, etc..."
         })
     }
@@ -134,7 +134,7 @@ function Resources({classes}) {
                     addConfig(false, "Failed to update category.")
                 })
             },
-            validateInput: (input) => {return input.length >= 4 ? 0 : 1},
+            validateInput: (input) => {return input.length > 0 ? 0 : 1},
             textFieldLabel: "Restaurants, hiking, etc..."
         })
     }
@@ -157,7 +157,7 @@ function Resources({classes}) {
                     addConfig(false, "Failed to update tag.")
                 })
             },
-            validateInput: (input) => {return input.length >= 4 ? 0 : 1},
+            validateInput: (input) => {return input.length > 0 ? 0 : 1},
             textFieldLabel: "Warm, quick, cozy..."
         })
     }
@@ -196,13 +196,13 @@ function Resources({classes}) {
                     addConfig(false, "Failed to add tag.")
                 })
             },
-            validateInput: (input) => {return input.length >= 4 ? 0 : 1},
+            validateInput: (input) => {return input.length > 0 ? 0 : 1},
             textFieldLabel: "Warm, quick, cozy..."
         })
     }
 
     const searchFunction = (keyword, item) => {
-        if(keyword.length < 3) return true
+        if(keyword.length < 1) return true
         return item.name.includes(keyword)
     }
 

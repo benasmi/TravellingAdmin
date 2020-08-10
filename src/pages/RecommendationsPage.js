@@ -12,6 +12,7 @@ import TextField from "@material-ui/core/TextField";
 import debounce from "lodash/debounce";
 import Button from "@material-ui/core/Button";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 const styles = theme => ({
     root:{
@@ -92,7 +93,6 @@ function RecommendationsPage({classes}) {
         }).catch(()=>{
 
         }).finally(()=>{
-
             setLoading(false)
         })
     }
@@ -158,6 +158,23 @@ function RecommendationsPage({classes}) {
     };
 
 
+    function RecommendationSkeleton(){
+        return(
+            <div>
+                <Skeleton animation='wave' variant="rect" width={200} height={40} />
+                <Skeleton animation='wave' variant="text" width={180}/>
+                <Skeleton animation='wave' variant="text" width={250}/>
+                <div style={{display: 'flex', margin: 16, flexDirection: 'row'}}>
+                    <Skeleton animation='wave' variant="rect" style={{marginRight: 16}} width={300} height={300} />
+                    <Skeleton animation='wave' variant="rect" style={{marginRight: 16}} width={300} height={300} />
+                    <Skeleton animation='wave' variant="rect" style={{marginRight: 16}} width={300} height={300} />
+                </div>
+                <Skeleton animation='wave' variant="text" width={1000}/>
+            </div>
+        )
+    }
+
+
 
     function updateExplorePage() {
         const explorable = []
@@ -191,27 +208,33 @@ function RecommendationsPage({classes}) {
                         Save feed
                     </Button>
                 </div>
-                <div className={classes.leftContent}>
 
-                    <ReactSortable
-                        style={{width: '100%', height: '100%'}}
-                        list={homeRecommendations}
-                        setList={setHomeRecommendations}
-                        animation={150}
-                        group="cards"
-                        onChange={(order, sortable, evt) => {}}
-                        onEnd={evt => {}}
-                    >
-                        {homeRecommendations.map(rec => (
-                            <Recommendation
-                                key={rec.id}
-                                recommendation={rec}
-                                onEditCallback={()=> {
-                                    startEditing(rec, homeRecommendations, setHomeRecommendations)
-                                }}
-                            />
-                        ))}
-                    </ReactSortable>
+                <div className={classes.leftContent}>
+                    {loading ? <>
+                            <RecommendationSkeleton />
+                            <RecommendationSkeleton style={{marginTop: 48}}/>
+                        </> :
+                        homeRecommendations.length > 0 ?
+                        <ReactSortable
+                            style={{width: '100%', height: '100%'}}
+                            list={homeRecommendations}
+                            setList={setHomeRecommendations}
+                            animation={150}
+                            group="cards"
+                            onChange={(order, sortable, evt) => {}}
+                            onEnd={evt => {}}
+                        >
+                            {homeRecommendations.map(rec => (
+                                <Recommendation
+                                    key={rec.id}
+                                    recommendation={rec}
+                                    onEditCallback={()=> {
+                                        startEditing(rec, homeRecommendations, setHomeRecommendations)
+                                    }}
+                                />
+                            ))}
+                        </ReactSortable> : <Alert style={{marginTop: 48}} severity="info">No recommendations are put in home tab. Click and Drag existing recommendations from right side.</Alert>
+                    }
 
                 </div>
 
@@ -228,24 +251,32 @@ function RecommendationsPage({classes}) {
                     <TextField id="standard-search" label="Search" value={keyword} type="search" onChange={e=>{
                         setKeyword(e.target.value)
                     }} />
-                    <ReactSortable
-                        style={{width: '100%', height: '100%'}}
-                        list={recommendations}
-                        setList={setRecommendations}
-                        animation={150}
-                        group="cards"
-                        onChange={(order, sortable, evt) => {}}
-                        onEnd={evt => {}}
-                    >
-                        {recommendations.map(rec => (
-                            <Recommendation
-                                onEditCallback={()=>{
-                                    startEditing(rec, recommendations, setRecommendations)
-                                }}
-                                key={rec.id}
-                                recommendation={rec}/>
-                        ))}
-                    </ReactSortable>
+                    {loading ? <>
+                       <RecommendationSkeleton />
+                       <RecommendationSkeleton style={{marginTop: 16}}/>
+                    </> :
+                        recommendations.length > 0 ?
+
+                           <ReactSortable
+                           style={{width: '100%', height: '100%'}}
+                           list={recommendations}
+                           setList={setRecommendations}
+                           animation={150}
+                           group="cards"
+                           onChange={(order, sortable, evt) => {}}
+                           onEnd={evt => {}}
+                           >
+                           {recommendations.map(rec => (
+                               <Recommendation
+                                   onEditCallback={()=>{
+                                       startEditing(rec, recommendations, setRecommendations)
+                                   }}
+                                   key={rec.id}
+                                   recommendation={rec}/>
+                           ))}
+                           </ReactSortable> :  <Alert style={{marginTop: 48}} severity="info">Currently there are no available recommendations.</Alert>
+                       }
+
                 </div>
             </div>
 

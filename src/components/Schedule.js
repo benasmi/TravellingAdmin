@@ -132,7 +132,7 @@ function Schedule({classes, data, setData, index}){
                             />
                             <DatePicker
                                 className={classes.pickerStyle}
-                                views={["month", "day"]}
+                                views={["month", "date"]}
                                 label="To"
                                 value={moment(data.to, "MM-DD")}
                                 onChange={updateToTime}

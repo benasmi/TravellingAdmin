@@ -31,7 +31,7 @@ const styles = theme => ({
     },
 });
 
-function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setErrorInfo, availableTags, selectedTags, setSelectedTags, setAvailableTags, tourId}) {
+function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setErrorInfo, availableCategories, selectedCategories, setSelectedCategories, setAvailableCategories, tourId}) {
 
     const handleDescriptionChange = (e) => {
         tourInfoReducer({
@@ -100,14 +100,14 @@ function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setEr
             />
             <br/><br/>
             <Typography component="h6" variant="h6">
-                Tags for this tour
+                Categories for this tour
             </Typography>
             <AutoCompleteChip
-                options={availableTags}
-                id="tagId"
-                setOptions={setAvailableTags}
-                setSelectedOptions={setSelectedTags}
-                selectedOptions={selectedTags}
+                options={availableCategories}
+                id="categoryId"
+                setOptions={setAvailableCategories}
+                setSelectedOptions={setSelectedCategories}
+                selectedOptions={selectedCategories}
             />
 
             {tourId !== undefined &&

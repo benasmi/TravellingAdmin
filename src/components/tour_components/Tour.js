@@ -102,8 +102,8 @@ function Tour({classes, match}) {
     const [isLoading, setIsLoading] = useState(match.params.tourId !== undefined);
     const [recommendationsDialogOpen, setRecommendationsDialogOpen] = useState(false)
 
-    const [selectedTags, setSelectedTags] = useState([])
-    const [availableTags, setAvailableTags] = useState([])
+    const [selectedCategories, setSelectedCategories] = useState([])
+    const [availableCategories, setAvailableCategories] = useState([])
 
     const [errorInfo, setErrorInfo] = useState({
             errors: {
@@ -143,13 +143,13 @@ function Tour({classes, match}) {
     };
 
     useEffect(() => {
-        if (tourId !== undefined) { //If user wants to edit a tour, we download all tour data. loadData also downloads tags
+        if (tourId !== undefined) { //If user wants to edit a tour, we download all tour data. loadData also downloads categories
             loadData()
-        }else{ //Otherwise, we just download tags instead.
-            API.Tags.getAllTags().then(response => {
-                setAvailableTags(response)
+        }else{ //Otherwise, we just download categories instead.
+            API.Categories.getAllCategories().then(response => {
+                setAvailableCategories(response)
             }).catch(() => {
-                addConfig(false, "Tags failed to load")
+                addConfig(false, "Categories failed to load")
             })
         }
     }, [])
@@ -183,16 +183,16 @@ function Tour({classes, match}) {
     const loadData = () => {
         Promise.all([
             API.Tour.getTour("?id=" + tourId),
-            API.Tags.getAllTags(),
-            API.Tour.getTourTags("?id=" + tourId),
+            API.Categories.getAllCategories(),
+            API.Tour.getTourCategories("?id=" + tourId),
             ]
         ).catch(() => {
             addConfig(false, "Tour has failed to load")
             setTourId(undefined)
         }).then((response) => {
             parseTourInfoResponse(response[0])
-            setAvailableTags(response[1])
-            setSelectedTags(response[2])
+            setAvailableCategories(response[1])
+            setSelectedCategories(response[2])
         }).finally(() => {
             setIsLoading(false)
         })
@@ -245,7 +245,7 @@ function Tour({classes, match}) {
                 return response
             }).then((response) => Promise.all(
                 [
-                    API.Tour.updateTourTags(selectedTags, "?p=" + response)
+                    API.Tour.updateTourCategories(selectedCategories, "?p=" + response)
                 ]
             )).then((() => {
                 addConfig(true, "Tour has been inserted successfully!")
@@ -255,7 +255,7 @@ function Tour({classes, match}) {
         } else {
             Promise.all([
                 API.Tour.updateTour(aggregatedTour, "?id=" + tourId),
-                API.Tour.updateTourTags(selectedTags, "?p=" + tourId)
+                API.Tour.updateTourCategories(selectedCategories, "?p=" + tourId)
             ])
             .then(() => {
                 addConfig(true, "Tour has been updated successfully!")
@@ -308,7 +308,7 @@ function Tour({classes, match}) {
             <TourInfoComponent tourInfo={tourInfo} tourInfoReducer={dispatchTourInfo} errorInfo={errorInfo}
                                setErrorInfo={setErrorInfo}
                                tourId={tourId}
-                               setSelectedTags={setSelectedTags} selectedTags={selectedTags} availableTags={availableTags} setAvailableTags={setAvailableTags}/>
+                               setSelectedCategories={setSelectedCategories} selectedCategories={selectedCategories} availableCategories={availableCategories} setAvailableCategories={setAvailableCategories}/>
             <Divider variant="middle"/>
             {tourDaysComponents}
             <div className={classes.actionsArea}>
@@ -320,7 +320,7 @@ function Tour({classes, match}) {
                 </Button>
             </div>
         </Paper>
-    ), [tourInfo, currentDay, errorInfo, availableTags, selectedTags]);
+    ), [tourInfo, currentDay, errorInfo, availableCategories, selectedCategories]);
 
     const theme = useTheme();
     const largeScreen = useMediaQuery(theme.breakpoints.up('lg'));

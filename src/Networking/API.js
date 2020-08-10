@@ -80,12 +80,12 @@ const SourcePlace = {updateSourcesForPlace};
 //Tours
 const insertTour = (data) => RequestType.postRequest("api/v1/tour/insert",data)
 const updateTour = (data, urlParams) => RequestType.postRequest("api/v1/tour/update",data, urlParams)
-const updateTourTags = (data, urlParams) => RequestType.postRequest("api/v1/tour/tags/update",data, urlParams)
+const updateTourCategories = (data, urlParams) => RequestType.postRequest("api/v1/tour/categories/update",data, urlParams)
 const getTour = (urlParams) => RequestType.getRequest("api/v1/tour",urlParams)
-const getTourTags = (urlParams) => RequestType.getRequest("api/v1/tour/tags",urlParams)
+const getTourCategories = (urlParams) => RequestType.getRequest("api/v1/tour/categories",urlParams)
 const removeTour = (urlParams) => RequestType.getRequest("api/v1/tour/delete", urlParams);
 const getAllToursAdmin = (urlParams) => RequestType.getRequest("api/v1/tour/searchadmin", urlParams);
-const Tour = {insertTour, getTour, updateTour, getAllToursAdmin, removeTour, getTourTags, updateTourTags}
+const Tour = {insertTour, getTour, updateTour, getAllToursAdmin, removeTour, getTourCategories, updateTourCategories}
 
 //Auth
 const login = (data) => RequestType.postRequest("api/v1/auth/login", data, "", false);

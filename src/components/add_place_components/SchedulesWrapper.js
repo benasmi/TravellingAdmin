@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import Schedule from "../Schedule";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import initialScheduleData from "./initialScheduleData";
 
 const styles = theme => ({
     header: {
@@ -22,7 +23,7 @@ function SchedulesWrapper({classes, scheduleData, setScheduleData, isScheduleEna
         setScheduleData(oldData => {
             return [
                 ...oldData,
-                {scheduleDefault: false, from: "01-01", to: "01-02", periods : []}
+                {scheduleDefault: false, from: "01-01", to: "01-02", periods : initialScheduleData[0]["periods"]}
             ]
         })
     }

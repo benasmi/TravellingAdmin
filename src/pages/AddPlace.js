@@ -529,13 +529,16 @@ function AddPlace({classes, match}) {
                     Save
                 </Button>
 
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => addToRecommendation()}
-                    className={classes.button}>
-                    Add to recommendation
-                </Button>
+                {placeId != null ?
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => addToRecommendation()}
+                        className={classes.button}>
+                        Add to recommendation
+                    </Button> : null
+                }
+
 
                 <RecommendationListDialog
                     open={showRecommendationDialog}

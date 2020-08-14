@@ -10,7 +10,8 @@ const request = async function (options, contentType, authorize= true) {
         'Content-Type': (contentType == null) ? 'application/json' : contentType,
         'Accept': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'Authorization': "Bearer " + getAccessToken()
+        'Authorization': "Bearer " + getAccessToken(),
+        'device': 'web'
     };
 
     if(!authorize){

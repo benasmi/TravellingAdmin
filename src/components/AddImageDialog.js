@@ -30,6 +30,7 @@ function AddImageDialog(props) {
         Promise.all(selectedFiles.map(imagefile => {
             let formData = new FormData()
             formData.append("image", imagefile)
+            console.log('image', imagefile)
             return API.Photos.uploadPhoto(formData)
         })).then(response => {
             console.log(response)

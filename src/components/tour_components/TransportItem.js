@@ -32,10 +32,6 @@ const styles = theme => ({
 
 const transportTypes = [
     {
-        icon: <DirectionsWalkIcon/>,
-        label: "Walk"
-    },
-    {
         icon: <MetroIcon/>,
         label: "Metro"
     },
@@ -58,6 +54,10 @@ const transportTypes = [
     {
         icon: <FlightIcon/>,
         label: "Plane"
+    },
+    {
+        icon: <DirectionsWalkIcon/>,
+        label: "Walk"
     },
     {
         icon: <TramIcon/>,

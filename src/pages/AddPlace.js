@@ -23,6 +23,7 @@ import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
 import RecommendationListDialog from "../components/recomendation/RecommendationListDialog";
 import {RecommendationType} from "../components/recomendation/Recommendation";
 import SchedulesContainer, {defaultScheduleData} from "../components/schedule_components/SchedulesContainer";
+import moment from "moment";
 
 const styles = theme => ({
   button: {
@@ -99,7 +100,7 @@ function AddPlace({classes, match}) {
   const [scheduleData, setScheduleData] = useState(defaultScheduleData);
   const [scheduleOpenIndex, setScheduleOpenIndex] = useState(0);
   const [seasonalScheduleEnabled, setSeasonalScheduleEnabled] = useState(false);
-  const [enableLastAccommodation, setEnableLastAccommodation] = useState(false);
+  const [lastAccommodation, setLastAccommodation] = useState(null);
 
   const [photos, setPhotos] = useState([]);
 
@@ -202,75 +203,50 @@ function AddPlace({classes, match}) {
   }
 
   const parseScheduleData = (data) => {
-    return data.map(schedule => {
-      if(schedule.from != null)
-        setSeasonalScheduleEnabled(true)
 
-      const intervalVariants = new Array(7)
-          .fill([])
-          .map((item, index) => {
-            return schedule.periods.filter(period => period.openDay === index).map(period => {
-              const obj = {openTime: period.openTime, closeTime: period.closeTime}
-              if(period.lastAccommodation != null){
-                obj['lastAccommodation'] = period.lastAccommodation
-                setEnableLastAccommodation(true);
-              }
-              return obj
-            })
-          })
-
-      const intervalVariantsUnique = [...new Set(intervalVariants.map(item => JSON.stringify(item)))]
-          .map(item => JSON.parse(item))
-          .filter(item => item.length !== 0)
-          .map(item => {
-            return {
-              shifts: item.map(shift => {
-                return {...shift, elementId: shortid.generate()}
-              }),
-              days: intervalVariants.reduce((accumulator, variant, index) => {
-                if (JSON.stringify(item) === JSON.stringify(variant))
-                  return [...accumulator, index]
-                else return accumulator
-              }, []),
-              elementId: shortid.generate()
-            }
-          })
-      return {
-        from: schedule.from,
-        to: schedule.to,
-        variants: intervalVariantsUnique
-      }
+    data.some(schedule => {
+      return schedule.periods.some(period => {
+        if (period.lastAccommodation != null) {
+          setLastAccommodation(moment(period.lastAccommodation, 'HH:mm').minutes() - moment(period.closeTime, 'HH:mm').minutes())
+          return true
+        }
+        return false
+      })
     })
+
+    if (data.length > 1 || data.some(schedule => schedule.from != null && schedule.to != null))
+      setSeasonalScheduleEnabled(true)
+
+    return (data.map(schedule => {
+      const newData = {...schedule}
+      newData.periods = newData.periods.map(period => {
+        const newPeriod = {...period}
+        newPeriod.elementId = shortid.generate()
+        return newPeriod
+      })
+      return newData
+    }))
   }
 
   const convertSchedule = (data) => {
-    let converted =  data.map((schedule, index) => {
-      const periods = []
-      schedule.variants.forEach(variant => {
-        variant.days.forEach(dayIndex => {
-          variant.shifts.forEach(shift => {
-            const period = {
-              openTime: shift.openTime,
-              closeTime: shift.closeTime,
-              openDay: dayIndex,
-              closeDay: dayIndex
-            }
-            if(enableLastAccommodation)
-              period.lastAccommodation = shift.lastAccommodation
-            periods.push(period)
-          })
-        })
-      })
-      return {
-          from: seasonalScheduleEnabled ? schedule.from: null,
-          to: seasonalScheduleEnabled ? schedule.to : null,
-          periods,
-          scheduleDefault: false,
+    return (data.map(schedule => {
+      const newSchedule = {...schedule}
+      if (!seasonalScheduleEnabled) {
+        delete newSchedule.from;
+        delete newSchedule.to;
       }
-    })
-    if(!seasonalScheduleEnabled && converted.length > 1)
-      converted = [converted[0]]
-    return converted
+      newSchedule.periods = newSchedule.periods.map(period => {
+        const newPeriod = {...period}
+        if (lastAccommodation != null)
+          newPeriod.lastAccommodation = moment(newPeriod.closeTime, 'HH:mm').subtract(lastAccommodation, 'minutes').format('HH:mm')
+        newPeriod.closeDay = newPeriod.openDay
+        return newPeriod
+      })
+
+      newSchedule.scheduleDefault = false;
+      console.log(newSchedule)
+      return newSchedule
+    }))
   }
 
   function setAllData(place) {
@@ -310,7 +286,7 @@ function AddPlace({classes, match}) {
     });
 
     setScheduleData(place.schedule.length === 0 ? defaultScheduleData : parseScheduleData(place.schedule))
-    if(place.schedule.length === 0)
+    if (place.schedule.length === 0)
       setIsScheduleEnabled(false)
 
     setSources(place.sources);
@@ -537,17 +513,17 @@ function AddPlace({classes, match}) {
     return (
         <Paper elevation={4} className={classes.paperContent}>
           {<SchedulesContainer scheduleData={scheduleData} setScheduleData={setScheduleData}
-                                                       scheduleOpenIndex={scheduleOpenIndex}
-                                                       setScheduleOpenIndex={setScheduleOpenIndex}
-                                                       seasonalScheduleEnabled={seasonalScheduleEnabled}
-                                                       setSeasonalScheduleEnabled={setSeasonalScheduleEnabled}
-                                                        enableLastAccommodation={enableLastAccommodation}
+                               scheduleOpenIndex={scheduleOpenIndex}
+                               setScheduleOpenIndex={setScheduleOpenIndex}
+                               seasonalScheduleEnabled={seasonalScheduleEnabled}
+                               setSeasonalScheduleEnabled={setSeasonalScheduleEnabled}
+                               setLastAccommodation={setLastAccommodation}
                                isScheduleEnabled={isScheduleEnabled}
                                setIsScheduleEnabled={setIsScheduleEnabled}
-          setEnableLastAccommodation={setEnableLastAccommodation}/>}
+                               lastAccommodation={lastAccommodation}/>}
         </Paper>
     )
-  }, [scheduleData, scheduleOpenIndex, enableLastAccommodation, seasonalScheduleEnabled, isScheduleEnabled])
+  }, [scheduleData, scheduleOpenIndex, lastAccommodation, seasonalScheduleEnabled, isScheduleEnabled])
 
   return (
       <div className={classes.root}>
@@ -555,7 +531,7 @@ function AddPlace({classes, match}) {
         {firstTimeLoading ? <div className={classes.loader}><CircularProgress/></div> :
             <div className={classes.content}>
 
-              {basicPlaceInfo}
+              {/*{basicPlaceInfo}*/}
 
               {placeId !== undefined ?
                   <Paper elevation={4} className={classes.paperContent}>
@@ -565,10 +541,10 @@ function AddPlace({classes, match}) {
                   </Paper>
                   : null}
 
-              {placePhotos}
-              {placeLocation}
-              {parkingLocation}
-              {placeDiscovery}
+              {/*{placePhotos}*/}
+              {/*{placeLocation}*/}
+              {/*{parkingLocation}*/}
+              {/*{placeDiscovery}*/}
               {scheduleContainer}
               {/*{scheduleDatesWrapper}*/}
             </div>}

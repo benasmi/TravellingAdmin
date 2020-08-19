@@ -10,6 +10,7 @@ import AddIcon from "@material-ui/icons/Add";
 import shortid from 'shortid';
 import Alert from "@material-ui/lab/Alert";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import ScheduleWorkingHours from "./ScheduleWorkingHours";
 
 const styles = theme => ({
   root: {
@@ -31,7 +32,7 @@ const styles = theme => ({
 });
 
 
-function Schedule({classes, enableLastAccommodation, scheduleData, setScheduleData, scheduleOpenIndex, setScheduleOpenIndex, seasonalScheduleEnabled}) {
+function Schedule({classes, scheduleData, setScheduleData, scheduleOpenIndex, setScheduleOpenIndex, seasonalScheduleEnabled}) {
 
   const currentSchedule = scheduleData[scheduleOpenIndex]
 
@@ -42,10 +43,6 @@ function Schedule({classes, enableLastAccommodation, scheduleData, setScheduleDa
       return newData;
     })
   }
-
-  const weekdayStatuses = (new Array(7).fill('')).map((item, index) => {
-    return currentSchedule.variants.some(variant => variant.days.includes(index));
-  })
 
   const changeToDate = (date, value) => {
     setScheduleData(oldData => {
@@ -80,27 +77,6 @@ function Schedule({classes, enableLastAccommodation, scheduleData, setScheduleDa
       </div>
   )
 
-  const handleAddVariant = () => {
-    setScheduleData(oldData => {
-      const newData = [...oldData]
-      const shifts = [
-        {
-          openTime: "08:00",
-          closeTime: "18:00",
-          elementId: shortid.generate(),
-        }
-      ]
-      if(enableLastAccommodation)
-        shifts[0]['lastAccommodation'] = "18:00"
-      newData[scheduleOpenIndex].variants.push({
-        elementId: shortid.generate(),
-        shifts,
-        days: []
-      })
-      return newData
-    })
-  }
-
   const handleRemoveSchedule = () => {
     setScheduleOpenIndex(index => {
       setScheduleData(oldData => {
@@ -120,32 +96,9 @@ function Schedule({classes, enableLastAccommodation, scheduleData, setScheduleDa
             onClick={handleRemoveSchedule}
             startIcon={<DeleteOutlineIcon/>}
             style={{display: 'absolute'}}>Remove this schedule</Button>}
-        {currentSchedule.variants.length === 0 && seasonalScheduleEnabled &&
-        <Alert severity="info">No schedule variants specified for this schedule. This means that this place is closed
-          from {moment(currentSchedule.from).format("MMMM D")} to {moment(currentSchedule.to).format("MMMM D")}</Alert>
-        }
-        {
-          currentSchedule.variants.length !== 0 && weekdayStatuses.includes(false) &&
-          <Alert severity="info">This place is closed
-            on {weekdayStatuses.map((item, index) => item ? '' : `${weekdays.find(weekday => weekday.id === index).fullName} `)}</Alert>
-        }
-        {currentSchedule.variants.map((variant) =>
-            <WorkingHoursVariant
-                enableLastAccommodation={enableLastAccommodation}
-                scheduleData={scheduleData}
-                setScheduleData={setScheduleData}
-                scheduleOpenIndex={scheduleOpenIndex}
-                variantId={variant.elementId}
-                key={variant.elementId}/>)
-        }
-        <Button
-            variant="text"
-            color="secondary"
-            size="large"
-            onClick={handleAddVariant}
-            startIcon={<AddIcon/>}>
-          Add new variant
-        </Button>
+
+        <ScheduleWorkingHours schedule={scheduleData} setSchedule={setScheduleData} scheduleOpenIndex={scheduleOpenIndex} />
+
       </div>
   )
 }

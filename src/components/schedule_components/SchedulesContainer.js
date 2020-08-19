@@ -14,6 +14,7 @@ import Schedule from "./Schedule";
 import moment from "moment";
 import Switch from "@material-ui/core/Switch";
 import shortid from 'shortid';
+import TextField from "@material-ui/core/TextField";
 
 const styles = theme => ({
   root: {
@@ -48,27 +49,19 @@ export const defaultScheduleData = [
   {
     from: "01-25",
     to: "02-20",
-    variants: [
+    periods: [
       {
-        elementId: shortid.generate(),
-        shifts: [
-          {
-            openTime: "08:00",
-            closeTime: "18:00",
-            elementId: shortid.generate()
-          }
-        ],
-        days: [
-          0, 1, 2, 3, 4
-        ]
-      },
+        openTime: "08:00",
+        closeTime: "18:00",
+        openDay: 0,
+        elementId: shortid.generate()
+      }
     ],
 
   }
 ]
 
-function SchedulesContainer({classes, scheduleData, setScheduleData, scheduleOpenIndex, setScheduleOpenIndex, seasonalScheduleEnabled, setSeasonalScheduleEnabled, enableLastAccommodation, setEnableLastAccommodation, isScheduleEnabled, setIsScheduleEnabled}) {
-
+function SchedulesContainer({classes, scheduleData, setScheduleData, scheduleOpenIndex, setScheduleOpenIndex, seasonalScheduleEnabled, setSeasonalScheduleEnabled, isScheduleEnabled, setIsScheduleEnabled, lastAccommodation, setLastAccommodation}) {
 
   const handleAddSchedule = () => {
     setScheduleData(oldData => {
@@ -76,7 +69,7 @@ function SchedulesContainer({classes, scheduleData, setScheduleData, scheduleOpe
       newData.push({
         from: "01-01",
         to: "05-01",
-        variants: []
+        periods: [...defaultScheduleData[0].periods]
       })
       setScheduleOpenIndex(newData.length - 1)
       return newData;
@@ -133,24 +126,8 @@ function SchedulesContainer({classes, scheduleData, setScheduleData, scheduleOpe
   }
 
   const handleEnableLastAccommodation = () => {
-    let accommodationTimeEnabled = !enableLastAccommodation;
-    setEnableLastAccommodation(current => {
-      return accommodationTimeEnabled
-    })
-    setScheduleData(oldData => {
-      const newData = [...oldData];
-      newData.forEach(schedule => {
-        schedule.variants.forEach(variant => {
-          variant.shifts.forEach(shift => {
-            if(accommodationTimeEnabled)
-              shift.lastAccommodation = shift.closeTime
-            else
-              delete shift.lastAccommodation
-          })
-        })
-      })
-      return newData;
-    })
+    let accommodationTimeEnabled = lastAccommodation != null;
+    setLastAccommodation(accommodationTimeEnabled ? null : 30)
   }
 
   return (
@@ -191,16 +168,33 @@ function SchedulesContainer({classes, scheduleData, setScheduleData, scheduleOpe
           <Checkbox
               name="checkedB"
               color="primary"
-              checked={enableLastAccommodation}
+              checked={lastAccommodation != null}
               onChange={handleEnableLastAccommodation}
           />
         }
           label="Specify last accommodation times"
           />
+          {lastAccommodation != null &&
+          <>
+            {/*<Typography variant="h8">*/}
+            {/*  Minutes before close time*/}
+            {/*</Typography>*/}
+            <TextField
+                id="standard-number"
+                label="Minutes to closing time"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={lastAccommodation}
+                onChange={(e) => setLastAccommodation(e.target.value)}
+            />
+          </>
+          }
 
         {seasonalScheduleEnabled && tabsLayout}
 
-          <Schedule enableLastAccommodation={enableLastAccommodation} scheduleData={scheduleData}
+          <Schedule scheduleData={scheduleData}
           seasonalScheduleEnabled={seasonalScheduleEnabled}
           setScheduleData={setScheduleData} scheduleOpenIndex={scheduleOpenIndex} setScheduleOpenIndex={setScheduleOpenIndex}/>
           </>}

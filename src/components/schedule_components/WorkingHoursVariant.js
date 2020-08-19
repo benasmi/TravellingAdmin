@@ -25,7 +25,7 @@ const styles = theme => ({
   },
   removeButtonContainer: {
     display: 'flex',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   }
 });
 
@@ -96,8 +96,8 @@ function WorkingHoursVariant({classes, enableLastAccommodation, scheduleData, se
           return(
               <Button onClick={() => toggleWeekday(item.id)}
                       className={classes.weekdayButton}
-                      variant={dayActive ? "contained" : "outlined"}
-                      color={"primary"}
+                      variant={"contained"}
+                      color={dayActive ? "primary" : "secondary"}
                       disabled={!dayActive && weekdayReserved(item.id)}>
                 {item.name}
               </Button>
@@ -119,7 +119,6 @@ function WorkingHoursVariant({classes, enableLastAccommodation, scheduleData, se
   return (
       <div className={classes.root}>
         {/*<Divider light/>*/}
-
 
         {weekdayPicker}
         <WorkingShift

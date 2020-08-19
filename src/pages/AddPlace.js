@@ -531,7 +531,7 @@ function AddPlace({classes, match}) {
         {firstTimeLoading ? <div className={classes.loader}><CircularProgress/></div> :
             <div className={classes.content}>
 
-              {/*{basicPlaceInfo}*/}
+              {basicPlaceInfo}
 
               {placeId !== undefined ?
                   <Paper elevation={4} className={classes.paperContent}>
@@ -541,12 +541,11 @@ function AddPlace({classes, match}) {
                   </Paper>
                   : null}
 
-              {/*{placePhotos}*/}
-              {/*{placeLocation}*/}
-              {/*{parkingLocation}*/}
-              {/*{placeDiscovery}*/}
+              {placePhotos}
+              {placeLocation}
+              {parkingLocation}
+              {placeDiscovery}
               {scheduleContainer}
-              {/*{scheduleDatesWrapper}*/}
             </div>}
 
 

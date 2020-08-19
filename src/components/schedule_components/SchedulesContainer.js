@@ -55,7 +55,37 @@ export const defaultScheduleData = [
         closeTime: "18:00",
         openDay: 0,
         elementId: shortid.generate()
-      }
+      },
+      {
+        openTime: "08:00",
+        closeTime: "18:00",
+        openDay: 1,
+        elementId: shortid.generate()
+      },
+      {
+        openTime: "08:00",
+        closeTime: "18:00",
+        openDay: 2,
+        elementId: shortid.generate()
+      },
+      {
+        openTime: "08:00",
+        closeTime: "18:00",
+        openDay: 3,
+        elementId: shortid.generate()
+      },
+      {
+        openTime: "08:00",
+        closeTime: "18:00",
+        openDay: 4,
+        elementId: shortid.generate()
+      },
+      {
+        openTime: "08:00",
+        closeTime: "17:00",
+        openDay: 5,
+        elementId: shortid.generate()
+      },
     ],
 
   }

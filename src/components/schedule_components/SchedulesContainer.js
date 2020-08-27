@@ -119,7 +119,7 @@ function SchedulesContainer({classes, scheduleData, setScheduleData, scheduleOpe
           {
             scheduleData.map((item, index) =>
                 <Tab onClick={() => setScheduleOpenIndex(index)}
-                     label={`${moment(item.from).format("MMMM ")}-${moment(item.to).format("MMMM ")}`}/>
+                     label={`${moment(item.from, "MM-DD").format("MMMM ")}-${moment(item.to, "MM-DD").format("MMMM ")}`}/>
             )
           }
         </Tabs>

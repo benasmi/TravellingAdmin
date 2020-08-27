@@ -61,7 +61,7 @@ function Schedule({classes, scheduleData, setScheduleData, scheduleOpenIndex, se
             className={classes.pickerStyle}
             views={["month", "date"]}
             // maxDate={currentSchedule.to}
-            value={currentSchedule.from}
+            value={moment(currentSchedule.from, "MM-DD")}
             onChange={changeFromDate}
         />
         <Typography variant="h8">
@@ -71,7 +71,7 @@ function Schedule({classes, scheduleData, setScheduleData, scheduleOpenIndex, se
             className={classes.pickerStyle}
             views={["month", "date"]}
             // minDate={currentSchedule.from}
-            value={currentSchedule.to}
+            value={moment(currentSchedule.to, "MM-DD")}
             onChange={changeToDate}
         />
       </div>

@@ -126,7 +126,7 @@ function AddPlace({classes, match}) {
 
   const [sources, setSources] = useState([]);
 
-  const [isScheduleEnabled, setIsScheduleEnabled] = useState(true);
+  const [isScheduleEnabled, setIsScheduleEnabled] = useState(false);
 
   const [placeId, setPlaceId] = useState(match.params.placeId);
 

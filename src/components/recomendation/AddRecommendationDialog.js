@@ -66,7 +66,8 @@ function AddRecommendationDialog({classes, open, setOpen, addCallback}){
                     addConfig(true, "Recommendation added successfully")
                     addCallback(insertedData)
                     setOpen(false)
-                }).catch(()=>{
+                }).catch((error)=>{
+                    console.log('recommendation error', error)
                     addConfig(false, "Something went wrong. Please try again.")
                 }).finally(()=>{
                     setLoading(false)

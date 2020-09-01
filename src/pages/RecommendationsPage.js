@@ -182,14 +182,14 @@ function RecommendationsPage({classes}) {
             explorable.push(row.id)
         })
 
-        setLoading(true)
+        // setLoading(true)
         API.Explore.updateExplorePage(explorable).then(()=>{
             addConfig(true, "Updated explore page successfully!")
 
         }).catch(()=>{
             addConfig(false, "Unexpected error!")
         }).finally(()=>{
-            setLoading(false)
+            // setLoading(false)
         })
     }
 

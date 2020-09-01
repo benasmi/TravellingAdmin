@@ -94,7 +94,7 @@ function RecommendationListDialog({classes, open, setOpen, objectId, type}){
     }
 
     function addNewRecommendationCallback(recommendation){
-        let recData = { ...recommendations }
+        let recData = [ ...recommendations ]
         recData.unshift(recommendation)
 
         setRecommendations(recData)

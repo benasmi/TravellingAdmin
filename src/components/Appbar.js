@@ -37,6 +37,7 @@ import API from "../Networking/API";
 import {AuthContext} from "../contexts/AuthContext";
 import RecommendationsPage from "../pages/RecommendationsPage";
 import EditRecommendationProvider, {EditRecommendationContext} from "../contexts/EditRecommendationContext";
+import AppStateStorageProvider from "../contexts/AppStateStorageContext";
 const drawerWidth = 240;
 
 
@@ -105,10 +106,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // const PlacesWithContext = () =>  (
-//     <PlacesFilterProvider>
+//     <AppStateStorageProvider>
 //         <Places/>
-//     </PlacesFilterProvider>
+//     </AppStateStorageProvider>
 // );
+
 const TourWithContext = (props) =>  (
     <PlacesFilterProvider>
         <Tour {...props}/>

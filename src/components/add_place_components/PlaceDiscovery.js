@@ -38,7 +38,6 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
     const updateTags = () => {
         API.Tags.getAllTags().then(response=>{
             setAvailableTags(response);
-            console.log(response);
         }).catch(error=>{
             console.log(error)
         })
@@ -46,7 +45,6 @@ function PlaceDiscovery({classes, selectedTags, setSelectedTags, selectedCategor
     const updateCategories = () => {
         API.Categories.getAllCategories().then(response=>{
             setAvailableCategories(response)
-            console.log(response);
         }).catch(error=>{
             console.log(error)
         });

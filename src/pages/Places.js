@@ -12,6 +12,7 @@ import Strings from "../helpers/stringResources";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
 import FilterBlock from "../components/add_place_components/FilterBlock";
 import {PlacesFilterContext} from "../contexts/PlacesFilterContext";
+import {AppStateStorageContext} from "../contexts/AppStateStorageContext";
 
 const styles = theme => ({
     button: {
@@ -74,8 +75,9 @@ function Places(props) {
     const {addAlertConfig} = UseAlertDialogContext();
     const {addConfig} = UseSnackbarContext();
 
+    const {placesPageConfig, savePlacesTableInfo} = useContext(AppStateStorageContext)
+
     useEffect(() => {
-        console.log("Filter query has changed!")
         setIsLoading(true);
         requestAllPlaces();
     }, [filterQuery]);
@@ -88,7 +90,7 @@ function Places(props) {
         }
     }
 
-    function requestAllPlaces(p = 1, keyword = "") {
+    function requestAllPlaces(p = placesPageConfig.page, keyword = placesPageConfig.keyword) {
         console.log(filterQuery + "&p=" + p + "&s=" + 10 + "&keyword=" + keyword);
         getAllPlaces(filterQuery + "&p=" + p + "&s=" + 10 + "&keyword=" + keyword);
     }
@@ -111,7 +113,6 @@ function Places(props) {
     }
 
     function removePlaceCallback(id) {
-        console.log("Name", getPlaceNameById(id));
         setIsLoading(true);
         addAlertConfig(Strings.DIALOG_PLACE_DELETE_TITLE + " - " + getPlaceNameById(id), Strings.DIALOG_PLACE_DELETE_MESSAGE, [{
             name: "Remove",
@@ -139,6 +140,7 @@ function Places(props) {
     const changePageCallback = (p = 0, keyword = "") => {
         if(!isLoading){
             setIsLoading(true);
+            savePlacesTableInfo(keyword, p)
             requestAllPlaces(p, keyword)
         }
     };
@@ -157,6 +159,7 @@ function Places(props) {
                     changePageCallback={changePageCallback}
                     updateCallback={updatePlaceCallback}
                     removeCallback={removePlaceCallback}
+                    initialKeyword={placesPageConfig.keyword}
                     id={"placeId"}
                     isLoading={isLoading}
                 />

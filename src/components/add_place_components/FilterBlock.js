@@ -112,10 +112,11 @@ function FilterBlock({classes, setOpen}) {
                     <div className={classes.sortingButtons}>
                         {filterOptions.map(row=>{
                             return <FormControlLabel
+                                key={row.filterName}
                                 control={<Checkbox
-                                    checked={row.filter}
-                                    onChange={()=>filterOptionsChanged(row.filterName)}
-                                    name={row.filterName} />}
+                                checked={row.filter}
+                                onChange={()=>filterOptionsChanged(row.filterName)}
+                                name={row.filterName} />}
                                 label={row.filterLabel}
                             />
                         })}

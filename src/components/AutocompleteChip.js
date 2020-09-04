@@ -123,7 +123,10 @@ function AutoCompleteChip(props){
                     options={options}
                     onChange={handleInput}
                     disableClearable
-                    getOptionLabel={(option) =>  id!==undefined ? name!== undefined ? option[name] : option.name : option}
+                    getOptionLabel={(option) => {
+                        const label = id != null ? name != null ? option[name].name : option.name : option.name
+                        return label
+                    }}
                     renderInput={(params) => <TextField {...params} label={label} variant="outlined" />}
                 />
             </Box>

@@ -89,7 +89,7 @@ function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setEr
                        helperText={shouldDisplayTitleMissingError ? "Please provide a title for your tour" : ""}
                        value={tourInfo.name}
                        onChange={handleTitleChange}
-                       defaultValue="My tour name" className={classes.nameField}/>
+                       className={classes.nameField}/>
             <TextField
                 className={classes.descriptionField}
                 multiline
@@ -105,6 +105,7 @@ function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setEr
             <AutoCompleteChip
                 options={availableCategories}
                 id="categoryId"
+                label="Select category"
                 setOptions={setAvailableCategories}
                 setSelectedOptions={setSelectedCategories}
                 selectedOptions={selectedCategories}
@@ -141,10 +142,10 @@ function TourInfoComponent({classes, tourInfo, tourInfoReducer, errorInfo, setEr
 TourInfoComponent.propTypes = {
     tourInfo: PropTypes.object.isRequired,
     tourInfoReducer: PropTypes.func.isRequired,
-    availableTags: PropTypes.array.isRequired,
-    setAvailableTags: PropTypes.func.isRequired,
-    selectedTags: PropTypes.array.isRequired,
-    setSelectedTags: PropTypes.func.isRequired,
+    availableCategories: PropTypes.array.isRequired,
+    setAvailableCategories: PropTypes.func.isRequired,
+    selectedCategories: PropTypes.array.isRequired,
+    setSelectedCategories: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(TourInfoComponent)

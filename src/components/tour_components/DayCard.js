@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import CardHeader from "@material-ui/core/CardHeader";
 import RemoveIcon from '@material-ui/icons/Remove';
-import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 
 
 const styles = theme => ({
@@ -62,7 +62,7 @@ function DayCard({classes, onSelectCallback, index, currentDay, tourInfoReducer,
                         className={classes.descriptionInput}
                         multiline
                         label="Description"
-                        value={description}
+                        value={description == null ? '' : description}
                         variant="outlined"
                         onChange={(e) => {
                             updateDescriptionGlobally(e.target.value)
@@ -71,7 +71,9 @@ function DayCard({classes, onSelectCallback, index, currentDay, tourInfoReducer,
                 </CardContent>
                 <CardHeader
                     action={
-                        <Button startIcon={<RemoveIcon/>} aria-label="remove" onClick={() => handleRemoveDay(index)}/>
+                        <IconButton  aria-label="remove" onClick={() => handleRemoveDay(index)}>
+                            <RemoveIcon/>
+                        </IconButton>
                     }
                 />
             </Card>

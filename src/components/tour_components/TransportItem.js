@@ -13,6 +13,7 @@ import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
 import NativeSelect from "@material-ui/core/NativeSelect";
 import IconButton from "@material-ui/core/IconButton";
 import RemoveIcon from "@material-ui/icons/Remove";
+import Typography from "@material-ui/core/Typography";
 
 
 const styles = theme => ({
@@ -65,7 +66,7 @@ const transportTypes = [
     }
 ]
 
-function TransportItem({classes, transportId, transportChangeCallback, transportRemoveCallback}) {
+function TransportItem({classes, transportId, transportChangeCallback}) {
 
     const [currentTransport, setCurrentTransport] = useState(transportId == null ? 0 : transportId)
 
@@ -89,9 +90,9 @@ function TransportItem({classes, transportId, transportChangeCallback, transport
                         })}
                     </NativeSelect>
                 </FormControl>
-                <IconButton aria-label="remove" onClick={() => transportRemoveCallback()}>
-                    <RemoveIcon />
-                </IconButton>
+                {/*<Typography variant="subtitle2" style={{flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end'}}>*/}
+                {/*    Estimated 15 min | 4km*/}
+                {/*</Typography>*/}
             </div>
             <MoreVertIcon/>
         </div>

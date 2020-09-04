@@ -19,25 +19,19 @@ const styles = theme => ({
     }
 })
 
-const TourPlaceSortable = SortableElement(({displayNoTransportWarning, elementData, removePlaceCallback, classes, addTransportCallback}) => (
+const TourPlaceSortable = SortableElement(({handleEditPlace, currentDay, elementData, removePlaceCallback, classes, tourInfoReducer, elementIndex, lastElement}) => (
     <div>
         <TourPlaceComponent removeCallback={removePlaceCallback} classes={{root: classes.tourPlaceComponent}}
-                            addTransportCallback={addTransportCallback} elementData={elementData}
-                            displayNoTransportWarning={displayNoTransportWarning}/>
-    </div>
-));
-const TransportItemSortable = SortableElement(({transportId, transportChangeCallback, transportRemoveCallback}) => (
-    <div>
-        <TransportItem transportId={transportId} transportRemoveCallback={transportRemoveCallback} transportChangeCallback={transportChangeCallback}/>
+                            elementData={elementData}
+                            tourInfoReducer={tourInfoReducer}
+                            elementIndex={elementIndex}
+                            currentDay={currentDay}
+                            handleEditPlace={handleEditPlace}
+                            lastElement={lastElement}/>
     </div>
 ));
 
-const SortableList = SortableContainer(({currentDay, removeElementCallback, tourInfo, classes, addTransportCallback, transportChangeCallback}) => {
-
-    const shouldDisplayNoTransportWarning = (index) => {
-        let elements = tourInfo.days[currentDay].tour
-        return ((elements.length -1 ) > index) && elements[index + 1].type !== ElementType.transport
-    }
+const SortableList = SortableContainer(({handleEditPlace, currentDay, removeElementCallback, tourInfo, classes, tourInfoReducer}) => {
 
     return (
 
@@ -46,23 +40,22 @@ const SortableList = SortableContainer(({currentDay, removeElementCallback, tour
 
                 switch (item.type) {
                     case ElementType.place:
-                        return <TourPlaceSortable key={item.data.details.placeId} index={index}
-                                                  addTransportCallback={addTransportCallback} elementData={item}
+                        return <TourPlaceSortable key={item.data.details.placeId} elementIndex={index}
+                                                  elementData={item}
+                                                  lastElement={index === tourInfo.days[currentDay].tour.length - 1}
+                                                  index={index}
                                                   classes={classes}
-                                                  displayNoTransportWarning={shouldDisplayNoTransportWarning(index)}
+                                                  currentDay={currentDay}
+                                                  handleEditPlace={handleEditPlace}
+                                                  tourInfoReducer={tourInfoReducer}
                                                   removePlaceCallback={() => removeElementCallback(index)}/>
-                    case ElementType.transport:
-                        return <TransportItemSortable key={item.data.elementIdentifier} index={index}
-                                                      transportId={item.data.transport}
-                                                      transportRemoveCallback = {() => removeElementCallback(index)}
-                                                      transportChangeCallback={(transport) => transportChangeCallback(index, transport)}/>
                 }
             })}
         </ul>
     )
 });
 
-function TourPlacesWrapper({classes, tourInfo, tourInfoReducer, currentDay, errorInfo, setErrorInfo}) {
+function TourPlacesWrapper({classes, tourInfo, tourInfoReducer, currentDay, errorInfo, setErrorInfo, handleEditPlace}) {
 
     const removeElementCallback = (index) => {
         tourInfoReducer({
@@ -81,26 +74,6 @@ function TourPlacesWrapper({classes, tourInfo, tourInfoReducer, currentDay, erro
         })
     }
 
-    const handleTransportChange = (index, data) => {
-        tourInfoReducer({
-            type: 'UPDATE_ELEMENT',
-            day: currentDay,
-            index: index,
-            data: data
-        })
-    }
-
-    const addTransportCallback = (details) => {
-        tourInfoReducer({
-            type: 'INSERT_TRANSPORT_FOR_PLACE',
-            placeId: details.data.details.placeId,
-            day: currentDay,
-            data: {type: ElementType.transport, data: {transport: 0, elementIdentifier: shortid.generate()}}
-        })
-    }
-
-
-
     return (
         <div className={classes.root}>
             {tourInfo.days[currentDay].tour.length === 0 &&
@@ -108,12 +81,12 @@ function TourPlacesWrapper({classes, tourInfo, tourInfoReducer, currentDay, erro
             <SortableList
                 pressDelay={200}
                 disableAutoscroll={false}
-                currentDay={currentDay}
+                tourInfoReducer={tourInfoReducer}
                 tourInfo={tourInfo}
-                transportChangeCallback={handleTransportChange}
                 onSortEnd={onSortEnd}
+                handleEditPlace={handleEditPlace}
+                currentDay={currentDay}
                 classes={classes}
-                addTransportCallback={addTransportCallback}
                 removeElementCallback={removeElementCallback}/>
         </div>
     )

@@ -48,24 +48,6 @@ export default function TourDataReducer(state, action) {
                     ...days
                 ]
             }
-        case 'INSERT_TRANSPORT_FOR_PLACE':
-            state.days.forEach((item, index) => {
-                if (index === action.day) {
-                    let tour = item.tour
-                    let index = tour.findIndex((item) => item.type === ElementType.place && item.data.details.placeId === action.placeId)
-                    tour.splice(index + 1, 0, action.data)
-                    days.push({
-                        ...item,
-                        tour: tour
-                    })
-                } else days.push(item)
-            })
-            return {
-                ...state,
-                days: [
-                    ...days
-                ]
-            }
         case 'ADD_DAY':
             return {
                 ...state,

@@ -121,7 +121,7 @@ function RecommendationListDialog({classes, open, setOpen, objectId, type}){
                             <React.Fragment>
                                 <List component="nav" style={{ overflowY: "scroll", width: '100%', maxHeight: 400}} onScroll={handleScroll} aria-label="main mailbox folders">
                                     {recommendations.map(row=>{
-                                        return <ListItem style={{width: '100%'}} button onClick={()=>{addPlaceToRecommendation(row)}}>
+                                        return <ListItem key={row.name} style={{width: '100%'}} button onClick={()=>{addPlaceToRecommendation(row)}}>
                                             <ListItemIcon>
                                                 <CheckBoxOutlineBlankIcon />
                                             </ListItemIcon>

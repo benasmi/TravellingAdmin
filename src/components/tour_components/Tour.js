@@ -17,6 +17,8 @@ import shortid from 'shortid';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import RecommendationListDialog from "../recomendation/RecommendationListDialog";
 import {RecommendationType} from "../recomendation/Recommendation";
+import history from "../../helpers/history";
+import TransportItem from "./TransportItem";
 
 export const ElementType = {
     place: 0,
@@ -125,7 +127,8 @@ function Tour({classes, match}) {
                 type: ElementType.place,
                 data: {
                     type: type,
-                    details: {...placeInfo}
+                    details: {...placeInfo},
+                    transport: {fk_transportId: 3}
                 },
             },
             onError: () => {
@@ -141,6 +144,10 @@ function Tour({classes, match}) {
             index: index
         })
     };
+
+    const handleEditPlace = (placeId) => {
+        window.open(`https://www.traveldirection.ax.lt/app/addplace/${placeId}`);
+    }
 
     useEffect(() => {
         if (tourId !== undefined) { //If user wants to edit a tour, we download all tour data. loadData also downloads categories
@@ -161,16 +168,10 @@ function Tour({classes, match}) {
             day.data.forEach(place => {
                 let aggregatedPlace = {
                     type: ElementType.place,
-                    data: {details: place.place, type: place.place.type}
+                    data: {details: place.place, type: place.place.type, transport: place.transport == null ? {fk_transportId: 3} : place.transport}
                 }
                 delete aggregatedPlace.data.details.type
                 aggregatedElements.push(aggregatedPlace)
-                place.transport.forEach(transport => {
-                    aggregatedElements.push({
-                        type: ElementType.transport,
-                        data: {transport: transport.fk_transportId - 1, elementIdentifier: shortid.generate()}
-                    })
-                })
             })
             let aggregatedDay = {...day, tour: aggregatedElements, elementIdentifier: shortid.generate()}
             delete aggregatedDay.data
@@ -222,17 +223,15 @@ function Tour({classes, match}) {
                 let element = day.tour[i]
                 if (element.type !== ElementType.place)
                     continue;
-                let transport = []
-                for (let j = i + 1; j < day.tour.length && day.tour[j].type === ElementType.transport; j++) {
-                    transport.push({fk_transportId: day.tour[j].data.transport + 1})
-                }
                 let aggregatedPlace = {
                     place: {
                         type: element.data.type,
                         placeId: element.data.details.placeId
                     },
-                    transport: transport
                 }
+                if(i !== day.tour.length - 1)
+                    aggregatedPlace.transport = element.data.transport
+
                 aggregatedDay.data.push(aggregatedPlace)
             }
             aggregatedDays.push(aggregatedDay)
@@ -289,6 +288,7 @@ function Tour({classes, match}) {
                      removePlace={removeElementCallback}
             />
             <TourPlacesWrapper errorInfo={errorInfo} setErrorInfo={setErrorInfo}
+                               handleEditPlace={handleEditPlace}
                                currentDay={currentDay} tourInfoReducer={dispatchTourInfo} tourInfo={tourInfo}/>
         </React.Fragment>
     ), [dayInfoWithoutDesc, currentDay])
@@ -312,7 +312,7 @@ function Tour({classes, match}) {
             <Divider variant="middle"/>
             {tourDaysComponents}
             <div className={classes.actionsArea}>
-                <Button variant="contained" color="primary" onClick={() => setRecommendationsDialogOpen(true)} disabled={tourId === null}>
+                <Button variant="contained" color="primary" onClick={() => setRecommendationsDialogOpen(true)} disabled={tourId == null}>
                     Add tour to recommendation
                 </Button>
                 <Button variant="contained" color="primary" onClick={handleSave}>

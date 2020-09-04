@@ -16,7 +16,7 @@ const styles = theme => ({
     }
 });
 
-const acceptedFileFormats = ['image/jpeg', 'image/png', 'image/bmp', 'image/jpg']
+const acceptedFileFormats = ['.jpeg', '.png', '.bmp', '.jpg']
 
 function AddImageDialog(props) {
 
@@ -30,14 +30,14 @@ function AddImageDialog(props) {
         Promise.all(selectedFiles.map(imagefile => {
             let formData = new FormData()
             formData.append("image", imagefile)
-            console.log('image', imagefile)
-            return API.Photos.uploadPhoto(formData)
+            return API.Photos.uploadPhoto(formData).then(response => response)
         })).then(response => {
             console.log(response)
             onFinishCallback(response)
         }).catch(error => {
-            onFinishCallback()
+            onFinishCallback(null)
         }).finally(() => {
+            setSelectedFiles([])
             setIsLoading(false)
         })
     }
@@ -45,11 +45,6 @@ function AddImageDialog(props) {
     const handleDrop = (files )=> {
         setSelectedFiles(existingFiles => [...existingFiles, ...files])
     }
-
-    useEffect(() => {
-        console.log(selectedFiles)
-
-    }, [selectedFiles])
 
     const handleDelete = (file) => {
         console.log(file.name)
@@ -68,7 +63,7 @@ function AddImageDialog(props) {
                         className={classes.dropzoneArea}
                         acceptedFiles={acceptedFileFormats}
                         maxFileSize={25000000}
-                        showAlerts={false}
+                        showAlerts={['error']}
                         dropzoneProps={{disabled: loading}} filesLimit={5} onDrop={handleDrop}
                     onDelete={handleDelete}/>
                 </DialogContent>

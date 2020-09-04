@@ -21,7 +21,6 @@ import EditIcon from '@material-ui/icons/Edit'
 import TextField from "@material-ui/core/TextField"
 import useDebounce from "../helpers/debounce";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import Chip from "@material-ui/core/Chip";
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -107,10 +106,6 @@ EnhancedTableHead.propTypes = {
     checkable: PropTypes.bool.isRequired
 };
 
-
-
-
-
 const useToolbarStyles = makeStyles((theme) => ({
     root: {
         paddingLeft: theme.spacing(2),
@@ -145,7 +140,6 @@ const EnhancedTableToolbar = (props) => {
         [debouncedSearch]
     );
 
-
     return (
         <Toolbar
             className={clsx(classes.root, {
@@ -168,7 +162,7 @@ const EnhancedTableToolbar = (props) => {
                     </IconButton>
                 </Tooltip>
             ) : <div style={{display: "flex", alignItems: "center"}}>
-                <TextField id="standard-basic" label="Search" onChange={ event =>{setKeyword(event.target.value)}}/>
+                <TextField id="standard-basic" label="Search" value={keyword} onChange={ event =>{setKeyword(event.target.value)}}/>
                 {!!customToolbarElements ? customToolbarElements : null}
             </div>}
         </Toolbar>
@@ -222,7 +216,20 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function TableComponent({title, searchFunction, headCells, pagingInfo, data, checkable, changePageCallback, updateCallback, removeCallback, id, isLoading, customToolbarElements}) {
+export default function TableComponent({title,
+                                           searchFunction,
+                                           headCells,
+                                           pagingInfo,
+                                           data,
+                                           checkable,
+                                           changePageCallback,
+                                           updateCallback,
+                                           removeCallback,
+                                           id,
+                                           isLoading,
+                                           customToolbarElements,
+                                           initialKeyword
+}) {
 
     TableComponent.propTypes = {
         title: PropTypes.string.isRequired,
@@ -235,18 +242,25 @@ export default function TableComponent({title, searchFunction, headCells, paging
         removeCallback: PropTypes.func,
         id: PropTypes.string.isRequired,
         isLoading: PropTypes.bool,
-        customToolbarElements: PropTypes.object
+        customToolbarElements: PropTypes.object,
+        initialKeyword: PropTypes.string,
     };
+
+    TableComponent.defaultProps = {
+        initialKeyword: ''
+    }
+
+
 
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState([]);
-    const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [keyword, setKeyword] = useState('');
 
+    const [page, setPage] = useState(0);
+    const [keyword, setKeyword] = useState(initialKeyword);
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -413,6 +427,7 @@ export default function TableComponent({title, searchFunction, headCells, paging
                         </TableBody>
                     </Table>
                 </TableContainer>
+
                 <TablePagination
                     rowsPerPageOptions={[10]}
                     component="div"

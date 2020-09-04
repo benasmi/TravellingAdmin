@@ -16,36 +16,37 @@ import {PlacesFilterProvider} from "./contexts/PlacesFilterContext";
 import EditDialogProvider from "./contexts/EditDialogContext";
 import {TextInputDialog} from "./components/feedback/TextInputDialog";
 import LoadingScreen from "./components/LoadingScreen";
+import AppStateStorageProvider from "./contexts/AppStateStorageContext";
 
 require('dotenv').config();
 
 ReactDOM.render(
     <React.Fragment>
-        <AuthProvider>
-            {/*<LoadingScreen />*/}
-            <Router history={history}>
-                <SnackbarProvider>
-                    <AlertDialogProvider>
-                        <EditDialogProvider>
-                            <SnackbarFeedback/>
-                            <AlertDialogFeedback/>
-                            <TextInputDialog/>
-                            <PlacesFilterProvider>
-                            <Switch>
-                                <Redirect exact from="/" to="/login"/>
-                                <Redirect exact from="/app" to="/app/home"/>
-                                <AuthenticatedRoute path="/app" component={App}/>
-                                <Route path="/login" component={LoginPage}/>
-                                <Route path="*" component={NotFoundPage}/>
-                                <Redirect from="*" to="/404"/>
-                            </Switch>
-                            </PlacesFilterProvider>
+        <AppStateStorageProvider>
+            <AuthProvider>
+                <Router history={history}>
+                    <SnackbarProvider>
+                        <AlertDialogProvider>
+                            <EditDialogProvider>
+                                <SnackbarFeedback/>
+                                <AlertDialogFeedback/>
+                                <TextInputDialog/>
+                                <PlacesFilterProvider>
+                                    <Switch>
+                                        <Redirect exact from="/" to="/login"/>
+                                        <Redirect exact from="/app" to="/app/home"/>
+                                        <AuthenticatedRoute path="/app" component={App}/>
+                                        <Route path="/login" component={LoginPage}/>
+                                        <Route path="*" component={NotFoundPage}/>
+                                        <Redirect from="*" to="/404"/>
+                                    </Switch>
+                                </PlacesFilterProvider>
+                            </EditDialogProvider>
+                        </AlertDialogProvider>
+                    </SnackbarProvider>
+                </Router>
+            </AuthProvider>
+        </AppStateStorageProvider>
 
-                        </EditDialogProvider>
-
-                    </AlertDialogProvider>
-                </SnackbarProvider>
-            </Router>
-        </AuthProvider>
     </React.Fragment>
     , document.getElementById('root'));

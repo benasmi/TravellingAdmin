@@ -28,7 +28,6 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
         } else {
             place[name] = value
         }
-        console.log("Updated place", place);
         setPlaceInfo(place)
     };
 

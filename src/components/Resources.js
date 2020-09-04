@@ -202,7 +202,8 @@ function Resources({classes}) {
     }
 
     const searchFunction = (keyword, item) => {
-        if(keyword.length < 1) return true
+        console.log("Keyword is what", keyword)
+        if(keyword == null || keyword.length < 1) return true
         return item.name.includes(keyword)
     }
 

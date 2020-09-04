@@ -6,6 +6,7 @@ import AddIcon from "@material-ui/icons/Add";
 import AddImageDialog from "../AddImageDialog";
 import {Card} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import UseSnackbarContext from "../../contexts/UseSnackbarContext";
 
 const styles = theme => ({
     outline: {
@@ -20,11 +21,15 @@ const styles = theme => ({
 
 function PhotosInfo({classes, setPhotos, photos}) {
     const [addImageDialogOpen, setAddImageDialogOpen] = useState(false);
+    const {addConfig} = UseSnackbarContext();
 
     function handleAddPhoto(files) {
         setAddImageDialogOpen(false);
-        if(files == null)
+        if(files == null){
+            addConfig(false, "Something went wrong")
             return;
+        }
+        addConfig(true, "Photos were uploaded successfully.")
 
         setPhotos([
             ...photos,
@@ -53,7 +58,6 @@ function PhotosInfo({classes, setPhotos, photos}) {
                 </Button>
 
                 <AddImageDialog open={addImageDialogOpen} onFinishCallback={(files) => handleAddPhoto(files)} onCloseCallback={() => setAddImageDialogOpen(false)}/>
-
 
             </Card>
         </div>

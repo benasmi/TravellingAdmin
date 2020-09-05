@@ -168,7 +168,9 @@ function Tour({classes, match}) {
             day.data.forEach(place => {
                 let aggregatedPlace = {
                     type: ElementType.place,
-                    data: {details: place.place, type: place.place.type, transport: place.transport == null ? {fk_transportId: 3} : place.transport}
+                    data: {details: place.place, type: place.place.type, transport: place.transport == null ? {fk_transportId: 3} : {
+                            fk_transportId: place.transport.fk_transportId-1
+                        }}
                 }
                 delete aggregatedPlace.data.details.type
                 aggregatedElements.push(aggregatedPlace)
@@ -230,13 +232,16 @@ function Tour({classes, match}) {
                     },
                 }
                 if(i !== day.tour.length - 1)
-                    aggregatedPlace.transport = element.data.transport
+                    aggregatedPlace.transport = {fk_transportId: element.data.transport.fk_transportId+1}
+                else
+                    aggregatedPlace.transport = {fk_transportId: null}
 
                 aggregatedDay.data.push(aggregatedPlace)
             }
             aggregatedDays.push(aggregatedDay)
         })
         let aggregatedTour = {...tourInfo, days: aggregatedDays}
+        console.log("P-HhH-P", aggregatedTour)
 
         if (tourId === undefined) {
             API.Tour.insertTour(aggregatedTour).then((response) => {

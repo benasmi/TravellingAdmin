@@ -56,6 +56,8 @@ function TourMap({classes, tourInfo, currentDay, addPlace, removePlace}) {
 
     const [directions, setDirection] = useState();
 
+    console.log('rerender')
+
     const [infoWindows, setInfoWindows] = useState([]);
     const [directionPlaces, setDirectionPlaces] = useState([])
 

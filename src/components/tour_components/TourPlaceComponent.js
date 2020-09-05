@@ -115,6 +115,7 @@ function TourPlaceComponent({classes, elementData, removeCallback, tourInfoReduc
             </CardContent>
           </div>
           <CardHeader
+              onClick={e => {e.stopPropagation(); e.preventDefault()}}
               action={
                 <IconButton aria-label="remove" onClick={() => removeCallback(elementData)}>
                   <RemoveIcon/>
@@ -123,15 +124,25 @@ function TourPlaceComponent({classes, elementData, removeCallback, tourInfoReduc
           />
         </Card>
 
-        {/*<TextField*/}
-        {/*    className={classes.descriptionInput}*/}
-        {/*    multiline*/}
-        {/*    label="Add a note"*/}
-        {/*    variant="outlined"*/}
-        {/*    onChange={(e) => {*/}
-        {/*      // updateDescriptionGlobally(e.target.value)*/}
-        {/*    }}*/}
-        {/*/>*/}
+        <TextField
+            className={classes.descriptionInput}
+            multiline
+            value={elementData.data.note}
+            label="Add a note"
+            style={{marginTop: 10, marginBottom: 5}}
+            variant="outlined"
+            onChange={(e) => {
+              tourInfoReducer({
+                type: 'UPDATE_ELEMENT',
+                day: currentDay,
+                index: elementIndex,
+                data: {
+                  ...elementData,
+                  note: e.target.value
+                }
+              })
+            }}
+        />
 
         {elementData.data.transport != null && !lastElement &&
         <TransportItem transportChangeCallback={handleChangeTransport}

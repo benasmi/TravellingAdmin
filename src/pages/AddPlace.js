@@ -288,6 +288,8 @@ function AddPlace({classes, match}) {
     setScheduleData(place.schedule.length === 0 ? defaultScheduleData : parseScheduleData(place.schedule))
     if (place.schedule.length === 0)
       setIsScheduleEnabled(false)
+    else
+      setIsScheduleEnabled(true)
 
     setSources(place.sources);
     setSelectedTags(place.tags);

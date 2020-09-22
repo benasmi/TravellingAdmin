@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import API from "../Networking/API";
 import * as moment from "moment";
 import {func} from "prop-types";
+import {AppStateStorageContext} from "./AppStateStorageContext";
 export const PlacesFilterContext = React.createContext();
 var buildUrl = require('build-url');
 
@@ -49,6 +50,9 @@ export const PlacesFilterProvider = ({children}) => {
             municipalities: selectedMunicipalities
         }
     }));
+
+    const {placesPageConfig, savePlacesTableInfo} = useContext(AppStateStorageContext)
+
 
     const getCategories = (params="") => {
         API.Categories.getAllCategories().then(response=>{

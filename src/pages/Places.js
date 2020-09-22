@@ -79,7 +79,12 @@ function Places(props) {
 
     useEffect(() => {
         setIsLoading(true);
-        requestAllPlaces();
+        if(!isLoading){
+            savePlacesTableInfo(1, placesPageConfig.keyword)
+            requestAllPlaces(1, placesPageConfig.keyword);
+        }else{
+            requestAllPlaces()
+        }
     }, [filterQuery]);
 
 

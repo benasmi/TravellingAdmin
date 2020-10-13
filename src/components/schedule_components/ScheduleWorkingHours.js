@@ -134,6 +134,23 @@ function ScheduleWorkingHours({schedule, setSchedule, scheduleOpenIndex, classes
       return moment(schedule[scheduleOpenIndex].periods[0].openTime, "HH:mm")
   }
 
+  const determineGlobalSplitScheduleCloseTime = () => {
+    for(let i = 0; i < 7; i++){
+      let periodsForThisDay =  schedule[scheduleOpenIndex].periods.filter(period => period.openDay === i)
+      if (periodsForThisDay.length > 1)
+        return moment(periodsForThisDay[1].closeTime, "HH:mm")
+    }
+    return moment("18:00", "HH:mm")
+  }
+  const determineGlobalSplitScheduleOpenTime = () => {
+    for(let i = 0; i < 7; i++){
+      let periodsForThisDay =  schedule[scheduleOpenIndex].periods.filter(period => period.openDay === i)
+      if (periodsForThisDay.length > 1)
+        return moment(periodsForThisDay[1].openTime, "HH:mm")
+    }
+    return moment("13:00", "HH:mm")
+  }
+
   return (
       <div>
         <div className={classes.root}>
@@ -192,7 +209,7 @@ function ScheduleWorkingHours({schedule, setSchedule, scheduleOpenIndex, classes
                                 ampm={false}
                                 className={classes.pickerStyle}
                                 format="HH:mm"
-                                minutesStep={30}
+                                minutesStep={5}
                                 InputProps={{
                                   classes: {
                                     input: classes.pickerInput,
@@ -209,7 +226,7 @@ function ScheduleWorkingHours({schedule, setSchedule, scheduleOpenIndex, classes
                                 ampm={false}
                                 className={classes.pickerStyle}
                                 format="HH:mm"
-                                minutesStep={30}
+                                minutesStep={5}
                                 InputProps={{
                                   classes: {
                                     input: classes.pickerInput,
@@ -250,7 +267,7 @@ function ScheduleWorkingHours({schedule, setSchedule, scheduleOpenIndex, classes
             ampm={false}
             format="HH:mm"
             className={classes.pickerStyle}
-            minutesStep={30}
+            minutesStep={5}
             InputProps={{
               classes: {
                 input: classes.pickerInput,
@@ -259,12 +276,16 @@ function ScheduleWorkingHours({schedule, setSchedule, scheduleOpenIndex, classes
             onChange={(e) => {
               setSchedule(schedules => {
                 const newSchedules = [...schedules]
-                newSchedules[scheduleOpenIndex].periods = newSchedules[scheduleOpenIndex].periods.map(period => {
-                  return {
-                    ...period,
-                    openTime: moment(e).format("HH:mm")
-                  }
-                })
+                let newPeriods = []
+                for(let i = 0; i < 7; i++){
+                    let periodsForThisDay =  schedules[scheduleOpenIndex].periods.filter(period => period.openDay === i)
+                    if (periodsForThisDay.length > 0){
+                      newPeriods.push({...periodsForThisDay[0], openTime: moment(e).format("HH:mm")})
+                      if(periodsForThisDay.length > 1)
+                        newPeriods.push(periodsForThisDay[1])
+                    }
+                }
+                newSchedules[scheduleOpenIndex].periods = newPeriods
                 return newSchedules
               })
             }}
@@ -278,7 +299,7 @@ function ScheduleWorkingHours({schedule, setSchedule, scheduleOpenIndex, classes
             ampm={false}
             format="HH:mm"
             className={classes.pickerStyle}
-            minutesStep={30}
+            minutesStep={5}
             InputProps={{
               classes: {
                 input: classes.pickerInput,
@@ -287,16 +308,86 @@ function ScheduleWorkingHours({schedule, setSchedule, scheduleOpenIndex, classes
             onChange={(e) => {
               setSchedule(schedules => {
                 const newSchedules = [...schedules]
-                newSchedules[scheduleOpenIndex].periods = newSchedules[scheduleOpenIndex].periods.map(period => {
-                  return {
-                    ...period,
-                    closeTime: moment(e).format("HH:mm")
+                let newPeriods = []
+                for(let i = 0; i < 7; i++){
+                  let periodsForThisDay =  schedules[scheduleOpenIndex].periods.filter(period => period.openDay === i)
+                  if (periodsForThisDay.length > 0){
+                    newPeriods.push({...periodsForThisDay[0], closeTime: moment(e).format("HH:mm")})
+                    if(periodsForThisDay.length > 1)
+                      newPeriods.push(periodsForThisDay[1])
+                  }
                 }
-                })
+                newSchedules[scheduleOpenIndex].periods = newPeriods
                 return newSchedules
               })
             }}
             value={determineGlobalCloseTime()}
+        />
+
+        <br/>
+        <Typography variant="h7">
+          Global split schedule time
+        </Typography>
+        <TimePicker
+            margin="normal"
+            ampm={false}
+            format="HH:mm"
+            className={classes.pickerStyle}
+            minutesStep={5}
+            InputProps={{
+              classes: {
+                input: classes.pickerInput,
+              },
+            }}
+            onChange={(e) => {
+              setSchedule(schedules => {
+                const newSchedules = [...schedules]
+                let newPeriods = []
+                for(let i = 0; i < 7; i++){
+                  let periodsForThisDay =  schedules[scheduleOpenIndex].periods.filter(period => period.openDay === i)
+                  if (periodsForThisDay.length > 0){
+                    newPeriods.push(periodsForThisDay[0])
+                    if(periodsForThisDay.length > 1)
+                      newPeriods.push({...periodsForThisDay[1], openTime: moment(e).format("HH:mm")})
+                  }
+                }
+                newSchedules[scheduleOpenIndex].periods = newPeriods
+                return newSchedules
+              })
+            }}
+            value={determineGlobalSplitScheduleOpenTime()}
+        />
+        <Typography variant="h7">
+          -
+        </Typography>
+        <TimePicker
+            margin="normal"
+            ampm={false}
+            format="HH:mm"
+            className={classes.pickerStyle}
+            minutesStep={5}
+            InputProps={{
+              classes: {
+                input: classes.pickerInput,
+              },
+            }}
+            onChange={(e) => {
+              setSchedule(schedules => {
+                const newSchedules = [...schedules]
+                let newPeriods = []
+                for(let i = 0; i < 7; i++){
+                  let periodsForThisDay =  schedules[scheduleOpenIndex].periods.filter(period => period.openDay === i)
+                  if (periodsForThisDay.length > 0){
+                    newPeriods.push(periodsForThisDay[0])
+                    if(periodsForThisDay.length > 1)
+                      newPeriods.push({...periodsForThisDay[1], closeTime: moment(e).format("HH:mm")})
+                  }
+                }
+                newSchedules[scheduleOpenIndex].periods = newPeriods
+                return newSchedules
+              })
+            }}
+            value={determineGlobalSplitScheduleCloseTime()}
         />
       </div>
   )

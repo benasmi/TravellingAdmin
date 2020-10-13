@@ -263,6 +263,7 @@ function AddPlace({classes, match}) {
       totalReviews: place.totalReviews,
       price: place.price,
       averageTimeSpent: place.averageTimeSpent,
+      bookInAdvance: place.bookInAdvance
     });
 
     setLocationData({
@@ -459,6 +460,7 @@ function AddPlace({classes, match}) {
     placeInfo.phoneNumber,
     placeInfo.price,
     placeInfo.website,
+      placeInfo.bookInAdvance,
     sources
   ])
 

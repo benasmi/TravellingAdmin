@@ -13,6 +13,8 @@ import API from "../../Networking/API";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import AddSourceDialog from "../AddSourceDialog";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 
 const styles = theme => ({});
@@ -123,6 +125,24 @@ function BasicPlaceInfo({classes, placeInfo, setPlaceInfo, selectedSources, setS
                 shrink: true,
             }}
         />
+      <FormControlLabel
+          style={{width: '100%', marginLeft: 5}}
+          control={
+            <Checkbox
+                name="checkedB"
+                color="primary"
+                checked={placeInfo['bookInAdvance'] || false}
+                onChange={(e) => setPlaceInfo(place => {
+                  return {
+                    ...place,
+                    bookInAdvance: !place.bookInAdvance || false
+                  }
+                }
+                )}
+            />
+          }
+          label={<span style={{fontSize: 16}}>Requires booking in advance</span>}
+      />
         <TextField
             label="Website"
             style={{margin: 8}}

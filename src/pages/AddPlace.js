@@ -90,7 +90,7 @@ function AddPlace({classes, match}) {
     placeId: "",
     name: "", description: "", website: "", phoneNumber: "",
     isPublic: false, isVerified: true, overallStarRating: 0, totalReviews: 0,
-    source: "", price: "", averageTimeSpent: "0"
+    source: "", price: "", averageTimeSpent: "0", grade: 50
   });
 
 
@@ -263,7 +263,8 @@ function AddPlace({classes, match}) {
       totalReviews: place.totalReviews,
       price: place.price,
       averageTimeSpent: place.averageTimeSpent,
-      bookInAdvance: place.bookInAdvance
+      bookInAdvance: place.bookInAdvance,
+      grade: place.grade
     });
 
     setLocationData({
@@ -504,13 +505,15 @@ function AddPlace({classes, match}) {
     return (
         <Paper elevation={4} className={classes.paperContent}>
           <PlaceDiscovery
+              placeInfo={placeInfo}
+              setPlaceInfo={setPlaceInfo}
               selectedTags={selectedTags}
               setSelectedTags={setSelectedTags}
               selectedCategories={selectedCategories}
               setSelectedCategories={setSelectedCategories}/>
         </Paper>
     )
-  }, [selectedCategories, selectedTags])
+  }, [selectedCategories, selectedTags, placeInfo])
 
 
   const scheduleContainer = useMemo(() => {

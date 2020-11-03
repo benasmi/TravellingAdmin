@@ -122,14 +122,14 @@ function ScheduleWorkingHours({schedule, setSchedule, scheduleOpenIndex, classes
   }
 
   const determineGlobalCloseTime = () => {
-    if(schedule[scheduleOpenIndex].periods == null || schedule[scheduleOpenIndex].length === 0)
-      return "08:00"
+    if(schedule[scheduleOpenIndex].periods == null || schedule[scheduleOpenIndex].periods.length === 0)
+      return moment("08:00", "HH:mm")
     else
       return moment(schedule[scheduleOpenIndex].periods[0].closeTime, "HH:mm")
   }
   const determineGlobalOpenTime = () => {
-    if(schedule[scheduleOpenIndex].periods == null || schedule[scheduleOpenIndex].length === 0)
-      return "18:00"
+    if(schedule[scheduleOpenIndex].periods == null || schedule[scheduleOpenIndex].periods.length === 0)
+      return moment("18:00", "HH:mm")
     else
       return moment(schedule[scheduleOpenIndex].periods[0].openTime, "HH:mm")
   }

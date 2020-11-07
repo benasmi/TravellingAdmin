@@ -80,7 +80,7 @@ function Places(props) {
     useEffect(() => {
         setIsLoading(true);
         if(!isLoading){
-            savePlacesTableInfo(1, placesPageConfig.keyword)
+            savePlacesTableInfo(placesPageConfig.keyword, 1);
             requestAllPlaces(1, placesPageConfig.keyword);
         }else{
             requestAllPlaces()

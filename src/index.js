@@ -17,6 +17,7 @@ import EditDialogProvider from "./contexts/EditDialogContext";
 import {TextInputDialog} from "./components/feedback/TextInputDialog";
 import LoadingScreen from "./components/LoadingScreen";
 import AppStateStorageProvider from "./contexts/AppStateStorageContext";
+import {AbstractionCategoryDialog} from "./components/feedback/AbstractionCategoryDialog";
 
 require('dotenv').config();
 
@@ -31,6 +32,7 @@ ReactDOM.render(
                                 <SnackbarFeedback/>
                                 <AlertDialogFeedback/>
                                 <TextInputDialog/>
+                                <AbstractionCategoryDialog/>
                                 <PlacesFilterProvider>
                                     <Switch>
                                         <Redirect exact from="/" to="/login"/>

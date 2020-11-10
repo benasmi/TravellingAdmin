@@ -23,14 +23,18 @@ const getAllTags = () => RequestType.getRequest("api/v1/tags/all");
 const addTag = (params) => RequestType.postRequest("api/v1/tags/insert", params);
 const removeTags = (params) => RequestType.postRequest("api/v1/tags/delete", params);
 const updateTags = (params) => RequestType.postRequest("api/v1/tags/update", params);
-const Tags = {getAllTags, addTag, removeTags, updateTags};
+const updateFeaturedTags = (data) => RequestType.postRequest("api/v1/tags/featured/update", data);
+const Tags = {getAllTags, addTag, removeTags, updateTags, updateFeaturedTags};
 
 //Category
 const addCategory = (params) => RequestType.postRequest("api/v1/categories/insert", params);
 const removeCategory = (params) => RequestType.postRequest("api/v1/categories/delete", params);
 const updateCategory = (params) => RequestType.postRequest("api/v1/categories/update", params);
 const getAllCategories = (params) => RequestType.getRequest("api/v1/categories/all", params);
-const Categories = {addCategory, getAllCategories, removeCategory, updateCategory};
+const getAllAbstractedCategories = (params) => RequestType.getRequest("api/v1/categories/all/abstracted", params);
+const updateAbstractedCategories = (data) => RequestType.postRequest("api/v1/categories/update/abstracted", data);
+const abstractedCategoriesLeftOver = () => RequestType.getRequest("api/v1/categories/abstracted/left");
+const Categories = {addCategory, getAllCategories, removeCategory, updateCategory, getAllAbstractedCategories, updateAbstractedCategories, abstractedCategoriesLeftOver};
 
 //Photo
 const addPhoto = (params) => RequestType.postRequest("api/v1/photo/insert", params);

@@ -1,17 +1,15 @@
-import PropTypes from "prop-types";
 import {withStyles} from "@material-ui/core/styles";
 import React, {useEffect, useState} from "react";
 import TableComponent from "./TableComponent";
 import API from "../Networking/API";
 import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
-import Strings from "../helpers/stringResources";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import history from "../helpers/history";
 import AddIcon from "@material-ui/icons/Add";
-import AddDialog from "./AddDialog";
 import UseEditDialogContext from "../contexts/UseEditDialogContext";
+import AutoCompleteChip from "./AutocompleteChip";
+import Divider from "@material-ui/core/Divider";
 
 const styles = theme => ({
     root: {
@@ -36,16 +34,24 @@ const styles = theme => ({
         justifyContent: "flex-end",
         width: "100%",
     }
-})
+});
 
 const categoriesHeadCells = [
     {id: 'name', numeric: false, disablePadding: false, label: 'Category name', isId: false},
     {id: 'actions', numeric: false, disablePadding: false, label: 'Actions', isId: false}
-]
+];
+
+const categoriesAbstractedHeadCells = [
+    {id: 'name', numeric: false, disablePadding: false, label: 'Category name', isId: false},
+    {id: 'label', numeric: false, disablePadding: false, label: 'Mapped categories', isId: false},
+    {id: 'count', numeric: false, disablePadding: false, label: 'Count', isId: false},
+    {id: 'actions', numeric: false, disablePadding: false, label: 'Actions', isId: false}
+];
+
 const tagsHeadCells = [
     {id: 'name', numeric: false, disablePadding: false, label: 'Tag name', isId: false},
     {id: 'actions', numeric: false, disablePadding: false, label: 'Actions', isId: false}
-]
+];
 
 function Resources({classes}) {
 
@@ -58,24 +64,50 @@ function Resources({classes}) {
         tags: false
     })
 
-    const [categories, setCategories] = useState([])
-    const [tags, setTags] = useState([])
+    const [categories, setCategories] = useState([]);
+    const [abstractedCategories, setAbstractedCategories] = useState([]);
+    const [tags, setTags] = useState([]);
+    const [featuredTags, setFeaturedTags] = useState([]);
 
     useEffect(() => {
-        setIsLoading({categories: true, tags: true})
+        setIsLoading({categories: true, tags: true, abstractedCats: true});
         Promise.all([
                 API.Categories.getAllCategories(),
-                API.Tags.getAllTags()
+                API.Tags.getAllTags(),
+                API.Categories.getAllAbstractedCategories()
             ]
         ).then(response => {
-            setCategories(response[0])
-            setTags(response[1])
+            setCategories(response[0]);
+            parseTags(response[1]);
+            parseAbstractedCats(response[2]);
         }).catch(() => {
             addConfig(false, "Could not retrieve data!")
         }).finally(() => {
-            setIsLoading(oldData => {return{ ...oldData, categories: false, tags: false}})
+            setIsLoading(oldData => {return{ ...oldData, categories: false, tags: false, abstractedCats: false}})
         })
     }, [])
+
+    function parseTags(response){
+
+        console.log("Tags", response)
+        setTags(response);
+
+        const featuredTags = response.filter(tag => tag.isFeatured === true);
+        console.log("Featured tags", featuredTags)
+        setFeaturedTags(featuredTags);
+    }
+
+    function parseAbstractedCats(response) {
+        let cats = response;
+        for(let i = 0; i<cats.length; i++){
+            cats[i].count = cats[i].mappedCategories.length;
+            cats[i].label = cats[i].mappedCategories.map(elem=>{
+                return elem.name;
+            }).join(' | ')
+        }
+        setAbstractedCategories(cats)
+    }
+
 
     const handleAddCategory = () => {
         addEditDialogConfig({
@@ -114,7 +146,7 @@ function Resources({classes}) {
             }
         }], () => {
         })
-    }
+    };
 
     const updateCategoryHandler = (categoryId) => {
         let categoryName = categories.filter(item => item.categoryId === categoryId)[0].name
@@ -137,7 +169,51 @@ function Resources({classes}) {
             validateInput: (input) => {return input.length > 0 ? 0 : 1},
             textFieldLabel: "Restaurants, hiking, etc..."
         })
-    }
+    };
+
+    const updateAbstractionCategoryHandler = (categoryId) => {
+        let abstractedCat = abstractedCategories.filter(item => item.categoryId === categoryId)[0];
+        addEditDialogConfig({
+            title: "Edit abstraction category",
+            explanation: "Type the abstraction category name",
+            defaultText: abstractedCat.name,
+            onDoneCallback: (selectedOptions, text) => {
+                API.Categories.updateAbstractedCategories(
+                    {name: text,
+                        categoryId: abstractedCat.categoryId,
+                        mappedCategories: selectedOptions
+                    }).then(()=>{
+                    addConfig(true, "Abstraction category updated successfully");
+
+                    setAbstractedCategories(oldData => {return oldData.map(item => {
+                        if(item.categoryId === categoryId)
+                            return {...item, name: text,
+                                mappedCategories: selectedOptions,
+                                count: selectedOptions.length,
+                                label: selectedOptions.map(row=>{
+                                    return row.name;
+                                }).join(' | ')
+                        };
+                        else return item
+                    })})
+                }).catch(()=>{
+                    addConfig(false, "Failed to update abstraction category.")
+                })
+            },
+            validateInput: (input) => {
+                console.log("Input length", input)
+                return input.length > 0 ? 0 : 1
+            },
+            textFieldLabel: "Restaurants, hiking, etc...",
+            payload: {
+                type: "SUPER_CAT",
+                options: categories,
+                selectedOptions: abstractedCat.mappedCategories
+            }
+        })
+    };
+
+
 
     const updateTagHandler = (id) => {
         let tagName = tags.filter(item => item.tagId === id)[0].name
@@ -199,12 +275,43 @@ function Resources({classes}) {
             validateInput: (input) => {return input.length > 0 ? 0 : 1},
             textFieldLabel: "Warm, quick, cozy..."
         })
-    }
+    };
 
     const searchFunction = (keyword, item) => {
-        console.log("Keyword is what", keyword)
-        if(keyword == null || keyword.length < 1) return true
+        if(keyword == null || keyword.length < 1) return true;
         return item.name.includes(keyword)
+    };
+
+    function SuperTags() {
+        return (
+            <div>
+                <AutoCompleteChip
+                    options={tags}
+                    setOptions={setTags}
+                    selectedOptions={featuredTags}
+                    setSelectedOptions={setFeaturedTags}
+                    id='tagId'
+                    label="Select featured tags"
+                />
+                <Button
+                    style={{alignSelf: 'flex-end'}}
+                    onClick={()=>{
+                        API.Tags.updateFeaturedTags(
+                            featuredTags
+                        ).then(()=>{
+                            addConfig(true, "Featured tags updated and now live!")
+                        }).catch(()=>{
+                            addConfig(false, "Error updating featured tags")
+                        })
+                    }}
+                    variant='contained'
+                    color='primary'
+                >
+                    Save featured tags
+                </Button>
+                <Divider style={{marginTop: 32, marginBottom: 32}}/>
+            </div>
+        )
     }
 
     return (
@@ -237,6 +344,23 @@ function Resources({classes}) {
                 </Box>
 
                 <br/>
+                <br/>
+
+                <TableComponent
+                    title={"Abstracted categories"}
+                    headCells={categoriesAbstractedHeadCells}
+                    data={abstractedCategories}
+                    pagingInfo={null}
+                    checkable={false}
+                    searchFunction={searchFunction}
+                    changePageCallback={() => {}}
+                    updateCallback={updateAbstractionCategoryHandler}
+                    removeCallback={()=>{}}
+                    id={"categoryId"}
+                    isLoading={loading.categories}
+                />
+
+                <br/>
 
                 <TableComponent
                     title={"Tags"}
@@ -248,6 +372,7 @@ function Resources({classes}) {
                     changePageCallback={() => {}}
                     updateCallback={updateTagHandler}
                     removeCallback={removeTagHandler}
+                    customToolbarElements={SuperTags}
                     id={"tagId"}
                     isLoading={loading.tags}
                 />

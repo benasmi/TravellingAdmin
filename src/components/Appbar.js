@@ -19,10 +19,7 @@ import Home from "../pages/Home";
 import Places from "../pages/Places";
 import AddPlace from "../pages/AddPlace";
 import history from "../helpers/history";
-import ApiPlaces from "../pages/ApiPlaces";
-import UseSnackbarContext from "../contexts/UseSnackbarContext";
 import UseAppBarTitleContext from "../contexts/UseAppBarTitleContext";
-import NotFoundPage from "../pages/NotFoundPage";
 import Redirect from "react-router-dom/es/Redirect";
 
 import Tour from "./tour_components/Tour";
@@ -32,12 +29,9 @@ import Resources from "./Resources";
 import {PlacesFilterProvider} from "../contexts/PlacesFilterContext";
 import ManageUsers from "../pages/ManageUsers";
 import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
-import Strings from "../helpers/stringResources";
-import API from "../Networking/API";
 import {AuthContext} from "../contexts/AuthContext";
 import RecommendationsPage from "../pages/RecommendationsPage";
-import EditRecommendationProvider, {EditRecommendationContext} from "../contexts/EditRecommendationContext";
-import AppStateStorageProvider from "../contexts/AppStateStorageContext";
+import EditRecommendationProvider from "../contexts/EditRecommendationContext";
 const drawerWidth = 240;
 
 

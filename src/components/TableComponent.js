@@ -81,13 +81,18 @@ const EnhancedTableToolbar = (props) => {
 
     return (
         <Toolbar>
-            <div style={{display: "flex", width: '100%', alignItems: "center", justifyContent: 'space-between'}}>
-                <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-                    {title}
-                </Typography>
-                <TextField id="standard-basic" label="Search" value={keyword} onChange={ event =>{setKeyword(event.target.value)}}/>
-                {!!customToolbarElements ? customToolbarElements : null}
+            <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
+                <div>
+                    {customToolbarElements !== undefined ? customToolbarElements() : null}
+                </div>
+                <div style={{display: "flex", width: '100%', alignItems: "center", justifyContent: 'space-between'}}>
+                    <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+                        {title}
+                    </Typography>
+                    <TextField id="standard-basic" label="Search" value={keyword} onChange={ event =>{setKeyword(event.target.value)}}/>
+                </div>
             </div>
+
         </Toolbar>
     );
 };

@@ -56,7 +56,14 @@ const defaultOptions = {
     /**
      * The default text to be displayed in TextField
      */
-    defaultText: ""
+    defaultText: "",
+
+    /**
+     * Additional payload
+     */
+    payload: {}
+
+
 }
 
 export default function EditDialogProvider({ children }) {
@@ -70,7 +77,7 @@ export default function EditDialogProvider({ children }) {
             setDialogConfig({
                 ...defaultOptions,
                 ...options
-            })
+            });
             setDialogOpen(true)
         },
         removeEditDialogConfig: () => setDialogConfig(null)

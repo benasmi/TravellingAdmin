@@ -83,7 +83,7 @@ const EnhancedTableToolbar = (props) => {
         <Toolbar>
             <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
                 <div>
-                    {customToolbarElements !== undefined ? customToolbarElements() : null}
+                    {customToolbarElements !== undefined ? customToolbarElements : null}
                 </div>
                 <div style={{display: "flex", width: '100%', alignItems: "center", justifyContent: 'space-between'}}>
                     <Typography className={classes.title} variant="h6" id="tableTitle" component="div">

@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 import API from "../Networking/API";
 import * as moment from "moment";
-import {func} from "prop-types";
 import {AppStateStorageContext} from "./AppStateStorageContext";
+import {AppResourcesContext} from "./AppResourcesContext";
 export const PlacesFilterContext = React.createContext();
 var buildUrl = require('build-url');
 
@@ -17,6 +17,9 @@ const initialDates = {
 export const PlacesFilterProvider = ({children}) => {
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
+
+    const [tags, setTags] = useState([]);
+    const [selectedTags, setSelectedTags] = useState([]);
 
     const [cities, setCities] = useState([]);
     const [selectedCities, setSelectedCities] = useState([]);
@@ -33,6 +36,8 @@ export const PlacesFilterProvider = ({children}) => {
     const [initialLoading, setInitialLoading] = useState(true);
     const [resetFilterOptions, setResetFilterOptions] = useState(false);
 
+    const {globalCategories, globalTags} = useContext(AppResourcesContext);
+
     const [filterOptions, setFilterOptions] = useState([
         {filterLabel: "Unverified", filter: false, filterName: "unverified"},
         {filterLabel: "Unpublished", filter: false, filterName: "unpublished"}]);
@@ -45,23 +50,22 @@ export const PlacesFilterProvider = ({children}) => {
             dm: [dates.modificationStart, dates.modificationEnd],
             filterOptions: parseFilterOptions(),
             categories: parseCategories(),
+            tags: parseTags(),
             countries: selectedCountries,
             cities: selectedCities,
             municipalities: selectedMunicipalities
         }
     }));
 
-    const {placesPageConfig, savePlacesTableInfo} = useContext(AppStateStorageContext)
 
+    useEffect(()=>{
+        setCategories(JSON.parse(JSON.stringify(globalCategories)))
+    },[globalCategories]);
 
-    const getCategories = (params="") => {
-        API.Categories.getAllCategories().then(response=>{
-            setCategories(response);
-            // console.log(response);
-        }).catch(error=>{
-            console.log(error)
-        });
-    };
+    useEffect(()=>{
+        setTags(JSON.parse(JSON.stringify(globalTags)))
+    },[globalTags]);
+
 
     const getAllCities = (restrictions="") =>{
         API.Places.getAllCities(restrictions).then(res=>{
@@ -95,7 +99,6 @@ export const PlacesFilterProvider = ({children}) => {
 
     useEffect(()=>{
         if(!initialLoading){
-            // console.log("Selected countries changed")
             getAllMunicipalities(buildUrl(null, {
                 queryParams: {
                     countryRestrictions: selectedCountries
@@ -113,7 +116,6 @@ export const PlacesFilterProvider = ({children}) => {
 
     useEffect(()=>{
         if(!initialLoading){
-            // console.log("Selected munis changed")
             getAllCities(buildUrl(null, {
                 queryParams: {
                     munRestrictions: selectedMunicipalities,
@@ -124,9 +126,7 @@ export const PlacesFilterProvider = ({children}) => {
     }, [selectedMunicipalities]);
 
     useEffect(()=>{
-        console.log("Fetching...");
         Promise.all([
-            getCategories(),
             getAllCities(),
             getAllCountries(),
             getAllCounties(),
@@ -147,6 +147,7 @@ export const PlacesFilterProvider = ({children}) => {
                         dm: [dates.modificationStart, dates.modificationEnd],
                         o: parseFilterOptions(),
                         c: parseCategories(),
+                        tags: parseTags(),
                         countries: selectedCountries,
                         cities: selectedCities,
                         municipalities: selectedMunicipalities
@@ -158,7 +159,7 @@ export const PlacesFilterProvider = ({children}) => {
                 }
             }
         }
-    },[selectedCategories, selectedCities,selectedCountries,selectedMunicipalities,dates,filterOptions,resetFilterOptions]);
+    },[selectedCategories, selectedTags, selectedCities,selectedCountries,selectedMunicipalities,dates,filterOptions,resetFilterOptions]);
 
     function areFiltersCleared() {
         let filterOptionsCleared = true;
@@ -169,6 +170,7 @@ export const PlacesFilterProvider = ({children}) => {
         });
         return filterOptionsCleared &&
             selectedCategories.length === 0 &&
+            selectedTags.length === 0 &&
             selectedCities.length === 0 &&
             selectedCountries.length ===0 &&
             dates.insertionStart === initialDates.insertionStart &&
@@ -176,12 +178,13 @@ export const PlacesFilterProvider = ({children}) => {
     }
 
     function parseCategories(){
-        let cats = [];
-        selectedCategories.map(row=>{
-            cats.push(row.name)
-        });
-        return cats
+        return selectedCategories.map(row => row.categoryId);
     }
+
+    function parseTags(){
+        return selectedTags.map(row => row.tagId);
+    }
+
 
     function parseFilterOptions(){
         let options = [];
@@ -206,6 +209,11 @@ export const PlacesFilterProvider = ({children}) => {
         setCategories,
         selectedCategories,
         setSelectedCategories,
+
+        tags,
+        setTags,
+        selectedTags,
+        setSelectedTags,
 
         counties,
         setCounties,

@@ -10,6 +10,7 @@ import AddIcon from "@material-ui/icons/Add";
 import UseEditDialogContext from "../contexts/UseEditDialogContext";
 import AutoCompleteChip from "./AutocompleteChip";
 import Divider from "@material-ui/core/Divider";
+import Alert from "@material-ui/lab/Alert";
 
 const styles = theme => ({
     root: {
@@ -293,8 +294,12 @@ function Resources({classes}) {
                     id='tagId'
                     label="Select featured tags"
                 />
+                <Alert severity="error">
+                    Please, bare in mind that there shouldn't be more than ~8 featured tags.
+                    These selections directly influence search results in Travelgo app.
+                </Alert>
                 <Button
-                    style={{alignSelf: 'flex-end'}}
+                    style={{alignSelf: 'flex-end', marginBottom: 32, marginTop: 16}}
                     onClick={()=>{
                         API.Tags.updateFeaturedTags(
                             featuredTags
@@ -309,7 +314,6 @@ function Resources({classes}) {
                 >
                     Save featured tags
                 </Button>
-                <Divider style={{marginTop: 32, marginBottom: 32}}/>
             </div>
         )
     }
@@ -372,7 +376,7 @@ function Resources({classes}) {
                     changePageCallback={() => {}}
                     updateCallback={updateTagHandler}
                     removeCallback={removeTagHandler}
-                    customToolbarElements={SuperTags}
+                    customToolbarElements={SuperTags()}
                     id={"tagId"}
                     isLoading={loading.tags}
                 />

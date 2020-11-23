@@ -57,12 +57,16 @@ const style = theme =>({
 
 function FilterBlock({classes, setOpen}) {
     const {
+        tags, setTags, selectedTags, setSelectedTags,
         categories, setCategories, selectedCategories, setSelectedCategories,
         cities, setCities, selectedCities, setSelectedCities,
         countries, setCountries, selectedCountries, setSelectedCountries,
         municipalities, setMunicipalities, selectedMunicipalities, setSelectedMunicipalities,
         filterOptions, setFilterOptions, setResetFilterOptions,
         dates, setDates} = useContext(PlacesFilterContext);
+
+
+    const [datesVisible, setDatesVisible] = useState(false);
 
     const filterOptionsChanged = (name) =>{
         let generalOptions = Object.assign([], filterOptions);
@@ -83,6 +87,7 @@ function FilterBlock({classes, setOpen}) {
     function clearFilters() {
         setResetFilterOptions(true);
 
+        setSelectedTags([]);
         setSelectedCities([]);
         setSelectedCountries([]);
         setSelectedCategories([]);
@@ -131,44 +136,93 @@ function FilterBlock({classes, setOpen}) {
                                       selectedOptions={selectedCategories}
                                       setSelectedOptions={setSelectedCategories}/>
 
+                    <Typography variant="h6">
+                        Filter by tags
+                    </Typography>
+                    <AutocompleteChip label="Select tags"
+                                      id="tagId"
+                                      options={tags}
+                                      setOptions={setTags}
+                                      selectedOptions={selectedTags}
+                                      setSelectedOptions={setSelectedTags}/>
+
+
+                </Paper>
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+                <Paper className={classes.paper}>
+                    <Typography variant="h6">
+                        Filter by countries
+                    </Typography>
+                    <AutocompleteChip label="Select countries"
+                                      options={countries}
+                                      setOptions={setCountries}
+                                      selectedOptions={selectedCountries}
+                                      setSelectedOptions={setSelectedCountries}/>
+                            <Typography variant="h6">
+                                Filter by municipalities
+                            </Typography>
+                            <AutocompleteChip label="Select municipalities"
+                                              options={municipalities}
+                                              setOptions={setMunicipalities}
+                                              selectedOptions={selectedMunicipalities}
+                                              setSelectedOptions={setSelectedMunicipalities}/>
+                            <Typography variant="h6">
+                                Filter by cities
+                            </Typography>
+                            <AutocompleteChip label="Select cities"
+                                              options={cities}
+                                              setOptions={setCities}
+                                              selectedOptions={selectedCities}
+                                              setSelectedOptions={setSelectedCities}/>
                 </Paper>
             </Grid>
             <Grid item xs={12} sm={4}>
                 <Paper className={classes.paper}>
-                            <Typography variant="h6">
-                                Filter by dates
-                            </Typography>
-                            <Typography variant="subtitle1">
-                                Insertion dates
-                            </Typography>
+                    <div style={{display: 'flex', flexDirection: 'row', alignItems:'center', justifyContent: 'center'}}>
+                        <Typography variant="h6">
+                            Filter by dates
+                        </Typography>
+                        <Checkbox
+                            checked={datesVisible}
+                            onChange={event => setDatesVisible(event.target.checked)}
+                            inputProps={{ 'aria-label': 'primary checkbox' }}
+                        />
+                    </div>
+
+                    { datesVisible && <>
+                    <Typography variant="subtitle1">
+                        Insertion dates
+                    </Typography>
                     <Grid container justify="space-around">
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                            disableToolbar
-                            variant="inline"
-                            format="MM-dd-yyyy"
-                            margin="normal"
-                            id="insertionStart"
-                            onChange={(date)=>filterDateChange(date,"insertionStart")}
-                            value={dates.insertionStart}
-                            label="Date start"
-                            KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                            }}
-                        />
-                        <KeyboardDatePicker
-                            disableToolbar
-                            variant="inline"
-                            format="MM-dd-yyyy"
-                            margin="normal"
-                            value={dates.insertionEnd}
-                            onChange={(date)=>filterDateChange(date,"insertionEnd")}
-                            id="insertionEnd"
-                            label="Date end"
-                            KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                            }}
-                        />
+                            <KeyboardDatePicker
+                                disableToolbar
+                                variant="inline"
+                                format="MM-dd-yyyy"
+                                margin="normal"
+                                id="insertionStart"
+                                onChange={(date)=>filterDateChange(date,"insertionStart")}
+                                value={dates.insertionStart}
+                                label="Date start"
+                                KeyboardButtonProps={{
+                                    'aria-label': 'change date',
+                                }}
+                            />
+                            <KeyboardDatePicker
+                                disableToolbar
+                                variant="inline"
+                                format="MM-dd-yyyy"
+                                margin="normal"
+                                value={dates.insertionEnd}
+                                onChange={(date)=>filterDateChange(date,"insertionEnd")}
+                                id="insertionEnd"
+                                label="Date end"
+                                KeyboardButtonProps={{
+                                    'aria-label': 'change date',
+                                }}
+                            />
                         </MuiPickersUtilsProvider>
                     </Grid>
                     <Typography variant="subtitle1">
@@ -202,34 +256,7 @@ function FilterBlock({classes, setOpen}) {
                             }}
                         />
                     </Grid>
-                </Paper>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <Paper className={classes.paper}>
-                    <Typography variant="h6">
-                        Filter by countries
-                    </Typography>
-                    <AutocompleteChip label="Select countries"
-                                      options={countries}
-                                      setOptions={setCountries}
-                                      selectedOptions={selectedCountries}
-                                      setSelectedOptions={setSelectedCountries}/>
-                            <Typography variant="h6">
-                                Filter by municipalities
-                            </Typography>
-                            <AutocompleteChip label="Select municipalities"
-                                              options={municipalities}
-                                              setOptions={setMunicipalities}
-                                              selectedOptions={selectedMunicipalities}
-                                              setSelectedOptions={setSelectedMunicipalities}/>
-                            <Typography variant="h6">
-                                Filter by cities
-                            </Typography>
-                            <AutocompleteChip label="Select cities"
-                                              options={cities}
-                                              setOptions={setCities}
-                                              selectedOptions={selectedCities}
-                                              setSelectedOptions={setSelectedCities}/>
+                        </>}
                 </Paper>
             </Grid>
         </Grid>

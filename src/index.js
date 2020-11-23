@@ -18,6 +18,7 @@ import {TextInputDialog} from "./components/feedback/TextInputDialog";
 import LoadingScreen from "./components/LoadingScreen";
 import AppStateStorageProvider from "./contexts/AppStateStorageContext";
 import {AbstractionCategoryDialog} from "./components/feedback/AbstractionCategoryDialog";
+import AppResourcesProvider from "./contexts/AppResourcesContext";
 
 require('dotenv').config();
 
@@ -26,6 +27,7 @@ ReactDOM.render(
         <AppStateStorageProvider>
             <AuthProvider>
                 <Router history={history}>
+                    <AppResourcesProvider>
                     <SnackbarProvider>
                         <AlertDialogProvider>
                             <EditDialogProvider>
@@ -46,6 +48,7 @@ ReactDOM.render(
                             </EditDialogProvider>
                         </AlertDialogProvider>
                     </SnackbarProvider>
+                    </AppResourcesProvider>
                 </Router>
             </AuthProvider>
         </AppStateStorageProvider>

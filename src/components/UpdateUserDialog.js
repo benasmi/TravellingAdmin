@@ -63,8 +63,12 @@ const UpdateUserDialog = ({open, setOpen, userData, availableRoles, setAvailable
                 <AutoCompleteChip
                     id="roleId"
                     name="role"
-                    label="Select sources"
-                    options={availableRoles}
+                    label="Select role"
+                    options={availableRoles.map(role => {
+                        const newRole = {...role}
+                        newRole.name = newRole.role;
+                        return newRole;
+                    })}
                     setOptions={setAvailableRoles}
                     setSelectedOptions={setSelectedRoles}
                     selectedOptions={selectedRoles}

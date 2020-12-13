@@ -10,6 +10,8 @@ import UseAlertDialogContext from "../contexts/UseAlertDialogContext";
 import UseSnackbarContext from "../contexts/UseSnackbarContext";
 import UpdateUserDialog from "../components/UpdateUserDialog";
 import AddUserDialog from "../components/AddUserDialog";
+import {AlertDialogContext} from "../contexts/AlertDialogContext";
+import UseEditDialogContext from "../contexts/UseEditDialogContext";
 
 const styles = theme => ({
     button: {
@@ -72,6 +74,7 @@ function Places(props) {
     const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
     const [openAddDialog, setOpenAddDialog] = useState(false);
 
+    const {addEditDialogConfig} = UseEditDialogContext();
 
     // const {filterQuery} = useContext(PlacesFilterContext)
     const {addAlertConfig} = UseAlertDialogContext();
@@ -126,6 +129,48 @@ function Places(props) {
             requestUsers(p, keyword)
     };
 
+    const removeCallback = (id) => {
+        addAlertConfig(
+            "Warning",
+            "Are you sure you want to remove this user?",
+            [
+                {
+                    action: () => {
+                        API.User.remove(id).then(() => {
+                            addConfig(true, "User removed successfully")
+                            setData(data => {
+                                return data.filter(item => item.id !== id);
+                            })
+                        }).catch(() => {
+                            addConfig(false, "Failed to remove user")
+                        })
+                    },
+                    name: "Yes"
+                }
+            ]
+        )
+    }
+
+    const changePasswordCallback = (id) => {
+        const user = data.find(user => user.id === id)
+        addEditDialogConfig({
+            title: "Change password",
+            explanation: `Type the new password for ${user.name} ${user.surname}`,
+            onDoneCallback: (options, text) => {
+                API.User.changePassword({
+                    userId: id,
+                    newPassword: text
+                }).then(() => {
+                    addConfig(true, "Password changed successfully")
+                }).catch(() => {
+                    addConfig(false, "Something went wrong")
+                })
+            },
+            type: "password",
+            validateInput: (input) => {return input.length > 5 ? 0 : 1},
+            textFieldLabel: "Type in a secure password"
+        })
+    }
 
     return (
         <div className={classes.root}>
@@ -152,6 +197,9 @@ function Places(props) {
                     checkable={false}
                     changePageCallback={changePageCallback}
                     updateCallback={updatePlaceCallback}
+                    removeCallback={removeCallback}
+                    actionButtonCallback={changePasswordCallback}
+                    actionButtonText="Change password"
                     id={"id"}
                     isLoading={isLoading}
                 />

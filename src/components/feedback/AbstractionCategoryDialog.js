@@ -78,7 +78,7 @@ export const AbstractionCategoryDialog = () => {
                         onInput={handleInput}
                         label={dialogConfig.textFieldLabel}
                         defaultValue={dialogConfig.defaultText}
-                        type="email"
+                        type={dialogConfig.type}
                         fullWidth
                     />
 

@@ -44,6 +44,11 @@ const defaultOptions = {
     textFieldLabel: "Type here",
 
     /**
+     * The type of input to use
+     */
+    type: "email",
+
+    /**
      * Should return 0 if input is valid.
      * If the input is not valid, it should return an error code.
      * Any returned code, that is not 0 is considered to be an error.
@@ -62,7 +67,6 @@ const defaultOptions = {
      * Additional payload
      */
     payload: {}
-
 
 }
 

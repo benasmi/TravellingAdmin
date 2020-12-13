@@ -84,6 +84,7 @@ export const AbstractionCategoryDialog = ({dialogConfig, setDialogConfig, onDone
                         label="Restaurants, hiking, etc..."
                         defaultValue={dialogConfig.category.name}
                         type="email"
+
                         fullWidth
                     />
 

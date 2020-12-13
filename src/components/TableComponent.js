@@ -17,6 +17,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import TextField from "@material-ui/core/TextField"
 import useDebounce from "../helpers/debounce";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import Button from "@material-ui/core/Button";
 
 
 /**
@@ -149,6 +150,8 @@ export default function TableComponent({title,
                                            changePageCallback,
                                            updateCallback,
                                            removeCallback,
+                                            actionButtonCallback,
+                                            actionButtonText,
                                            id,
                                            isLoading,
                                            customToolbarElements,
@@ -163,6 +166,8 @@ export default function TableComponent({title,
         changePageCallback: PropTypes.func,
         updateCallback: PropTypes.func,
         removeCallback: PropTypes.func,
+        actionButtonCallback: PropTypes.func,
+        actionButtonText: PropTypes.string,
         id: PropTypes.string.isRequired,
         isLoading: PropTypes.bool,
         customToolbarElements: PropTypes.object,
@@ -249,7 +254,6 @@ export default function TableComponent({title,
                                                                 {removeCallback !== undefined ? <IconButton size="small" aria-label="delete" onClick={()=>removeCallback(row[id])}>
                                                                     <DeleteIcon  fontSize="small" />
                                                                 </IconButton> : null}
-
                                                             </div>
                                                             </TableCell>
                                                 }else{
@@ -257,6 +261,8 @@ export default function TableComponent({title,
                                                 }
 
                                             })}
+                                            {actionButtonCallback != null && <TableCell onClick={e => {e.stopPropagation(); e.preventDefault()}}><Button onClick={() => actionButtonCallback(row[id])} variant="outlined">{actionButtonText}</Button></TableCell>}
+
                                         </TableRow>
                                     );
                                 })}

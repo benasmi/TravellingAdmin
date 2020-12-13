@@ -100,12 +100,9 @@ function Resources({classes}) {
     }, [])
 
     function parseTags(response){
-
-        console.log("Tags", response)
         setTags(response);
 
         const featuredTags = response.filter(tag => tag.isFeatured === true);
-        console.log("Featured tags", featuredTags)
         setFeaturedTags(featuredTags);
     }
 

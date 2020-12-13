@@ -103,8 +103,10 @@ const getUserProfile = () => RequestType.getRequest("api/v1/user/info");
 const getAllUsers = (urlParams) => RequestType.getRequest("api/v1/user/search", urlParams);
 const getAllRoles = () => RequestType.getRequest("api/v1/user/roles/all");
 const setRoles = (data) => RequestType.postRequest("api/v1/user/setRoles", data);
+const remove = (data) => RequestType.postRequest("api/v1/user/remove", data);
+const changePassword = (data) => RequestType.postRequest("api/v1/user/changePassword", data);
 
-const User = {setRoles, getAllRoles, getAllUsers, getUserProfile};
+const User = {setRoles, getAllRoles, getAllUsers, getUserProfile, remove, changePassword};
 
 //Recommendation
 const createRecommendation = (data) => RequestType.postRequest("api/v1/recommendation/create", data);

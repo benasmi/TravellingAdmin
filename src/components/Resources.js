@@ -9,8 +9,8 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import UseEditDialogContext from "../contexts/UseEditDialogContext";
 import AutoCompleteChip from "./AutocompleteChip";
-import Divider from "@material-ui/core/Divider";
 import Alert from "@material-ui/lab/Alert";
+import {AbstractionCategoryDialog} from "./feedback/AbstractionCategoryDialog";
 
 const styles = theme => ({
     root: {
@@ -63,10 +63,21 @@ function Resources({classes}) {
     const [loading, setIsLoading] = useState({
         categories: false,
         tags: false
-    })
+    });
+
+
+    const [abstractedCategories, setAbstractedCategories] = useState([]);
+
+    const [abstractedDialogConfig, setAbstractedDialogConfig] = useState({
+        open:false,
+        category: {name: "asd", categoryId: -1},
+        payload: {
+            options: [],
+            selectedOptions: []
+        }
+    });
 
     const [categories, setCategories] = useState([]);
-    const [abstractedCategories, setAbstractedCategories] = useState([]);
     const [tags, setTags] = useState([]);
     const [featuredTags, setFeaturedTags] = useState([]);
 
@@ -172,42 +183,36 @@ function Resources({classes}) {
         })
     };
 
+    function onDoneUpdatingAbstractedCategory(selectedOptions, text, id) {
+        console.log({selectedOptions, text, id})
+        API.Categories.updateAbstractedCategories(
+            {name: text,
+                categoryId: id,
+                mappedCategories: selectedOptions
+            }).then(()=>{
+            addConfig(true, "Abstraction category updated successfully");
+            setAbstractedCategories(oldData => {return oldData.map(item => {
+                if(item.categoryId === id)
+                    return {...item, name: text,
+                        mappedCategories: selectedOptions,
+                        count: selectedOptions.length,
+                        label: selectedOptions.map(row=>{
+                            return row.name;
+                        }).join(' | ')
+                    };
+                else return item
+            })})
+        }).catch(()=>{
+            addConfig(false, "Failed to update abstraction category.")
+        })
+    }
+
     const updateAbstractionCategoryHandler = (categoryId) => {
         let abstractedCat = abstractedCategories.filter(item => item.categoryId === categoryId)[0];
-        addEditDialogConfig({
-            title: "Edit abstraction category",
-            explanation: "Type the abstraction category name",
-            defaultText: abstractedCat.name,
-            onDoneCallback: (selectedOptions, text) => {
-                API.Categories.updateAbstractedCategories(
-                    {name: text,
-                        categoryId: abstractedCat.categoryId,
-                        mappedCategories: selectedOptions
-                    }).then(()=>{
-                    addConfig(true, "Abstraction category updated successfully");
-
-                    setAbstractedCategories(oldData => {return oldData.map(item => {
-                        if(item.categoryId === categoryId)
-                            return {...item, name: text,
-                                mappedCategories: selectedOptions,
-                                count: selectedOptions.length,
-                                label: selectedOptions.map(row=>{
-                                    return row.name;
-                                }).join(' | ')
-                        };
-                        else return item
-                    })})
-                }).catch(()=>{
-                    addConfig(false, "Failed to update abstraction category.")
-                })
-            },
-            validateInput: (input) => {
-                console.log("Input length", input)
-                return input.length > 0 ? 0 : 1
-            },
-            textFieldLabel: "Restaurants, hiking, etc...",
+        setAbstractedDialogConfig({
+            open: true,
+            category: abstractedCat,
             payload: {
-                type: "SUPER_CAT",
                 options: categories,
                 selectedOptions: abstractedCat.mappedCategories
             }
@@ -218,13 +223,15 @@ function Resources({classes}) {
 
     const updateTagHandler = (id) => {
         let tagName = tags.filter(item => item.tagId === id)[0].name
+        console.log(tagName)
         addEditDialogConfig({
             title: "Edit tag",
             explanation: "Type the tag name",
             defaultText: tagName,
             onDoneCallback: (text) => {
+                console.log({id, text});
                 API.Tags.updateTags([{name: text, tagId: id}]).then(()=>{
-                    addConfig(true, "Tag updated successfully")
+                    addConfig(true, "Tag updated successfully");
                     setTags(oldData => {return oldData.map(item => {
                         if(item.tagId === id)
                             return {...item, name: text}
@@ -237,7 +244,7 @@ function Resources({classes}) {
             validateInput: (input) => {return input.length > 0 ? 0 : 1},
             textFieldLabel: "Warm, quick, cozy..."
         })
-    }
+    };
 
     const removeTagHandler = (id) => {
         let tagName = tags.filter(item => item.tagId === id)[0].name
@@ -350,6 +357,11 @@ function Resources({classes}) {
                 <br/>
                 <br/>
 
+                <AbstractionCategoryDialog
+                    setDialogConfig={setAbstractedDialogConfig}
+                    dialogConfig={abstractedDialogConfig}
+                    onDoneCallback={onDoneUpdatingAbstractedCategory}
+                />
                 <TableComponent
                     title={"Abstracted categories"}
                     headCells={categoriesAbstractedHeadCells}

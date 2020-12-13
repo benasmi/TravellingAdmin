@@ -6,14 +6,14 @@ import React, {useEffect, useState} from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import DialogActions from "@material-ui/core/DialogActions";
-import UseEditDialogContext from "../../contexts/UseEditDialogContext";
 import AutoCompleteChip from "../AutocompleteChip";
 import API from "../../Networking/API";
 
 
-export const AbstractionCategoryDialog = () => {
+export const AbstractionCategoryDialog = ({dialogConfig, setDialogConfig, onDoneCallback}) => {
 
-    const {dialogConfig, removeEditDialogConfig, dialogOpen, setDialogOpen} = UseEditDialogContext();
+
+
     const [inputText, setInputText] = useState("")
     const [error, setError] = useState(0)
 
@@ -23,14 +23,19 @@ export const AbstractionCategoryDialog = () => {
 
     const deInit = () => {
         setError(0)
-        setDialogOpen(false);
+        setDialogConfig(oldVal=>{
+            return {
+                ...oldVal,
+                open:false
+            }
+        });
         setInputText("")
     };
 
 
     useEffect(()=>{
-        if(dialogConfig.payload.type === 'SUPER_CAT'){
-            setInputText(dialogConfig.defaultText)
+        console.log(dialogConfig)
+            setInputText(dialogConfig.category.name);
             API.Categories.abstractedCategoriesLeftOver().then((options)=>{
                 console.log("Opcionais", options)
                 setOptions(options)
@@ -38,46 +43,46 @@ export const AbstractionCategoryDialog = () => {
 
             }).finally(()=>{
 
-            })
+            });
             setSelectedOptions(dialogConfig.payload.selectedOptions);
-        }
-    },[dialogConfig.payload]);
+    },[dialogConfig]);
 
     const handleClose = () => {
         deInit()
     };
 
     const handleDone = () => {
-        let errorCode = dialogConfig.validateInput(inputText)
-        console.log("Error", errorCode)
+        let errorCode = validateInput(inputText);
         setError(errorCode);
         if(errorCode !== 0) return;
-
-        if(dialogConfig.onDoneCallback !== undefined)
-            dialogConfig.onDoneCallback(selectedOptions, inputText);
+        onDoneCallback(selectedOptions, inputText, dialogConfig.category.categoryId);
         deInit()
     };
+
+    function validateInput(input){
+        return input.length > 0 ? 0 : 1
+    }
     const handleInput = (e) => {
         setInputText(e.target.value)
     };
 
     return (
         <div>
-            <Dialog open={dialogOpen} aria-labelledby="form-dialog-title" fullWidth>
-                <DialogTitle id="form-dialog-title">{dialogConfig.title}</DialogTitle>
+            <Dialog open={dialogConfig.open} aria-labelledby="form-dialog-title" fullWidth>
+                <DialogTitle id="form-dialog-title">Edit abstraction category</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        {dialogConfig.explanation}
+                        Type the abstraction category name
                     </DialogContentText>
                     <TextField
                         autoFocus
-                        helperText={error !== 0 && dialogConfig.errorMessages[error] !== null ? dialogConfig.errorMessages[error] : ""}
+                        helperText={error !== 0 ? "Contains errors" : ""}
                         error={error !== 0}
                         margin="dense"
                         id="name"
                         onInput={handleInput}
-                        label={dialogConfig.textFieldLabel}
-                        defaultValue={dialogConfig.defaultText}
+                        label="Restaurants, hiking, etc..."
+                        defaultValue={dialogConfig.category.name}
                         type="email"
                         fullWidth
                     />

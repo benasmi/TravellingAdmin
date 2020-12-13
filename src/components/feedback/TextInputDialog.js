@@ -30,8 +30,12 @@ export const TextInputDialog = () => {
         setError(errorCode)
         if(errorCode !== 0) return
 
-        if(dialogConfig.onDoneCallback !== undefined)
+        if(dialogConfig.onDoneCallback !== undefined){
             dialogConfig.onDoneCallback(inputText)
+            console.log("Input", inputText)
+        }else{
+            console.log("On done in undefined")
+        }
         deInit()
     }
     const handleInput = (e) => {

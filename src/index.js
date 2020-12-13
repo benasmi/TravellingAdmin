@@ -34,7 +34,7 @@ ReactDOM.render(
                                 <SnackbarFeedback/>
                                 <AlertDialogFeedback/>
                                 <TextInputDialog/>
-                                <AbstractionCategoryDialog/>
+                                {/*<AbstractionCategoryDialog/>*/}
                                 <PlacesFilterProvider>
                                     <Switch>
                                         <Redirect exact from="/" to="/login"/>
